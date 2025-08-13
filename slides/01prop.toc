@@ -1,4 +1,0 @@
-\beamer@sectionintoc {1}{Course Introduction}{3}{0}{1}
-\beamer@sectionintoc {2}{Arguments}{15}{0}{2}
-\beamer@sectionintoc {3}{Propositional Logic}{26}{0}{3}
-\beamer@sectionintoc {4}{Natural Deductions}{37}{0}{4}
