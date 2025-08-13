@@ -1,0 +1,711 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Two (Solutions)}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Natural Deductions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write natural deduction proofs using minimal logic. 
+				\item Write natural deduction proofs using the intuitionistic abusrdity rule. 
+			\end{itemize}
+
+		Relevant lectures: Lectures 4,5, and 6\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1, 2a, 2b, 2d, 2f, 3a\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or lecturer.}\\
+	{\bf Email lecturer to report on topic and references for essay.}
+
+	}
+}
+
+% Discussion questions for tutor.
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Show $A \vdash \lnot \lnot A$.
+	% This exercise is to focus on what it means to derive the negation of a statement. No absurdity rules needed, just implication introduction. 
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	Introduction rules: implication introduction as the conclusion consists of a single implication ($\lnot \lnot A \equiv (A \to \bot) \to \bot$) which this proof will need to introduce. This requires temporarily adding the antecedent $(A \to \bot)$ to our hypotheses. 
+
+	Elimination rules: implication elimination (aka modus ponens) as the hypotheses are $A$ and $A \to \bot$. 
+
+	\vspace{0.3cm}
+	
+	Hypotheses: $A$ with the temporary hypothesis $\lnot A \equiv A \to \bot$.
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{(A \to \bot) \to \bot}
+					{\infer[\MP]{\bot}
+						{A
+						&
+						\infer[1]{\cancel{A \to \bot}}{}}}			
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+	
+	
+	\item Show $A \to B \vdash A \to (A \land B)$.
+	% Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	Introduction rules: implication introduction. Since the conclusion is an implication $A \to (A \land B)$ we temporarily add the antecedent $A$ to our hypotheses. Proofs of hypotheticals/implications require use to assume the hypothesis. 
+
+	Elimination rules: implication elimination (aka modus ponens). The signle hypothesis is $A \to B$. We need $A$ to use modus ponens on the assumption. 
+
+	\vspace{0.3cm}
+	
+	Hypotheses: $A \to B$ with the temporary hypothesis $A$.
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{A \to (A \land B)}
+					{\infer[\land I]{A \land B}
+					{\infer[1]{\cancel{A}}{} 				
+					&				
+					\infer[]{B}
+						{A \to B 
+						& 
+						\infer[1]{\cancel{A}}{}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+	
+	\newpage
+	\item Show $(A \land B) \lor C \ \vdash \ (A \lor C) \land (B \lor C)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separetely. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+
+	\hspace{0.2cm}{\bf Solution}
+
+	This proof requires the use of disjunction elimination; as the only hypothesis is a disjunction. Proofs with this rule of inference have three subproofs, all of which can be worked on separately and brought together at the end. 
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\lor E]{?}{(A \land B) \lor C
+							  &
+							  \infer[]{(A \land B) \to \ ?}{\vdots}
+							  &
+							  \infer[]{C \to \ ?}{\vdots}}
+		\end{array}$
+	\end{center}
+
+	These subproofs are both derivations that introduce an implication; for this reason we can add the antecedent $A \land B$ (resp. $C$) to our hypotheses on each subproof. 
+
+	In fact the disjunction elimination will be the final step, so the ``?" is the conclusion to the argument: $(A \lor C) \land (B \lor C)$.
+
+	\hspace{0.5cm} {\bf First subproof}
+
+	On this branch we are trying to prove: $(A \land B) \to (A \lor C) \land (B \lor C)$. Our hypotheses are therefore $(A\land B) \lor C$ and $A \land B$.
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\to I,1]{(A \land B) \to (A \lor C) \land (B \lor C)}
+				{\infer[\land I]{(A \lor C) \land (B \lor C)}
+					{\infer[\lor I]{A \lor C}
+						{\infer[\land E_{l}]{A}
+							{\infer[1]{\cancel{A \land B}}{}}}
+					&
+					\infer[\lor I]{B \lor C}
+						{\infer[\land E_{r}]{B}
+							{\infer[1]{\cancel{A \land B}}{}}}}}
+		\end{array}$
+	\end{center}
+
+	\hspace{0.5cm} {\bf Second subproof}
+
+	On this branch we are trying to prove: $C \to (A \lor C) \land (B \lor C)$. Our hypotheses are therefore $(A\land B) \lor C$ and $C$.
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\to I,2]{C \to (A \lor C) \land (B \lor C)}
+				{\infer[\land I]{(A \lor C) \land (B \lor C)}
+					{\infer[\lor I]{A \lor C}
+						{\infer[2]{\cancel{C}}{}}
+					&
+					\infer[\lor I]{B \lor C}
+						{\infer[2]{\cancel{C}}{}}}}
+		\end{array}$
+	\end{center}
+
+	Combining the above subproofs yields
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{(A \lor C) \land (B \lor C)}{(A \land B) \lor C
+								&
+								\infer[]{(A \land B) \to (A \lor C) \land (B \lor C)}
+								{\infer[\land I]{(A \lor C) \land (B \lor C)}
+									{\infer[\lor I]{A \lor C}
+										{\infer[\land E_{l}]{A}
+											{\infer[1]{\cancel{A \land B}}{}}}
+									&
+									\infer[\lor I]{B \lor C}
+										{\infer[\land E_{r}]{B}
+											{\infer[1]{\cancel{A \land B}}{}}}}}
+								&
+								\infer[]{C \to (A \lor C) \land (B \lor C)}
+								{\infer[\land I]{(A \lor C) \land (B \lor C)}
+									{\infer[\lor I]{A \lor C}
+										{\infer[2]{\cancel{C}}{}}
+									&
+									\infer[\lor I]{B \lor C}
+										{\infer[2]{\cancel{C}}{}}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item This exercise breaks the proof of the sequent 
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent. 
+		
+		(!) Remember $\lnot A \equiv A \to \bot$.
+
+		\hspace{0.2cm}{\bf Solution}
+
+		The following sequence of sequents are obtained by assuming the antecedent on the outer-most implication of the consequent. 
+
+		\begin{center}
+			\begin{align*}
+				&\vdash \ (P \to Q) \to (\lnot Q \to \lnot P) & \\
+				P \to Q \ &\vdash \ \lnot Q \to \lnot P & \text{Apply Deduction Theorem}\\
+				P \to Q \ \lnot Q \ &\vdash \ \lnot P & \text{Apply Deduction Theorem}\\
+				P \to Q, \lnot Q, P &\vdash \ \bot & \text{Apply Deduction Theorem}
+			\end{align*}
+		\end{center}
+
+		\item Prove the following sequent 
+		
+		$$ P \to Q, \lnot Q, P \ \vdash \ \bot$$
+
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\MP]{\bot}
+						{\infer[\MP]{Q}{P & P \to Q} & \lnot Q}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		To prove the original sequent, we have to undo each application of the deduction theorem i.e. introduce the implication back to the consequent. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,3]{(P \to Q) \to (\lnot Q \to \lnot P)}
+						{\infer[\to I,2]{\lnot Q \to \lnot P}
+							{\infer[\to I,1]{\lnot P}
+								{\infer[\MP]{\bot}
+								{\infer[\MP]{Q}{\infer[1]{\cancel{P}}{} & \infer[3]{\cancel{P \to Q}}{}} & \infer[2]{\cancel{\lnot Q}}{}}}								
+							}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+	\end{enumerate}	
+	
+	\newpage
+	\item \textbf{Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of minimal logic. Some of these sequents have a double turnstile. This means you need to prove both directions. 
+	
+	\vspace{0.2cm}
+
+	{\bf Hints and Tips: Read!}
+
+	The hypotheses of the arguments will suggest the elimination rules to use, while the conclusion will suggest the introduction rules. It's a good first step to look at these, as this will dictate which other (temporary) hypotheses are available in a proof. For example, an implication introduction allows for the (temporary) assumption of the antecedent. 
+
+	Always expand $\lnot A \equiv A \to \bot$. Otherwise, it may not be clear that the implication introduction/elimination rules can be used.
+
+	\begin{enumerate}
+		\item $(A \land B) \to C \dashv\vdash A \to (B \to C) $
+		
+		\hspace{0.2cm}{\bf Solution}
+		
+		This double turnstile requires a proof in both directions. 
+		
+		\begin{enumerate}
+		\item First consider the sequent $(A \land B) \to C \vdash A \to (B \to C)$.
+		
+		\vspace{0.2cm}
+
+		Introduction rules: two implications in the conclusion suggest the need for two implication introductions. This requires the temporary addition of $A,B$ as hypotheses. 
+
+		\vspace{0.2cm}
+
+		Elimination rule: the implication in the hypothesis suggests one needs to use modus ponens with $A \land B$. Do we need to add $A \land B$ too?
+
+		\vspace{0.3cm}
+		Hypotheses $(A \land B) \to C$ with temporary hypotheses $A,B$.
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{A \to (B \to C)}
+						{\infer[\to I,2]{B \to C}
+							{\infer[\MP]{C}
+								{\infer[\land I]{A \land B}
+									{\infer[1]{\cancel{A}}{} & \infer[2]{\cancel{B}}{}}
+								&							
+								(A \land B) \to C}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		\item Now we may consider the sequent $A \to (B \to C) \vdash (A \land B) \to C$.
+
+		\vspace{0.2cm}
+
+		Introduction rules: implication which suggests the temporary assumption $A\land B$ should be added. 		
+		
+		\vspace{0.2cm}
+
+		Elimination rules: implication which suggests the need for $A,B$ in order to use modus ponens. Do we need to add these too? 
+
+		\vspace{0.3cm}
+		Hypothesis $A \to (B \to C)$ with temporary hypothesis $A \land B$.
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(A \land B) \to C}
+						{\infer[\MP]{C}
+							{\infer[]{B\to C}
+								{\infer[\land E_{l}]{A}{\infer[1]{\cancel{A \land B}}{}} & A \to (B \to C)}
+							&
+							\infer[\land E_{r}]{B}
+								{\infer[1]{\cancel{A \land B}}{}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+	\end{enumerate}
+	Together these natural deductions complete the proof of the claim. 
+		
+		\newpage
+		\item $\lnot A \lor \lnot B \vdash \lnot(A \land B)$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Unpack the negations!}
+
+		Introduction rules: implication suggests the temporary assumption $A \land B$.
+
+		\vspace{0.2cm}
+
+		Elimination rules: disjunction suggests the temporary assumptions $\lnot A, \lnot B$. 
+
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $\lnot A \lor \lnot B$, $A \land B$, $\lnot A$, and $\lnot B$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot(A \land B)}
+						{\infer[\lor E]{\bot}
+							{\lnot A \lor \lnot B &
+							\infer[\to I,2]{\lnot A \to \bot}
+								{\infer[\MP]{\bot}
+									{\infer[2]{\cancel{\lnot A}}{}
+									&
+									\infer[\land E_{l}]{A}{\infer[1]{\cancel{A \land B}}{}}}}
+								&
+							\infer[\to I,3]{\lnot B \to \bot}
+								{\infer[\MP]{\bot}
+									{\infer[3]{\cancel{\lnot B}}{} 
+									&
+									\infer[\land E_{r}]{B}{\infer[1]{\cancel{A \land B}}{}}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $\lnot(A \lor B) \dashv\vdash \lnot A \land \lnot B$
+				
+		\hspace{0.2cm}{\bf Solution}
+		
+		\begin{enumerate}
+		
+			\item First of the two sequents to prove 
+			
+			$$\lnot(A \lor B) \vdash \lnot A \land \lnot B$$			
+			
+			Introduction rule: conjunction. This means the proof will be completed by bringing two separate proofs together. One of $\lnot A$ and the other of $\lnot B$. These can be worked on separately. Furthermore, proofs of negation use implication introduction, so this suggests the addition of temporary assumptions $A,B$.
+			
+			\vspace{0.2cm}
+			
+			Elimination rule: implication. This requires $A \lor B$ in order to use modus ponens. However, this does not need to be added to our hypotheses. Why?
+		
+			\vspace{0.2cm}
+
+			Hypotheses in proof are: $\lnot(A \lor B)$, $A$, and $B$.
+
+			\vspace{0.2cm}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\land I]{\lnot A \land \lnot B}
+							{\infer[\to I,1]{\lnot A}
+								{\infer[\MP]{\bot}
+									{\infer[\lor I]{A \lor B}{\infer[1]{\cancel{A}}{}}
+									&
+									\lnot(A \lor B)}}
+							&
+							\infer[\to I,2]{\lnot B}
+							{\infer[\MP]{\bot}
+								{\infer[\lor I]{A \lor B}{\infer[2]{\cancel{B}}{}}
+									&
+									\lnot(A \lor B)}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			\item Second of two sequents to prove
+			
+			$$\lnot A \land \lnot B \vdash \lnot(A \lor B)$$	
+			
+			Introduction rule: negation --- introducing negation is done by introducing implication. This suggests the temporary addition of the assumption $A \lor B$. 
+			
+			\vspace{0.2cm}
+			
+			Elimination rule: conjunction and disjunction. The elimination rule for the temporary hypothesis $A \lor B$ will need to be used as well. 
+		
+			\vspace{0.2cm}
+
+			Hypotheses in proof are: $\lnot A \land \lnot B$, $A \lor B$. 
+
+			\vspace{0.2cm}
+			
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\land I]{\lnot(A \lor B)}
+							{\infer[\lor E]{\bot}
+								{\infer[1]{\cancel{A \lor B}}{}
+								& 
+								\infer[\land E_{l}]{A \to \bot}{\lnot A \land \lnot B}
+								&
+								\infer[\land E_{r}]{B \to \bot}{\lnot A \land \lnot B}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+			\end{enumerate}
+				
+		\newpage
+		\item $A \to B, \ B \to C \vdash A \to C $
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: implication. Add $A$ to hypotheses.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication. Proof needs $B$ to use modus ponens, does it need to be added as well?
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $A \to B$, $B \to C$, $A$.  
+		
+		\begin{mdframed}	
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{A \to C}
+						{\infer[\MP]{C}
+							{\infer[\MP]{B}
+								{\infer[1]{\cancel{A}}{} & A \to B}
+							&
+							B \to C}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}		
+		
+		%\newpage
+		\item $A \lor B,\ \ A \to C,\ \ B \to D \vdash  C \lor D$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: disjunction. 
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: disjunction and implication. Disjunction elimination requires two implication introduction subproofs. For this reason we add $A$, $B$ to the hypotheses; one for each of the subproofs. Similarly, the elimination of $A\to C$ and $B \to D$ also suggest the addition of $A,B$ to the hypotheses. 
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $A \lor B$, $A \to C$, $B \to D$, $A,B$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{C \lor D}
+						{A \lor B
+						&
+						\infer[\to I,1]{A \to (C \lor D)}
+							{\infer[\lor I]{C \lor D}
+								{\infer[\MP]{C}
+									{\infer[1]{\cancel{A}}{}
+									&
+									A \to C}}}
+						&
+						\infer[\to I,2]{B \to (C \lor D)}
+						{\infer[\lor I]{C \lor D}
+							{\infer[\MP]{D}
+								{\infer[1]{\cancel{B}}{}
+								&
+								B \to D}}}					 
+						}				
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $A \to C,\ \ B \to D,\ \ \lnot C \lor \neg D \vdash \lnot A \lor \neg B$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation and disjunction. Add $A,B$ to hypotheses.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication and disjunction. Introduction suggests adding $A,B$ (already added) and the disjunction suggests adding $\lnot C$ and $\lnot D$. 
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $A \to C, B \to D, \lnot C \lor \neg D, A, B, \lnot C$, and $\lnot D$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{\lnot A \lor \lnot B}
+						{\lnot C \lor \lnot D
+							&
+						\infer[\to I,2]{\lnot C \to (\lnot A \lor \lnot B)}
+							{\infer[\lor I]{\lnot A \lor \lnot B}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[\MP]{\bot}
+										{\infer[2]{\cancel{\lnot C}}{}
+										&
+										\infer[\MP]{C}
+											{\infer[1]{\cancel{A}}{}
+											&
+											A \to C}}}}}
+							&
+						\infer[\to I,3]{\lnot D \to (\lnot A \lor \lnot B)}
+						{\infer[\lor I]{\lnot A \lor \lnot B}
+							{\infer[\to I,4]{\lnot B}
+								{\infer[\MP]{\bot}
+									{\infer[3]{\cancel{\lnot D}}{}
+									&
+									\infer[\MP]{D}
+										{\infer[4]{\cancel{B}}{}
+										&
+										B \to D}}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item $A,\ \ \neg A \vdash  \neg B$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation. 
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication.
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $A, \lnot A$, and $B$.
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot B}
+						{\infer[\MP]{\bot}{A & \lnot A}
+						&
+						\infer[1]{\cancel{B}}{}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		%\newpage
+		\item $A\to B, \ A \to \lnot B \vdash \lnot A$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication.
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $A \to B, A \to \lnot B$, and $A$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot A}
+						{\infer[\MP]{\bot}
+							{\infer[\MP]{B}
+								{\infer[1]{\cancel{A}}{}
+								&
+								A \to B}
+							&
+							\infer[\MP]{\lnot B}
+								{\infer[1]{\cancel{A}}{}
+								&
+								A \to \lnot B}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+	\end{enumerate}	
+
+	\newpage
+	\item \textbf{Intuitionistic derivations.} Provide natural deduction proofs of the following. You do not need to use the \emph{classical} RAA rule for these questions, but may find that the \emph{intuitionistic} $\bot$ rule is necessary.
+	 
+	\begin{enumerate}
+
+		\item $A, \neg A \vdash  B$ 
+	   
+		\hspace{0.2cm}{\bf Solution}
+ 
+		 \begin{mdframed}
+			 \begin{center}
+			 $\begin{array}{c}
+				 \infer[XF]{B}
+					 {\infer[\MP]{\bot}
+						 {A & \lnot A}}			
+			 \end{array}$
+			 \end{center}
+		 \end{mdframed}
+
+	   \item $\neg A \lor B \vdash  A \to B$ 
+
+	   \hspace{0.2cm}{\bf Solution}
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,2]{A \to B}
+						{\infer[\lor E]{B}
+							{\lnot A \lor B
+							&
+							\infer[\to I,1]{\lnot A \to B}
+								{\infer[XF]{B}
+									{\infer[\MP]{\bot}
+										{\infer[1]{\cancel{\lnot A}}{}
+										&
+										\infer[2]{\cancel{A}}{}}}}
+							&
+							B \to B}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+	   \item $A \lor B,\ \ \lnot A \vdash  B$ 
+	   
+	   \hspace{0.2cm}{\bf Solution}
+		
+	    \begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{B}
+						{A \lor B
+						&
+						\infer[\to I,1]{A \to B}
+							{\infer[XF]{B}
+								{\infer[\MP]{\bot}
+									{\infer[1]{\cancel{A}}{}
+									&
+									\lnot A}}}
+						&
+						B \to B}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		\item $ \vdash \ \lnot(Q \to P) \to (P \to Q)$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,2]{\lnot(Q \to P) \to (P \to Q)}
+							{\infer[\to I,1]{P \to Q}
+								{\infer[\XF]{Q}
+									{\infer[\MP]{\bot}	
+										{\infer[\to I]{Q \to P}
+											{\infer[1]{\cancel{P}}{}}
+										&
+										\infer[2]{\cancel{\lnot(Q \to P)}}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+	\end{enumerate}
+
+\end{enumerate}	
+\end{document}

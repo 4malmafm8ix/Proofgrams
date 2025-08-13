@@ -1,0 +1,13 @@
+#####################################
+#   Tutorial 09 :: Question 04      #
+#####################################
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,1,0,R,q0;
+q0,0,1,R,q0;
+q0,b,b,R,qdone;
+qdone,0,0,L,qdone;
+qdone,1,1,L,qdone;
+qdone,b,b,L,qdone;
+qdone,@,@,L,HALT;
+# End of instructions.

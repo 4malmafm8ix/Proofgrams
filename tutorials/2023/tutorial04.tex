@@ -1,0 +1,112 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+\begin{document}
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Four}
+\end{center}
+\begin{center}
+	{\bf Test Revision}
+\end{center}
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+	Key ideas:
+		\begin{itemize}
+			\item Revise the propositional logic topic.
+		\end{itemize}
+
+	Relevant content: Lectures 1 - 13 and Tutorials 1,2,3\\
+	Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 1,2,3,5,6}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: {\bf 2022 test}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	% Use valuation to show not semantic consequence.
+	\item Use valuations to decide whether the following propositions are tautologies, contingent, or contradictions.
+		\begin{enumerate}
+			\item $(\lnot P \land \lnot Q) \ \to \ \lnot(P \land Q)$ % Tautology
+			\item $\lnot(P \land Q) \ \to \ (\lnot P \land \lnot Q)$ % Contingent
+			\item  $\lnot(P \lor Q) \to (P \land Q)$% Contradiction
+		\end{enumerate}
+	
+	\vspace{4cm}
+
+	% Use RAA in natural deduction.	
+	\item Provide a natural deduction to prove $\vdash \ A \lor \lnot A$.
+	
+	\vspace{4cm}
+
+	% Use Soundness to conclude no derivations possible.
+	\item Explain why there can be no derivations of the proposition $A \land \lnot A$. Your answer should reference a metalogical theorem.
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Work through the 2022 midterm test. 
+	
+	\item Prove each of the following claims of semantic consequence 
+
+		\begin{enumerate}
+			\item $\lnot P \ \land \lnot Q \ \models \ \lnot(P \lor Q)$
+			\item $\lnot(P \lor Q) \ \models \ \lnot P \ \land \lnot Q$
+			\item $\lnot P \ \lor \lnot Q \ \models \ \lnot(P \land Q)$
+			\item $\lnot(P \land Q) \ \models \ \lnot P \ \lor \lnot Q$
+		\end{enumerate}
+
+	\item Explain how we know there must be natural deductions proving each of the corresponding syntactic consequences. Your answer should appeal to an appropriate metalogical theorem. 
+
+	\item Provide natural deductions for the following claims of syntactic consequence 
+
+		\begin{enumerate}
+			\item $\lnot P \ \land \lnot Q \ \vdash \ \lnot(P \lor Q)$
+			\item $\lnot(P \lor Q) \ \vdash \ \lnot P \ \land \lnot Q$
+			\item $\lnot P \ \lor \lnot Q \ \vdash \ \lnot(P \land Q)$
+			\item $\lnot(P \land Q) \ \vdash \ \lnot P \ \lor \lnot Q$
+		\end{enumerate}
+	
+	One of these natural deductions will \emph{require} the use of RAA. Use the BHK interpretation of the propositional connectives to figure out which one.
+
+	\item Prove the following claim twice:
+	
+		$$ \cancel{\models} \ A \to \lnot A$$
+
+		\begin{enumerate}
+			\item with an argument using a truth table, and
+			\item with an argument using a valuation function.
+		\end{enumerate}
+		
+	
+
+\end{enumerate}
+	
+\end{document}

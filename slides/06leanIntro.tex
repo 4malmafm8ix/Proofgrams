@@ -1,0 +1,137 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+% Bibliography
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{../../../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+% Definition format options. 
+\newtheoremstyle{indentDefn}
+{\topsep} % Space above
+{\topsep} % Space below
+{\it} % Body font
+{2cm} % Indent amount
+{\bf} % Theorem head font
+{:} % Punctuation after theorem head
+{0.5em} % Space after theorem head
+{} % Theorem head spec
+
+\theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
+
+\title{Introduction to Lean 4}
+\subtitle{Proof-Assistants}
+\author{MATH230}
+\institute{School of Mathematics and Statistics \\ University of Canterbury}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Lean}
+
+Lean is a functional programming language and an interactive theorem prover. It can be used to write general purpose compute programs and be used as an assistant in the process of authoring and checking proofs about mathematics and software. This open source project was launched by Leonardo de Moura at Microsoft Research in 2013. Lean 4 is the latest version and is maintained by de Moura and others at the Lean Focussed Research Institute.
+
+Lean is not the only language tool to implement the theoretical ideas that we have discussed throughout this course. Other languages include Agda, Idris, and Coq. For the purposes of this course we will only be using Lean. 
+
+\vfill
+\newpage
+\textbf{Getting Started}
+
+It is simplest to run Lean through the editor VS Code. Following the instructions at this link shows you how to do this. There are plugins for other editors, if you're that way inclined. However, if you're very new to programming, then it is recommended you stick to VSCode. 
+
+\vfill
+\newpage
+\textbf{Recall: Curry-Howard}
+
+% Give an ND and a typed lambda calculus deduction. 
+% Highlight, again, the centrality of the proof-term.
+
+% Proof-terms are what Lean is interested in. 
+% We can write this directly into Lean and have our proofs checked.
+
+\vfill
+\newpage
+\textbf{Example}
+
+% Provide code and info-view here. 
+% Composition
+
+\vfill
+\newpage
+\textbf{Keywords}
+
+Lean, indeed all programming languages, have a number of keywords used in structuring of programs. For our purposes of theorem proving, we will not need to know all of the keywords of Lean. For now, it suffices to consider only the following two keywords: 
+
+% Variable
+
+
+% Theorem
+
+
+\vfill
+\newpage
+\textbf{de Moura's Stone}
+
+% Write three column table translating between logic, stlc, and Lean. 
+
+
+\vfill
+\newpage
+\textbf{Lean Infoview}
+
+Lean's infoview is one of the key features that makes Lean easy to use. Along with the editor one writes the proof in, Lean provides another infoview to display a lot of information regarding the current proof. This is indespensible when proofs start to get even moderately long. 
+
+% Show the infoview 
+
+\vfill
+\newpage
+\textbf{Example}
+% Conjunction Commutative.
+
+
+\begin{frame}
+	\frametitle{Further Reading}
+	
+    This lecture was prepared with the aid of the following references. 
+    These should be consulted for further detail on the topics. 
+
+    \printbibliography
+	
+\end{frame}
+\end{document}

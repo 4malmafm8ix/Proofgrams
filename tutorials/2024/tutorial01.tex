@@ -1,0 +1,143 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial One}
+\end{center}
+\begin{center}
+	{\bf Minimal Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Identify the propositional structure of an argument, 
+				\item Translate natural language to propositional logic,
+				\item Identify when to use temporary hypotheses,
+				\item Remember to expand $\not P \equiv P \to \bot$,
+				\item Write natural deduction proofs using minimal logic. 
+			\end{itemize}
+
+		Relevant lectures: Lectures x,y, and z\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: \\ 
+	{\bf Due Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item Translate the following English argument into the formal language for propositional logic. Clearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+		
+	\vspace{0.5cm}
+
+	I will either go to Matukituki or Rakiura. If I go to Matukituki, then I will go hiking. If I go to Rakiura, then I will go hiking. Therefore, I will go hiking. 
+
+	\vspace{3cm}
+
+	\item Show $ P\rightarrow  Q \vdash  P\rightarrow ( P\land  Q)$.
+	% Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+
+	\vspace{3cm}
+
+	\item Show $ P\vdash \lnot \lnot  P$.
+	% This exercise is to focus on what it means to derive the negation of a statement. No absurdity rules needed, just implication introduction. 
+
+	\vspace{3cm}
+
+	\item Show $( P\land  Q) \lor  R \ \vdash \ ( P\lor  R) \land ( Q \lor  R)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separetely. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Translate the following English arguments into the formal language for propositional logic. Clearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+	
+	\begin{enumerate}
+		\item Moriarty knows Irene is either at work, or at home. He has heard from others that she is not at home. Therefore, he concludes she must be at work.
+		
+		\item  If Lestrade observes, then he will solve the crime. If Lestrade does not observe, then he calls for Holmes. As ever, Lestrade sees, but does not observe. Therefore he must call Holmes. 
+		
+		\item If Robert rushes, then he will blunder his queen. If Robert does not rush, then he will blunder his queen. Therefore, Robert will blunder his queen.
+		
+		\item Either the vicar is a liar ($L$), or he shot the earl ($V$). For, either the vicar shot the earl or the butler did ($B$). And unless the vicar is a liar, the butler was drunk at nine o'clock ($D$). And if the butler shot the earl, then the butler wasn't drunk at nine o'clock.
+
+		\item We will win, for if they attack if we advance, then we will win, and we won't advance. 
+	\end{enumerate}	
+
+	\item This exercise breaks the proof of the sequent 
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent. 
+		
+		(!) Remember $\lnot P \equiv P \to \bot$.
+
+		\item Prove the following sequent 
+		
+		$$ P \to Q, \lnot Q, P \ \vdash \ \bot$$
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+
+	\end{enumerate}
+	
+	\item \textbf{Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of minimal logic. Some of these sequents have a double turnstile. This means you need to prove both directions. 
+	 
+	\begin{enumerate}
+		\item $( P\land  Q) \rightarrow  R \dashv\vdash  P\rightarrow ( Q \rightarrow  R) $
+		\item $\lnot P\lor \lnot Q \vdash \lnot( P\land  Q)$
+		\item $\lnot( P\lor  Q) \dashv\vdash \lnot  P\land \lnot  Q$
+		\item $ P\rightarrow  Q, \  Q \rightarrow  R \vdash  P\rightarrow  R $
+		\item $ P\lor  Q,\ \  P\to  R,\ \  Q \to  D \vdash   R \lor  D$
+		\item $ P\to  R,\ \  Q \to  D,\ \ \neg R \lor \neg  D \vdash  \neg P\lor \neg  Q$
+		\item $ P,\ \ \neg  P\vdash  \neg  Q$
+	   \item $ P\rightarrow Q, \  P\rightarrow \lnot Q \vdash \lnot  P$
+	\end{enumerate}		
+
+\end{enumerate}
+	
+\end{document}

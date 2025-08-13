@@ -1,0 +1,2959 @@
+% Main file for Proofs and Programs document.
+
+% Document class: Book
+\documentclass{book}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Geometry package for page settings. 
+\usepackage{geometry} 
+\geometry{a4paper, margin=3cm}
+
+% Bibliography
+\usepackage[]{biblatex}
+\bibliography{../proofsPrograms.bib}
+% Command line sequence:
+% pdflatex *filename*
+% biber *filename*
+% pdflatex *filename*
+
+% Title information here 
+\title{Proofs and Programs \\
+        \normalsize{A Perspective on Formal Mathematics and Computation}}
+\author{Robert Culling}
+
+% Document starts here. 
+\begin{document}
+
+\maketitle
+
+\vspace*{3cm}
+
+\begin{quote}
+
+    ``For if praise is given to the men who have determined the number of regular solids - which is of no use, except insofar as it is pleasant to contemplate - and if it is thought to be an exercise worthy of a mathematical genius to have brought to light the more elegant properties of a conchoid or cissoid, or some other figure which rarely has any use, how much better will it be to bring under mathematical laws human reasoning, which is the most excellent and useful thing we have.''
+    \begin{flushright}
+        --- Gottfried Wilhelm Leibniz.\footnote{Quote obtained from Martin Davis' \emph{Universal Computer.}}
+    \end{flushright}
+
+\end{quote}
+
+
+\begin{quote}
+    ``I think it may be accepted as a starting point that the central problem in the foundation of mathematics is the construction of a symbolic system within which the body of extant mathematics may be derived in accordance with sharply stated and immediately applicable formal rules, and that other questions must be regarded as secondary on the ground that they cannot be given a definite meaning, in fact do not have a definite subject, until such a construction is accomplished. [...] In practice the search is for a formalized basis which is simple and brief beside the entire body of concretely existing mathematics but capable, under its rules of inference, of yielding this entire body and (infinite) further material [...].''
+    \begin{flushright}
+        --- Alonzo Church (1939\footnote{``The Present Situation in the Foundation of Mathematics.'' Alonzo Church, 1939.})
+    \end{flushright}
+\end{quote}
+
+\tableofcontents
+
+\chapter{Introduction}
+
+    \begin{lstlisting}
+        -- God created the integers;
+        inductive Peano where
+          | zero : Peano
+          | succ : Peano → Peano
+    \end{lstlisting} 
+    
+
+
+    \newpage
+    {\bf Acknowledgements} 
+
+    These notes are written for second year students at the University of Canterbury taking an elective course on logic, computation, and mathematics. This document is largely an exposition on the work of Alonzo Church, Gerhard Gentzen, Haskell B. Curry, and William Howard. Although their original papers remain readable to the modern student of mathematics, further resources were referred to throughout the development of these lecture notes:
+
+        \begin{enumerate}
+            \item Logic and Structure, Drik van Dalen \cite{vDalen}
+            \item Type Theory and Functional Programming, Simon Thompson \cite{thompson}
+            \item Stanford Encyclopedia of Philosophy
+            \item Theorem Proving in Lean 4, Jeremy Avigad et el.
+            \item MathLib, Leanprover Community. 
+            \item Verified Functional Programming in Agda, Aaron Stump.
+            \item Programming Language Foundations in Agda, Philip Wadler. 
+        \end{enumerate}    
+    
+    These lecture notes were also informed by lecture notes originally authored by Professor Douglas Bridges. Earlier adaptions of Bridges' notes had been made by Maarten McKubre-Jordens and Hannes Diener. Louis Warren showed great patience in helping me prepare the first time I taught the course. I am thankful to each of these men for bringing the subject to my attention, teaching me so much about it when I was an undergrad, and helping me develop as a mathematician. 
+
+\chapter{Proof Theory}
+
+\begin{quote}
+    ``The investigations that follow concern the domain of predicate logic. It comprises the types of inference that are continually used in all parts of mathematics. What remains to be added to these are axioms and forms of inference that may be considered as being proper to the particular branches of mathematics.''
+    \begin{flushright}
+        --- Gerhard Gentzen (1935\footnote{``Investigations into Logical Deduction.''})
+    \end{flushright}
+\end{quote}
+
+\section{Reasoning}
+
+% Summary for upcoming sections. 
+When formalising an argument both the content of the terms in the argument and the way the statements are connected matter. We will first talk about propositional logic, which can be thought of as the formalisation of the connective structure of an argument. Only once that is covered will we move on to study first order predicate logic - this allows for content specific expressions. Together they will allow for the expression of mathematical definitions and theorems in such a way that the meta-analysis is amenable to computation. 
+
+Reasoning and argumentation are not exclusively for the use of the mathematician. Human's use reasoning in every aspect of their lives, so let us first consider some examples of arguments, of reasoning, free of any mathematics. 
+
+\begin{eg}{Holmes and Watson}
+    If Watson moves into Baker St. with Holmes, then Holmes will be annoyed. Watson has indeed moved into Baker St. Therefore, Holmes must be annoyed.     
+\end{eg}
+
+In the previous example a number of declaritive sentences are stated, before a conclusion is made. In this case the conclusion of the reasoning is signalled by the use of \emph{therefore}. Sentences prior to the conclusion are called hypotheses; these are to be the evidence upon which the conclusion is founded. Further examples follow. As you read them, decide which sentences are hypotheses and which are conclusions? 
+
+\begin{eg}{Moriarty escapes}
+    If Watson can trap Moriarty, then Holmes can. Holmes has failed to catch Moriarty, therefore Watson can't catch him either. 
+\end{eg}
+
+\begin{eg}{Moriarty, harbinger of chaos}
+    Holmes has not caught Moriarty. For, either he catches Moriarty or the world will fall into chaos, and the world is surely in chaos. 
+\end{eg}
+
+\begin{eg}{Gladstone, the Good Doggo}
+    If Holmes is not on a case, then he gets bored. When Holmes is bored, he experiments on Gladstone - Watson's dog. Since Watson and Holmes are on a case, Gladstone is free for Holmes' experiments, today. 
+\end{eg}
+
+Statements of theorems in mathematics have the same abstract structure as the examples of every-day uses of language above. When a mathematician states a theorem they declare all the conditions underwhich their conclusion follows, before stating the conclusion. 
+
+\begin{eg}{Squeezing Theorem}
+    If $\{a_{n}\}$, $\{b_{n}\}$, and $\{c_{n}\}$ are sequences of real numbers such that $a_{n} < b_{n} < c_{n}$ and $L \in \mathbb{R}$, then if $a_{n}$ and $c_{n}$ converge to $L$, it must be the case that $b_{n}$ also converges to $L$. 
+\end{eg}
+
+\begin{eg}{Maxima}
+Suppose $f$ is continuous on the finite interval $[a,b]$ and $c \in [a,b]$ is a point at which $f$ attains a maximum. If $c \in (a,b)$ and $f'(x)$ exists at $c$, then $f'(c) = 0$. 
+\end{eg}
+
+Sometimes the assumed knowledge, assumed premises, are not explicitly referenced in the statement of the theorem. Rewrite each of the following theorem statements to make it clearer what they're arguing for and what that argument relies on. 
+
+\begin{eg}{Bounded Monotone}
+    Every bounded monotone sequence converges.
+\end{eg}
+
+\begin{eg}{Irrational surd}
+    $\sqrt{2}$ is irrational.
+\end{eg}
+
+
+
+\begin{defn}{Argument}
+    An argument is a finite collection of declarative sentences (propositions), one of which is singled out as the conclusion, while the others are referred to as premises. Premises are considered the evidence in support of the conclusion.
+\end{defn}
+
+\begin{eg}{Moriarty escapes}
+    If Watson can trap Moriarty, then Holmes can. Holmes has failed to catch Moriarty, therefore Watson can't catch him either. 
+
+    We can break the argument up into premises and conclusion as follows: 
+
+    \begin{itemize}
+        \item[P1:] If Watson can trap Moriarty, then Holmes can.
+        \item[P2:] Holmes has failed to catch Moriarty.
+        \item[C:] Watson can't catch Moriarty. 
+    \end{itemize}
+\end{eg}
+
+For each of the arguments above you will have felt a sense of whether the conclusion \emph{properly followed} from the premises. That is to say, whether the argument posed was correct. It is our objective to say, formally, when a conclusion can correctly be deduced from a set of premises. At this point is good to clarify that we are \emph{not} to say anything about any so called ``truth'' or ``falisity'' of the premises. We are simply interested in whether, \emph{given that the premises are the case, is it correct to say the conclusion is also the case}. Put another way, we will assume the premises have already been argued for, or that we are putting off their argument for now. 
+
+\begin{definition}{Sequent}
+
+    We introduce the following short hand
+
+    $$\Sigma \vdash \alpha$$ 
+
+    to denote that the conclusion $\alpha$ follows correctly from a set $\Sigma = \{P_{1},P_{2},...,P_{n}\}$ of premises for the conclusion $\alpha$. We say that $\alpha$ is a syntactic consequence of $\Sigma$. 
+
+\end{definition}
+
+Before we begin to analyse the structure of an argument, we add a layer of abstraction to help clarify some of the ambiguities present in a language like English. This layer of abstraction is called propositional logic. 
+
+
+\section{Propositional Logic}
+
+% Refer to the collection of propositions as Prop. Preempting Lean.
+% Cover syntax tree for wff.
+
+In the previous section we began to uncover the structure of propositions and formalised a definition of an argument. We saw that some propositions were direct claims with no extra connective structure - we called these atomic propositions. Other propositions were constructed from atomic propositions by the connective grammar of the English language - these we called compound propositions. 
+
+In order to formalise the process of reasoning, we are going to strip away all the content-words in a proposition and substitute capital English letters for propositions. Furthermore, we will introduce certain symbols - logical connectives - to allow for the construction of compound propositions. 
+
+% Do enough examples to account for all symbols.
+
+
+% Enumerate the symbols. 
+
+
+% What are the rules for writing props? Which strings of symbols are well formed? 
+
+% Make a definition box here: 
+Let us denote the collection of all propositions, or the type of propositions, simply as Prop. Terms in Prop are defined according to the following inductive definition: 
+
+\begin{itemize}
+    \item {\bf Atomic Propositions:} If $P$ is a single propositional variable, then $P$ is in Prop.
+    \item {\bf Negation:} If $\alpha$ is in Prop, then $(\lnot\alpha)$ is in Prop. 
+    \item {\bf Implication:} If $\alpha$ and $\beta$ are in Prop, then $(\alpha \to \beta)$ is in Prop.
+    \item {\bf Conjunction:} If $\alpha$ and $\beta$ are in Prop, then $(\alpha \land \beta)$ is in Prop.
+    \item {\bf Disjunction:} If $\alpha$ and $\beta$ are in Prop, then $(\alpha \lor \beta)$ is in Prop. 		
+\end{itemize}
+
+We will make liberal use of the shorthand $P : \prop$ for ``$P$ is a proposition'' or ``$P$ is of type Prop.'' Propositions are also referred to as well-formed formulae. 
+
+Due to the inductive nature of the definition of Prop, each proposition can be represented as by its syntax tree. Each node in the tree is represented by one of the constructors for Prop
+
+% Examples of syntax tree here:
+
+% Explain Backus-Naur form:
+
+Specification of terms in a formal language, like Prop, is often written following the more compact notation of Backus-Naur form. 
+
+% \begin{lstlisting}[mathescape]
+%     data Prop =
+%         | Atom
+%         | ($\lnot$ Prop)
+%         | (Prop $\land$ Prop)
+%         | (Prop $\lor$ Prop)
+% \end{lstlisting}
+
+This compact notation is simply stating that a proposition (term of type Prop) is either an atom, or constructed from component propositions and a logical-connective. Following this form requires one to always start with an atom and workup using the connectives to write a term of type prop. 
+
+% Working backwards - parsing - a term into its tree can be more difficult. 
+% Show an example of working backwards to parse the formula. 
+
+    \newpage
+    \section{Natural Deductions}
+
+    Propositional logic has given us a language to express the connective structure of statements made up of many propositions. For now we will not consider any internal structure in the propositions, this will come later. What concerns us in the present section is the process of formalising theorems and proofs. Theorems are collections of statements - a set of hypotheses and a single conclusion - and proofs are some process of unfolding those hypotheses so as to justify the conclusion. To put it another way, it's an explanation of the conclusion in the presence of the hypotheses. What do we mean by justify the conclusion? One answer to this question has become known as the \emph{Brouwer-Heyting-Kolmogorov Interpretation} \cite{sep-mathematics-constructive}.
+
+    Brouwer, Heyting, and Kolmogorov proposed the following (inductive) interpretation of what it should mean to prove statements involving propositional connectives:
+  
+    \begin{center}
+      \begin{tabular}{p{1.5cm}p{8cm}}
+        $P \land Q$ & to prove a conjunction we must provide both a proof of P and a proof of Q. \\      
+        $P \to Q$ & to prove an implication we must provide an algorithm for turning a proof of P into a proof of $Q$.\\
+        $P \lor Q$ & to prove a disjunction we must provide either a proof of P or a proof of Q. \\
+        $\lnot P$ &  to prove a negation we must provide an algorithm that turns a proof of P into a proof of $\bot$.
+      \end{tabular}
+    \end{center}
+
+    As this is an inductive definition, there are implicit starting assumptions in a proof. Theorems are hypothetical statements - if we know this, then we may conclude that - whether it be axioms or extra conditions specific to the theorem in question, there is some base case of assumed knowledge to start the inductive process from. 
+
+    {\bf Note:} There is a parallel, semantic, approach one can take to analyse the validity of an argument. There notions of True and False, truth tables, and valuations are developed and valid arguments are those that preserve truth. This approach will not be presented in these notes. The \emph{completeness} and \emph{soundness} theorems show that the semantic approach to logic is equivalent to the syntactic approach that we are to take here. One may read \emph{Logic and Structure} for details on the semantics of classical logic \cite{vDalen}.
+
+    We are going to develop a proof method that was first presented by Gerhard Gentzen, as such it is often referred to as the Gentzen Calculus or the natural deduction calculus. This method will develop proofs by unfolding the hypotheses of theorem in a manner consistent with the BHK. For now the alignment between the BHK and natural deductions will be loose, but as we study the process of computation more it will become air tight --- proofs really will be algorithms! 
+
+    \begin{center}
+        {\bf Sequents and Deductions}
+    \end{center}
+
+    Throughout these notes we will denote an arbitrary set of hypotheses of an argument by $\Sigma$. We will use the following notation to denote the fact that the proposition $\gamma$ is to be proved from the hypotheses $\Sigma$: $$\Sigma \vdash \gamma$$ We will refer to these as sequents. The symbol $\vdash$ is called a turnstile. 
+
+    {\bf Example:} Consider the claim that $Q$ follows from the hypotheses $P\land R$ and $P\to Q$. This claim will be stated using the following sequent: $$P \to Q, \ P \land R \ \vdash \ Q$$ Rather than making the claim in natural language. 
+
+    {\bf Example:} If we assume $P \land Q$, then (we will soon see) we may conclude $Q \land P$. In fact, the converse is true as well. That is, from $Q \land P$ we may conclude $P \land Q$. If we are making a claim that the sequent can be read in both directions, then we write the sequent as $$P \land Q \dashv \vdash Q \land P $$ These sequents of course require two proofs, one in each direction; thus both sides of the sequent play the role of hypothesis and conclusion, in turn.
+
+    Sequents such as $\Sigma \vdash \gamma$ require natural deductions to witness them. We use the following notation to denote an arbitrary deduction $$^{\Sigma}_{\gamma}\mathcal{D}$$ witnessing the proof of the sequent $\Sigma \vdash \gamma$. The details on how to write a deduction witnessing a specific sequent follow in the next section on rules of inference. For now browse the following example to try and get a feel for what's going on. This proof will be revisited and explained later. 
+
+    \vspace{0.1cm}
+
+    \begin{eg}{Natural Deduction}
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\to I,1]{A \to (B \to C)}
+                        {\infer[\to I,2]{B \to C}
+                            {\infer[\MP]{C}
+                                {\infer[\land I]{A \land B}
+                                    {\infer[1]{\cancel{A}}{} & \infer[2]{\cancel{B}}{}}
+                                &							
+                                (A \land B) \to C}}}
+                \end{array}$
+            \end{center}
+        \end{eg}
+
+    For each of the connectives we will present \emph{rules of inference} which dictate how to introduce (prove) and eliminate (make use of) compound statements made with each connective. Proofs then will be a finite tree of instances of these rules of inference. 
+
+    
+    \newpage
+    \subsection*{Implication}
+
+    Recall that the BHK interpretation of a proof of implication says that, to prove an implication $P \to Q$ we must provide an algorithm for turning a proof of $P$ into a proof of $Q$. Ignoring the word algorithm again, this says we need a procedure for turning knowledge of $P$ into knowledge of $Q$. 
+
+    What this means is that to prove $P \to Q$ we should work under the assumption that we know $P$ and use that assumption to prove $Q$. We add in a \emph{temporary assumption} in order to write down the required procedure. To be clear, this says nothing about whether $P$ is true; it simply puts us in the correct hypothetical situation to address the question of whether $Q$ follows from the assumption of $P$. Without assuming knowledge of $P$ how could one expect to determine whether $Q$ would follow from it? Once $Q$ has been derived from the temporary assumption $P$, we make it clear that $P$ was only temporarily assumed for the purpose of the proof by crossing it out. 
+
+    \vspace{0.1cm}
+
+    \begin{definition}{Implication Introduction}
+        If $^{\Sigma}_{\beta}\mathcal{D}$ is a deduction of $\beta$ from $\Sigma$, then the deduction can be extended to a deduction of $\alpha \rightarrow \beta$ from hypotheses $\Sigma \backslash \{\alpha\}$, which we depict as follows: 
+
+        \begin{center}
+            $\begin{array}{c}		
+                \infer[\rightarrow I]{\alpha \rightarrow \beta}
+                    {\begin{array}{c} \Sigma, \ \cancel{\alpha} \\ \mathcal{D} \\ \beta \end{array}}
+            \end{array}$
+        \end{center}
+    \end{definition}
+
+    In programming terms we can think of a proof of $P \to Q$ using implication introduction as a subroutine with a local variable $P$ that returns $Q$. If we ever have a proof of $P$ lying around, then we can use the subroutine to obtain a proof of $Q$. But writing the subroutine alone says nothing about whether one could ever prove $P$, just what can be done if $P$ were known. 
+
+    Keeping with this theme, if a proof of $P \to Q$ is to be thought of as a program, then we can eliminate (make use of) the implication by applying that program to a proof of $P$. This requires two proofs; one of $P \to Q$ and one of $P$. These are combined to produce a proof of $Q$. This rule of inference is known as \emph{modus ponens}.
+
+    \vspace{0.1cm}
+    
+    \begin{definition}{Implication Elimination (Modus Ponens)}
+
+        If $^{\Sigma_{1}}_{\alpha \rightarrow \beta}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\alpha}\mathcal{D}_{2}$ are deductions, then they can be extended to a deduction $^{\Sigma_{1}\cup \Sigma_{2}}_{\beta}\mathcal{D}$, which we depict as follows: 
+
+        \begin{center}
+            $\begin{array}{c}		
+                \infer[\MP]{\beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\ \alpha \end{array}}	
+            \end{array}$
+        \end{center}
+    \end{definition}
+
+    \begin{eg}{Implication Composition}
+
+        % Provide a natural deduction to prove the following sequent: $$\alpha \to \beta, \ \beta \to \gamma \ \vdash \ \alpha \to \gamma $$
+
+        % Since the conclusion of the sequent is an implication, we should first make the temporary assumption - local variable - $\alpha$ and show that this leads to $\gamma$. Notice that this reduces the original problem to finding a deduction witnessing the sequent: $$\alpha \to \beta, \ \beta \to \gamma, \ \alpha^{1} \ \vdash \ \gamma $$
+        % where the hypothesis $\alpha$ has been moved to the side of the assumptions. We have marked it with a $1$ to note that it is the first temporary assumption for this proof and that it will ultimately be discharged by the end of the proof. Here is a deduction witnessing the the new sequent: 
+
+        %     $\begin{array}{c}
+        %         \infer[\MP]{\gamma}
+        %                 {\infer[\MP]{\beta}
+        %                     {\infer[1]{\alpha}{} & \alpha \to \beta}
+        %                 &
+        %                 \beta \to \gamma}
+        %     \end{array}$
+
+        % This deduction can be extended using implication introduction to a deduction witnessing the original sequent. 
+	
+
+        %     $\begin{array}{c}
+        %         \infer[\to I,1]{\alpha \to \gamma}
+        %             {\infer[\MP]{\gamma}
+        %                 {\infer[\MP]{\beta}
+        %                     {\infer[1]{\cancel{\alpha}}{} & \alpha \to \beta}
+        %                 &
+        %                 \beta \to \gamma}}
+        %     \end{array}$
+
+        % This last step discharges the temporary assumption and ends with the conclusion of the original sequent.
+    \end{eg}
+
+    \begin{eg}{I Combinator}
+        
+    \end{eg}
+
+    \begin{eg}{S Combinator}
+        
+    \end{eg}
+
+    \begin{eg}{K Combinator}
+        
+        This example trips a lot of students up. Keep your wits about you.
+
+        $$P \ \vdash \ Q \to P$$
+
+    \end{eg}
+
+    \newpage
+    \subsection*{Conjunction}
+
+    Recall that the BHK interpretation of conjunction is that: A proof of the conjunction $P \land Q$ is an algorithm that takes in a proof of $P$ and a proof $Q$. If we (for now) brush over the word algorithm, then this simply states that a proof of the conjunction $P \land Q$ is a pair consisting of a proof of $P$ and a proof $Q$ --- To know $P \land Q$ is to know $P$ and to know $Q$. The following rules of inference are a diagrammatic representation of this idea. 
+
+    \vspace{0.1cm}
+
+    \begin{definition}{Conjunction Introduction}
+
+        If $^{\Sigma_{1}}_{\alpha}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\beta}\mathcal{D}_{2}$ are proofs of $\alpha$ and $\beta$ respectively, then together they constitute a proof $^{\Sigma_{1} \cup \Sigma_{2}}_{\alpha \land \beta}\mathcal{D}$, which we depict as follows: 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\land I]{\alpha \land \beta}
+                    {\begin{array}{c}
+                        \Sigma_{1} \\
+                        \mathcal{D}_{1} \\
+                        \alpha
+                    \end{array}
+                    &
+                    \begin{array}{c}
+                        \Sigma_{2} \\
+                        \mathcal{D}_{2} \\
+                        \beta
+                    \end{array}}
+            \end{array}$
+        \end{center}
+    \end{definition}
+
+    Similarly, if we have a knowledge of $P \land Q$, then that should mean we have knowledge of both $P$ and $Q$ separately. For this reason, a proof of $P \land Q$ can be extended to either a proof of $P$ or a proof of $Q$. This is codified in the following \emph{elimination} rules of the conjunction connective. 
+
+    \begin{definition}{Conjunction Elimination}
+
+        If $^{\Sigma}_{\alpha \land \beta}\mathcal{D}$ is a proof of $\alpha \land \beta$ from hypotheses $\Sigma$, then we can extend this proof in two ways to obtain proofs of $\alpha$ and $\beta$ respectively: 
+
+        \begin{center}
+            $\begin{array} { c c c }
+            
+            \begin{array}{ c  c  c }			
+                 \infer[\land E_{\ell}]{\alpha}
+                    {\begin{array}{c}
+                        \Sigma \\
+                        \mathcal{D} \\
+                        \alpha \land \beta
+                    \end{array}}
+            \end{array}
+    
+            & \hspace{3cm} &
+    
+            \begin{array}{ c  c  c }			
+                \infer[\land E_{r}]{\beta}
+                {\begin{array}{c}
+                    \Sigma \\
+                    \mathcal{D} \\
+                    \alpha \land \beta
+                \end{array}}	
+            \end{array}\\		
+    
+            \end{array}$
+        \end{center}	
+    \end{definition}
+
+    \begin{eg}{Conjunction Commutative}
+
+        Provide a natural deduction to prove the follow sequent: $$ \alpha \land \beta \vdash \beta \land \alpha $$
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\land I]{\beta \land \alpha}
+                    {\infer[\land E_{r}]{\beta}
+                        {\alpha \land \beta}
+                    &
+                    \infer[\land E_{l}]{\alpha}
+                        {\alpha \land \beta}}
+            \end{array}$
+        \end{center}
+        
+    \end{eg}
+
+    \begin{eg}{Conjunction Associative}
+
+        Provide a natural deduction to prove the following sequent: $$(\alpha \land \beta) \land \gamma \ \vdash \ \alpha \land (\beta \land \gamma) $$
+        This proof requires unfolding the hypotheses to the left of the $\vdash$ to uncover the conclusion on the right. In the end both a proof of $\alpha$ and a proof of $\beta \land \gamma$ need to come from the hypothesis $(\alpha \land \beta) \land \gamma$. However, these can be dealt with separately and combined together at the end. 
+
+        First, then, it suffices to provide a deduction witnessing: $$(\alpha \land \beta) \land \gamma \ \vdash \ \alpha$$
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\land E_{\ell}]{\alpha}
+                    {\infer[\land E_{\ell}]{\alpha \land \beta}
+                        {(\alpha \land \beta) \land \gamma}}
+            \end{array}$
+        \end{center}
+
+        Secondly we provide a deduction witnessing: $$(\alpha \land \beta) \land \gamma \ \vdash \ \beta \land \gamma$$
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\land I]{\beta \land \gamma}
+                    {\infer[\land E_{r}]{\beta} 
+                        {\infer[\land E_{\ell}]{\alpha \land \beta}
+                            {(\alpha \land \beta) \land \gamma}}
+                    &
+                    \infer[\land E_{r}]{\gamma} 
+                        {(\alpha \land \beta) \land \gamma}}
+            \end{array}$
+        \end{center}
+
+        Following the BHK these can be combined using $\land$ introduction to provide a proof of the original sequent 
+
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\land I]{\alpha \land (\beta \land \gamma)}
+                        {\infer[\land E_{\ell}]{\alpha}
+                            {\infer[\land E_{\ell}]{\alpha \land \beta}
+                            {(\alpha \land \beta) \land \gamma}}
+                            &
+                            \infer[\land I]{\beta \land \gamma}
+                                {\infer[\land E_{r}]{\beta} 
+                                    {\infer[\land E_{\ell}]{\alpha \land \beta}
+                                        {(\alpha \land \beta) \land \gamma}}
+                        &
+                        \infer[\land E_{r}]{\gamma} 
+                        {(\alpha \land \beta) \land \gamma}}}
+                \end{array}$
+            \end{center}
+    \end{eg}
+
+    \begin{eg}{Currying}
+        
+        Provide a natural deduction to prove the following sequent: $$(\alpha \land \beta) \to \gamma \ \vdash \ \alpha \to (\beta \to \gamma)$$
+
+        Since implication is the outermost connective in the conclusion, the antecedent of the conclusion can be temporarily added to the hypotheses. This reduces the sequent to: $$(\alpha \land \beta) \to \gamma, \ \alpha^{1} \ \vdash \ \beta \to \gamma$$
+
+        The outermost connective is still an implication, so we can use this idea again to reduce the sequent further: $$(\alpha \land \beta) \to \gamma, \ \alpha^{1}, \ \beta^{2} \ \vdash \ \gamma$$
+
+        The following deduction witnesses the new sequent.
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\MP]{\gamma}
+                            {\infer[\land I]{\alpha \land \beta}
+                                {\infer[1]{\cancel{\alpha}}{} & \infer[2]{\cancel{\beta}}{}}
+                            &							
+                            (\alpha \land \beta) \to \gamma}
+            \end{array}$
+        \end{center}
+
+        This sequent can be extended using implication introduction twice to get a deduction witnessing the original sequent. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\alpha \to (\beta \to \gamma)}
+                    {\infer[\to I,2]{\beta \to \gamma}
+                        {\infer[\MP]{\gamma}
+                            {\infer[\land I]{\alpha \land \beta}
+                                {\infer[1]{\cancel{\alpha}}{} & \infer[2]{\cancel{\beta}}{}}
+                            &							
+                            (\alpha \land \beta) \to \gamma}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    The technique of introducing and discharging temporary assumptions in the course of proving hypothetical statements like $P \to Q$ has come to be known as the \emph{deduction theorem}. Since we are following the Gentzen calculus formulation of propositional logic it hardly seems worth calling a theorem, but in other (e.g. Hilbert style) formulations of logic, it really is a theorem worth proving. Nonetheless we will refer to this technique as the deduction theorem and give the explanation of it here. 
+
+    {\bf Deduction Theorem:} \ $\Sigma \vdash \alpha \rightarrow \beta$ if and only if $\Sigma \cup \{\alpha\} \vdash \beta$
+
+	{\bf Proof:} If there is a deduction witnessing $\Sigma \vdash \alpha \rightarrow \beta$, then adding the assumption $\alpha$ will allow the deduction to be extended by modus ponens to a deduction of $\beta$ i.e. a deduction witnessing the sequent $\Sigma \cup \{\alpha\} \vdash \beta$. 
+
+    On the other hand, if there is a deduction witnessing $\Sigma \cup \{\alpha\} \vdash \beta$, implication introduction extends this to a deduction witnessing $\Sigma \vdash \alpha \rightarrow \beta$.
+
+    
+    \newpage
+    \subsection*{Disjunction}
+
+    Again we return to the BHK interpretation of the connectives to motivate the rules of inference for disjunction. Of disjunction the BHK says: to prove $P \lor Q$  we must provide either a proof of P or a proof of Q. Thus the introduction rules are straightforward, if we have a deduction witnessing $\Sigma \vdash P$, then it can be extended, via disjunction introduction, to a proof of $\Sigma \vdash P \lor Q$, for \emph{any} proposition $Q$. In fact there are two introduction rules, depending on which side of the disjunct one places the proposition $P$. 
+
+    \vspace{0.1cm}
+
+    \begin{definition}{Disjunction Introduction}
+
+        If $^{\Sigma}_{\alpha}\mathcal{D}$ is a derivation of $\alpha$ from $\Sigma$, then this proof can be extended in two ways to obtain proofs of $\alpha \lor \beta$ and $\beta \lor \alpha$ respectively: 
+
+        \begin{center}
+            $\begin{array} { c c c }
+            
+                \begin{array}{ c c }		
+                    \begin{array}{c}		
+                        \infer[\lor I_{L}]{\alpha \lor \beta}
+                        {\begin{array}{c} \Sigma \\ \mathcal{D} \\ \alpha \end{array}}
+                    \end{array}
+                \end{array}
+    
+            & \hspace{3cm} &
+    
+            \begin{array}{ c c }		
+                \begin{array}{c}		
+                    \infer[\lor I_{R}]{\beta \lor \alpha}
+                    {\begin{array}{c} \Sigma \\ \mathcal{D} \\ \alpha \end{array}}
+                \end{array}
+            \end{array}	\\		
+    
+            \end{array}$
+        \end{center}	
+    \end{definition}
+
+    What of disjunction elimination? What can be deduced if $P \lor Q$ is a hypotheses? Given nothing more than the proposition $P \lor Q$, we need to account for the fact that a proof of it may have come by way of a proof of $P$, or a proof of $Q$. Therefore a case analysis is required in the elimination of the disjunction $P \lor Q$. Two extra proofs must be provided; one proof of $P \to R$ and another proof of $Q \to R$. 
+
+    If we have the assumption $P \lor Q$ - that is, we know that either at least $P$ has a proof or $Q$ has a proof - together with proofs that $P \to R$ and $Q \to R$, then we may extend these three proofs to a proof of $R$. Notice that the proof of $R$ depends on the hypotheses of \emph{all three} branches. Conjunction introduction and modus ponens combined two proofs into one, now we have a rule of inference that combines three proofs into one. 
+
+    \begin{definition}{Disjunction Elimination}
+
+        If $^{\Sigma_{1}}_{\alpha\lor\beta}\mathcal{D}_{1}$, $^{\Sigma_{2}}_{\alpha\rightarrow\gamma}\mathcal{D}_{2}$, and $^{\Sigma_{2}}_{\beta\rightarrow\gamma}\mathcal{D}_{3}$ are derivations, then together these can be extended to a proof $^{\Sigma}_{\gamma}\mathcal{D}$, where $\Sigma = \Sigma_{1} \cup \Sigma_{2} \cup \Sigma_{3}$. We depict this extension as follows: 
+
+        \begin{center}
+            $\begin{array}{ c }
+	
+                \infer[\lor_{E}]{\gamma}
+                    {
+                    \begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \alpha\lor\beta \end{array}
+                     & 
+                    \begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \alpha\rightarrow\gamma \end{array}				
+                     & 
+                    \begin{array}{c} \Sigma_{3}  \\ \mathcal{D}_{3} \\ \beta\rightarrow\gamma \end{array}				 
+                    }	
+            
+            \end{array}$            
+        \end{center}
+    \end{definition}
+
+    {\bf Note!} Since disjunction elimination requires proofs that either disjunct lead to the same outcome, each disjunct can be temporarily added to the hypotheses in order to prove these implications. 
+
+    \begin{eg}{Disjunction Commutative}
+
+        Provide a natural deduction to witness the following sequent: $$\alpha \lor \beta \ \vdash \ \beta \lor \alpha $$
+
+        As is now custom, we first look to rewrite the sequent with temporary hypotheses. In this case, we see that $\alpha \lor \beta$ is a hypothesis and therefore we will need to use disjunction elimination. Two branches of this step will be proofs of implications with $\alpha$ and $\beta$ as antecedent. For this reason we temporarily add these to our hypotheses to reduce the original problem to the following sequent: $$\alpha \lor \beta, \alpha^{1}, \beta^{2} \ \vdash \ \beta \lor \alpha $$
+        In fact we can reduce the sequent further into \emph{two} sequents: $$\alpha \vdash \beta \lor \alpha \hspace{2cm} \beta \vdash \beta \lor \alpha$$
+        We have reduced the original problem to providing separate proofs to witness these sequents. These can be achieved using $\lor$ introduction. 
+
+        \begin{center}
+            $\begin{array}{c c}
+                \infer[\to I,1]{\alpha \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{R}]{\beta \lor \alpha}
+                            {\infer[1]{\alpha}
+                                {}}}
+
+                    \hspace{1cm}
+                &
+                    \hspace{1cm}
+
+                \infer[\to I,2]{\beta \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{L}]{\beta \lor \alpha}
+                            {\infer[2]{\beta}
+                                {}}}
+            \end{array}$
+        \end{center}
+
+        Together they combine with the assumption $\alpha \lor \beta$ to get a deduction witnessing the original sequent. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\lor E]{\beta \lor \alpha}
+                    {\alpha \lor \beta
+                    &
+                    \infer[\to I,1]{\alpha \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{R}]{\beta \lor \alpha}
+                            {\infer[1]{\cancel{\alpha}}
+                                {}}}
+                    &
+                    \infer[\to I,2]{\beta \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{L}]{\beta \lor \alpha}
+                            {\infer[2]{\cancel{\beta}}
+                                {}}}}
+            \end{array}$
+        \end{center}
+
+        
+    \end{eg}
+
+    \begin{eg}{Disjunction Associative}
+
+        Provide a natural deduction to witness the following sequent: $$(\alpha \lor \beta) \lor \gamma \ \vdash \ \alpha \lor (\beta \lor \gamma) $$
+
+        % Use this example to demonstrate how working backwards can be helpful. 
+        
+    \end{eg}
+
+    \newpage
+    \subsection*{Negation}
+
+    Recall the definition of $\lnot \alpha := \alpha \to \bot$, where $\bot$ denotes the proposition \emph{absurdity}. We think of $\lnot \alpha$ as being the proposition that $\alpha$ leads to absurdity. Therefore, in order to prove the negation of a proposition, one has to prove the corresponding implication. This means there are no new rules of inference for the negation connective. Negation introduction is a special case of implication introduction, whereas negation elimination is a special case of modus ponens. 
+
+    \begin{eg}{Modus Tollens}
+        Provide a natural deduction to prove the following sequent: $$\alpha \to \beta, \ \lnot \beta \ \vdash \ \lnot \alpha$$
+
+        Notice that this sequent is equivalent to $$\alpha \to \beta, \ \lnot \beta \ \vdash \ \alpha \to \bot$$ When it is rewritten like this it is clearer that the deduction theorem can help us reduce the sequent to the following by adding $\alpha$ as a temporary hypothesis: $$\alpha \to \beta, \ \lnot \beta, \ \alpha^{1} \vdash \ \bot$$
+
+        The following deduction witnesses the new sequent. Notice that $\lnot \beta$ is an implication and therefore modus ponens is the correct elimination rule to use on it. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\MP]{\bot}
+                        {\infer[\MP]{\beta}
+                            {\infer[1]{\alpha}
+                                {}
+                            &
+                            \alpha \to \beta}
+                        &
+                        \lnot \beta}
+            \end{array}$
+        \end{center}  
+
+        This deduction can be extended by implication introduction to witness the original sequent. Again, there is no special negation introduction rule. We just use implication introduction.
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\lnot \alpha}
+                    {\infer[\MP]{\bot}
+                        {\infer[\MP]{\beta}
+                            {\infer[1]{\alpha}
+                                {}
+                            &
+                            \alpha \to \beta}
+                        &
+                        \lnot \beta}}
+            \end{array}$
+        \end{center}        
+    \end{eg}
+
+    \begin{eg}{Contraposition}
+        Provide a natural deduction to prove the following sequent: $$\alpha \to \beta \ \vdash \ \lnot\beta \to \lnot\alpha $$
+
+        The deduction rule can be applied twice, remembering to desugar the negations into implications. This reduces the sequent to the following: $$\alpha \to \beta, \ \lnot\beta^{1}, \ \alpha^{2} \vdash \ \bot$$ The following deduction witnesses the reduced sequent: 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\MP]{\bot}
+                            {\infer[\MP]{\beta}
+                                {\alpha \to \beta
+                                &
+                                \infer[2]{\alpha}{}}
+                            &
+                            \infer[1]{\lnot\beta}{}}
+            \end{array}$
+        \end{center}   
+        
+        This sequent can be extended using implication introduction to obtain a deduction witnessing the original sequent. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\lnot\beta \to \lnot\alpha}
+                    {\infer[\to I,2]{\lnot\alpha}
+                        {\infer[\MP]{\bot}
+                            {\infer[\MP]{\beta}
+                                {\alpha \to \beta
+                                &
+                                \infer[2]{\alpha}{}}
+                            &
+                            \infer[1]{\lnot\beta}{}}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    \begin{center}
+        {\bf Proof by Refutation}
+    \end{center}
+
+    We have defined the process of proving a negative statement $\lnot\alpha$ to be the process of showing absurdity $\bot$ follows from the assumption of $\alpha$. Put another way, to show something is \emph{not the case} is to show that it leads to a contradiction. This method of proof has come to be known as \emph{proof by refutation} or simply \emph{refutation}. Here is an example of such a proof. 
+
+    \begin{eg}{$\sqrt{2}$ is irrational}
+
+        {\bf Proof:} This is a claim that something is not the case i.e. a negative claim. In particular is the claim that $\sqrt{2}$ is \emph{not} rational. In order to prove this we suppose that $\sqrt{2}$ is rational. Thus, there are $a,b$ such that $\sqrt{2} = \frac{a}{b}$ where $a,b$ have no common factors - for they can be divided out to form a simpler fraction.  
+        
+        This implies there exist coprime $a,b \in \mathbb{N}$ such that $a^{2} = 2b^{2}$. It follows that $2 | a$ and hence $a = 2k$. Furthermore, we see $4k^{2} = 2b^{2}$ and hence $b^{2} = 2k^{2}$ and thus $2 | b$. However, this contradicts the assumption that $a,b$ are coprime. Therefore, no such $a,b$ can exist. 
+    \end{eg}
+
+    This proof is often miscontrued as a \emph{proof by contradiction}. The distinction between the two methods will be clarified later in these notes. 
+
+    \newpage
+    \subsection*{Minimal Logic}
+
+    This page has each rule of inference of minimal logic. Use this when working on tutorials and when you are studying. What this page does not explicitly contain is any mention of the hypotheses that the conclusions depend on. Make sure you know which hypotheses the conclusion depends on when using any given rule of inference. 
+
+    $\begin{array}{c c c}
+        \infer[\land I]{\alpha \land \beta}
+                    {\begin{array}{c}
+                        \Sigma_{1} \\
+                        \mathcal{D}_{1} \\
+                        \alpha
+                    \end{array}
+                    &
+                    \begin{array}{c}
+                        \Sigma_{2} \\
+                        \mathcal{D}_{2} \\
+                        \beta
+                    \end{array}}
+        &
+        \begin{array}{ c }			
+            \infer[\land E_{L}]{\alpha}
+                {\begin{array}{c}
+                    \Sigma \\
+                    \mathcal{D} \\
+                    \alpha \land \beta
+                \end{array}}
+        \end{array}
+        &
+        \begin{array}{ c }			
+            \infer[\land E_{R}]{\beta}
+            {\begin{array}{c}
+                \Sigma \\
+                \mathcal{D} \\
+                \alpha \land \beta
+            \end{array}}
+        \end{array}\\
+
+        \textnormal{Conjuction Introduction}
+        &
+        \textnormal{Conjuction Elimination L(eft)}
+        &
+        \textnormal{Conjuction Elimination R(ight)}\\
+
+        \begin{array}{c}		
+            \infer[\rightarrow I]{\alpha \rightarrow \beta}
+                {\begin{array}{c} \hline \cancel{\alpha} \\ \Sigma \\ \mathcal{D} \\ \beta \end{array}}
+        \end{array}
+        &
+        \hspace{2cm}
+        &
+        \begin{array}{c}		
+            \infer[\MP]{\beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\ \alpha \end{array}}	
+        \end{array} \\
+
+        \textnormal{Implication Introduction}
+        &
+        \hspace{2cm}
+        &
+        \textnormal{Implication Elimination (Modus Ponens)}    
+    \end{array}$
+
+    \newpage
+    \subsection*{Ex Falso Quodlibet}
+
+
+    \newpage
+    \subsection*{Reductio ad Absurdum}
+
+    Previously we gave a proof witnessing the sequent $$\alpha \to \beta \ \vdash \ \lnot\beta \to \lnot\alpha $$ Whenever there is a sequent with just one hypothesis and one conclsuion, the converse sequent should be considered. Is it possible to provide a deduction witnessing the converse $$\lnot\beta \to \lnot\alpha \ \vdash \ \alpha \to \beta$$ That is to say, are these two implications logically equivalent? Let's see how much ground we can make on the proof. 
+
+    \begin{eg}{Not-Not is What?}
+        Provide a natural deduction to prove the following sequent: $$\lnot\beta \to \lnot\alpha \ \vdash \ \alpha \to \beta$$
+
+        Following the ideas we have already developed we add in temporary hypotheses according to the hypotheses and conclusion. This suggests that it is sufficient to give a proof witnessing the sequent: $$\lnot\beta \to \lnot\alpha, \alpha^{1}, \lnot\beta^{2} \ \vdash \ \beta$$ The $\alpha$ is added in order to prove the hypothetical $\alpha\to\beta$ and $\lnot\beta$ is added in order to make use of the hypothetical $\lnot\beta\to\lnot\alpha$. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\alpha \to \lnot\lnot\beta}
+                    {\infer[\to I,2]{\lnot\lnot\beta}
+                        {\infer[\MP]{\bot}
+                            {\infer[\MP]{\lnot\alpha}
+                                {\lnot\beta \to \lnot\alpha
+                                &
+                                \infer[2]{\lnot\beta}
+                                    {}}
+                            &
+                            \infer[1]{\alpha}
+                                {}}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    Are we done? Does this derivation provide a proof of the original sequent? It all turns on whether $\lnot\lnot\beta$ implies $\beta$. That is to say, whether there is a deduction witnessing the following sequent: $$\lnot\lnot\beta \ \vdash \ \beta$$ In fact, it can be shown (with tools\footnote{intuitionistic semantics} that we won't develop here) that the rules of inference so far introduced are \emph{not sufficient} to prove this! The deduction provided above is the closest we can get to an intuitionistic proof of this sequent. Knowledge of $\lnot\lnot\beta$, interpreted by the BHK, is an algorithm for turning (a proof of) $\lnot\beta$ into $\bot$ absurdity - this says nothing of it being a proof of $\beta$.
+
+    Intuitionistic logic must be extended in order to provide a proof of this sequent. Here is an example of a proof using this mode of reasoning, called \emph{proof by contradiction} or \emph{double negation elimination}.
+
+    \begin{eg}{Well, they can't not exist!}
+
+        Consider the following claim:
+
+        \begin{center}
+            \emph{There exist irrational numbers $x,y$ such that $x^{y}$ is rational.}
+        \end{center}
+        
+        {\bf Proof:} Suppose there are no such numbers. Since $\sqrt{2}$ is irrational, this implies $\sqrt{2}^{\sqrt{2}}$ is irrational. Therefore, both $x = \sqrt{2}$ and $y = \sqrt{2}^{\sqrt{2}}$ are irrational. However, it follows that $x^{y} = 2$ is rational. Contradicting the original claim that there are not such $x,y$. Therefore, there must be some irrational $x,y$ such that $x^{y}$ is rational. 
+    \end{eg}
+
+    This mode of reasoning is formalised into a rule of inference as follows. 
+
+    \begin{definition}{Reductio Ad Absurdum}
+
+        If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+
+        \begin{center}		
+            $\begin{array}{c}		
+            \infer[\RAA]{\alpha}
+            {\begin{array}{c} \Sigma, \ \cancel{\lnot\alpha} \\ \mathcal{D} \\ \bot \end{array}}
+            \end{array}$
+        \end{center}  
+
+        is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
+    \end{definition}
+
+    It is distinguished from the intuitionistic ex falso quodlibet by allowing for the discharge of the $\lnot\alpha$ assumption. It is this freedom to discharge assumptions that allows for the proof of theorems like double negation elimination and the logical equivalence of contraposition. Note that the discharged assumption must be the negation of the conclusion. 
+
+    \begin{eg}{Double Negation Elimination}
+        Provide a natural deduction to prove the following sequent: $$\lnot\lnot\alpha \ \vdash \ \alpha$$
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\RAA,1]{\alpha}
+                    {\infer[\MP]{\bot}
+                        {\lnot\lnot \alpha
+                        &
+                        \infer[1]{\lnot\alpha}{}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    RAA allows for the completion of the proof of the equivalence of an implication with its contraposition: 
+
+    \begin{eg}{Contraposition}
+        Provide a natural deduction to prove the following sequent: $$\lnot\beta \to \lnot\alpha \ \vdash \ \alpha \to \beta$$
+
+        Following the ideas we have already developed we add in temporary hypotheses according to the hypotheses and conclusion. This suggests that it is sufficient to give a proof witnessing the sequent: $$\lnot\beta \to \lnot\alpha, \alpha^{1}, \lnot\beta^{2} \ \vdash \ \beta$$ The $\alpha$ is added in order to prove the hypothetical $\alpha\to\beta$ and $\lnot\beta$ is added in order to make use of the hypothetical $\lnot\beta\to\lnot\alpha$. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\alpha \to \beta}
+                    {\infer[\RAA,2]{\beta}
+                        {\infer[\MP]{\bot}
+                            {\infer[\MP]{\lnot\alpha}
+                                {\lnot\beta \to \lnot\alpha
+                                &
+                                \infer[2]{\lnot\beta}
+                                    {}}
+                            &
+                            \infer[1]{\alpha}
+                                {}}}}
+            \end{array}$
+        \end{center}
+    \end{eg}    
+
+    \begin{eg}{Tis or Tisn't}
+        Provide a natural deduction to prove the following sequent: $ \vdash \ \alpha \lor \lnot \alpha$
+        \begin{center}    
+            $\begin{array}{c}
+                \infer[RAA,2]{\alpha \lor \lnot \alpha}
+                    {\infer[MP]{\bot}
+                        {\infer[\lor I]{\alpha \lor \lnot \alpha}
+                            {\infer[\to I,1]{\lnot \alpha}
+                                {\infer[MP]{\bot}
+                                    {\infer[]{\alpha \lor \lnot \alpha}{\infer[1]{\cancel{\alpha}}{}}
+                                    &
+                                    \infer[2]{\cancel{\lnot (\alpha \lor \lnot \alpha)}}{}}}}
+                        &
+                        \infer[2]{\cancel{\lnot(\alpha \lor \lnot \alpha)}}{}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    The logic obtained by adding in RAA as a rule of inference is known as \emph{classical} logic. It is the logic followed by most mathematicians, although there are some dissenters and there are many famous names among their ranks! 
+
+    Although we have presented the bridging from intuitionistic, or minimal, logic to classical logic as adding in the rule of inference RAA, there are other modes of reasoning that determine equivalent logics; that is, rules of inference that agree on which formulae are theorems. Rather than assuming the rule of inference RAA, one might instead assume \emph{the law of excluded middle} $P \lor \lnot P$ for each proposition $P$. Below is the same claim about the existence of certain irrational numbers, but with the proof presented in a slightly different way. 
+
+    \begin{eg}{But which is it?}
+        Consider the following claim:
+
+            \emph{There exists irrational numbers $x,y$ such that $x^y$ is rational.}
+
+        {\bf Proof:} Since $\sqrt{2}$ is irrational we consider the number $\sqrt{2}^{\sqrt{2}}$. This number is either rational or irrational. 
+        
+        If $\sqrt{2}^{\sqrt{2}}$ is rational, then the claim is true for $x=y=\sqrt{2}$ are an example of a pair with the claimed property. 
+        
+        If the number is irrational, then we compute $$(\sqrt{2}^{\sqrt{2}})^{\sqrt{2}} = \sqrt{2}^{\sqrt{2}\sqrt{2}}=\sqrt{2}^{2}=2$$ Certainly $2$ is rational, therefore $x=\sqrt{2}^{\sqrt{2}}$ and $y=\sqrt{2}$ are an example of such irrational numbers. 
+
+        In either case, there must exist irrational $x,y$ such that $x^{y}$
+    \end{eg}
+
+    There are theorems that are provable with the introduction of RAA that are not provable without it. These theorems can be proved by using the rules of inference derived so far: Intuionistic logic + RAA. However, since we already have a proof of LEM $$ \vdash \ P \lor \lnot P$$ which does not rely on any hypotheses, we can also make use of that in our proofs. Indeed, this leads to more readable proofs than trying to do everything from RAA each time. 
+
+    \begin{eg}{Material Implication}
+
+        The following sequent is not a theorem of intuitionistic logic $$ P \to Q \ \vdash \ \lnot P \lor Q$$ However it this is provable with the introduction of classical logic. As we know that LEM is a theorem, we are free to use this fact in our proof. When we make use of the LEM we have to make a choice about which proposition $\alpha$ to use. For LEM is really infinitely many theorems of the form $\vdash \ \alpha \lor \lnot \alpha$ one for each proposition $\alpha$. Since the consequent is made up of two atomic propositions $P$ and $Q$ it seems that we should choose one of these. Indeed either will work. The proof using $Q$ is presented here and the reader should provide the analogous proof using $P$. 
+
+        Once we have chosen to use the theorem $\vdash \ Q \lor \lnot Q$, we know there will be an $\lor$-elimination step in the proof. By now we know that $\lor$-elimination proofs have two implication subproofs. Altogether this means classical proofs using $Q \lor \lnot Q$ ultimately come down to proving two implications; in this case we need proofs of $P \to Q \ \vdash Q \to (\lnot P \lor Q)$ and $P \to Q \ \vdash \lnot Q \to (\lnot P \lor Q)$. These subproofs are in the second and third branch of the $\lor$-elimination below. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\lor E]{\lnot P \lor Q}
+                    {Q \lor \lnot Q
+                    &
+                    \infer[\to I,1]{Q \to (\lnot P \lor Q)}
+                        {\infer[\lor I]{\lnot P \lor Q}
+                            {\infer[1]{Q}
+                                {}}}
+                    &
+                    \infer[\to I,2]{\lnot Q \to (\lnot P \lor Q)}
+                        {\infer[\lor I]{\lnot P \lor Q}
+                            {\infer[\MT]{\lnot P} 
+                                {P \to Q
+                                &
+                                \infer[2]{\lnot Q}{}}}}}
+            \end{array}$
+        \end{center}
+        
+        The right-hand branch the proof was shortened using a \emph{derived rule of inference}. We have already shown $\lnot P$ follows from the hypotheses $P \to Q$ and $\lnot Q$ - we call this modus tollens. We need not reproduce the same proof each time we are in this situation, we can simply state that we are using MT at that line in the proof. There will be more about derived rules later. 
+
+    \end{eg}
+
+    \begin{mdframed}
+        {\bf Step-by-Step Classical Proofs}
+        
+        Once it is decided that classical logic is required to prove the sequent $\Sigma \ \vdash \ \gamma$ and that LEM with proposition $\alpha$ will be used in the proof, the rest of the proof can be broken down into the following steps: 
+
+            \begin{enumerate}
+                \item $\Sigma, \ \alpha^{1} \vdash \ \gamma$,
+                \item $\Sigma, \ \lnot\alpha^{2} \vdash \ \gamma$,
+                \item Implication introductions on previous two proofs, and
+                \item $\lor$-elimination with $\alpha \lor \lnot \alpha$. 
+            \end{enumerate}
+        
+    \end{mdframed}
+    
+    \begin{eg}{Pierce's Law}
+
+        Provide a natural deduction to prove the following sequent: 
+
+        $$ \vdash \ ((P \to Q) \to P) \to P$$
+        
+        This proof requires classical logic. However, it's best to make use of the minimal logic steps first, before moving onto use RAA or another classical mode of reasoning. This is a proof hypothetical of a hypothetical, so let's first assume the antecedent:
+
+        $$(P \to Q) \to P \ \vdash \ P$$
+        
+        Now, since $P$ dominates the statement, it seems a sensible choice to make use of the $P \lor \lnot P$ instance of LEM. Following the steps outlined above we break this proof into the following steps: 
+
+            \begin{enumerate}
+                \item $(P \to Q) \to P, \ P^{1} \vdash \ P$,
+                \item $(P \to Q) \to P, \ \lnot P^{2} \vdash \ P$,
+                \item Implication introductions on previous two proofs, and
+                \item $\lor$-elimination with $P \lor \lnot P$. 
+            \end{enumerate}
+        
+        The first step is trivial in this case. We assume $P$, which is precisely the proposition we want to prove. To prove the next hypothetical we need to make use of the new hypothesis $\lnot P$. The only way to do that is to assume $P$; this seems odd as it is the conclusion we are trying to draw! But we can discharge it later. 
+        
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,2]{\lnot P \to P}
+                    {\infer[\MP]{P}
+                        {\infer[\to I,3]{P \to Q}
+                            {\infer[\XF]{Q}
+                                {\infer[\MP]{\bot}
+                                    {\infer[3]{P}{}
+                                    &
+                                    \infer[2]{\lnot P}{}}}}
+                        &
+                        (P \to Q) \to P}}
+            \end{array}$
+        \end{center}
+        
+        Altogether the proof of Pierce's Law using LEM is: 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{((P \to Q) \to P) \to P}
+                    {\infer[\lor E]{P}
+                        {P \lor \lnot P
+                        &
+                        P \to P
+                        &
+                        \infer[\to I,2]{\lnot P \to P}
+                            {\infer[\MP]{P}
+                                {\infer[\to I,3]{P \to Q}
+                                    {\infer[\XF]{Q}
+                                        {\infer[\MP]{\bot}
+                                            {\infer[3]{P}{}
+                                            &
+                                            \infer[2]{\lnot P}{}}}}
+                                &
+                                (P \to Q) \to P}}}}               
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    {\bf Observation:} Notice that in the last two examples every step in the proofs are intuitionistic except for the assumption of LEM. 
+
+    \newpage
+    \subsection*{Derived Rules}
+
+    Just as a programmer can refactor their code into functions/subroutines to make their code cleaner, so can we employ theorems already proved to make proofs shorter, cleaner, and easier to comprehend. Mathematicians do this in their work by organising results into lemma, theorems, and corollaries. We can make allowances for this in our notation by annotating the line in the proof with a name of a theorem; something to acknowledge that we are using a previously proven result and are not reproducing the proof. 
+
+    \begin{eg}{$\land$Comm and $\land$Assoc}
+
+        Provide a natural deduction to prove the following sequent: $$(\alpha \land \beta) \land \gamma \ \vdash \ \beta \land (\alpha \land \gamma)$$
+
+        In this proof we make use of previously proven commutativity and associativity of the conjunction connective. We could reproduce those proofs here, but we need only reference them with the labels $\land \textnormal{\tiny{comm}}$ and $\land \textnormal{\tiny{assoc}}$ respectively. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\land \textnormal{\tiny{assoc}}]{\beta \land (\alpha \land \gamma)}
+                    {\infer[\land I]{(\beta \land \alpha) \land \gamma}
+                        {\infer[\land \textnormal{\tiny{comm}}]{\beta \land \alpha}
+                            {\infer[\land E_{l}]{\alpha \land \beta}
+                                {(\alpha \land \beta) \land \gamma}}
+                        &
+                        \infer[\land E_{r}]{\gamma}
+                            {(\alpha \land \beta) \land \gamma}}}
+            \end{array}$
+        \end{center}
+        
+    \end{eg}
+
+    These references to previous results will be referred to as \emph{derived rules of inference}. If the result to be called doesn't have an obvious name, then use the label THM to denote that a theorem is being called to justify that line in the proof. 
+
+
+    \newpage
+    \subsection*{Tips and Tricks}
+    
+    The list below contains a number of things to keep in mind when writing a natural deduction. It should be referenced if one is stuck for ideas! 
+
+        \begin{itemize}
+            \item Connectives in the {\bf hypotheses} are {\bf eliminated}.            
+            \item Connectives in the \underline{conclusion} are \underline{introduced}. 
+            \item Rewrite the sequence with all temporary hypotheses added:
+                \begin{itemize}
+                    \item When introducing $\alpha \to \beta$, one should temporarily add the antecedent $\alpha$ to the hypotheses.
+                    \item When eliminating $\alpha \lor \beta$, one should temporarily add each disjunct $\alpha, \beta$ to the set of hypotheses.
+                \end{itemize}
+            \item Don't write the whole proof at once; use subproofs! 
+                \begin{itemize}
+                    \item When using $\lor$ elimination, write each of the three branches separately. Bring them together at the end.
+                \end{itemize}
+            \item Working backwards can be helpful. Particularly in an $\lor$ elimination step of a deduction. 
+            \item When writing proofs depending on classical logic, rather than relying on RAA directly, make use of LEM instead.            
+        \end{itemize}
+
+
+    \newpage
+    \section{Sequent Calculus}
+
+    \newpage
+    \section{First Order Logic}
+    
+        \subsection{Predicates}
+
+        % Include restricted domains of quantification. Types.
+
+        % Include: Rules of inference for equality.
+        %          Mention that equality is well-defined wrt. predicates and functions.
+
+        \subsection{Quantifiers}
+
+        % Include: Rules of inference for forall and exists.
+
+        \subsection{First Order Languages}
+
+\chapter{Formal Mathematics}
+
+    \newpage
+    \section{First Order Theories}
+
+    Mathematicians interested in formalising mathematics began using first-order logic as their primary formal language. Their process can be broken into the following two steps (i) writing down a signature for the topic they were formalising i.e. specifiying the first-order language, (ii) Writing down axioms that (they hoped) would ensure that the terms of the language behaved according to the topic they were studying. 
+
+    Writing down a first-order language allows for the expression of terms, but those different strings of symbols are not (literally) equal. This is where the axioms come in, they impose extra structure on the terms that allow for identities to be derivied. Through this set of notes we have been using the sequent notation: 
+
+    $$\Sigma \ \vdash \ \alpha$$
+
+    Precisely, this is the claim that there is (at least one) natural deduction witnessing the derivation of $\alpha$ from the list of hypotheses $\Sigma$. We now consider the list $\Sigma$ to be consisting of \emph{axioms} as well as any other hypotheses required for proving a theorem. 
+
+    \begin{eg}{Group Theory}
+
+        Group theory is the first-order theory with signature
+
+        $$ \mathcal{G} : \{e, \ \cdot^{-1}, \ * \ , =\} $$
+
+        Consisting of the constant $e$, a unary function $^{-1}$ called the inverse, a binary function $\cdot$ called the product, and binary relation $=$. Terms are constructed from the constant $e$, variables, the unary inverse, and the binary product. We denote, by $G$, the type consisting of all terms generated by this language.        
+        
+        Propositions consist of (possibly quantified) identities written using the (infix) $=$ symbol and their combinations using the propositional connectives.  In the study of the first-order theory of groups, we assume each of following well-formed formulae - the axioms of Group Theory - hold for terms in the first-order language of Group Theory.
+        \begin{center}
+            \begin{itemize}
+                \item[G1:] $\forall x y z : G, \ (x \cdot y) \cdot z = x \cdot (y \cdot z)$
+                \item[G2:] $\forall x : G, \ e \cdot x = x$
+                \item[G3:] $\forall x : G, \ x \cdot e = x$    
+                \item[G4:] $\forall x : G, \ x \cdot x^{-1} = e$                        
+            \end{itemize}
+        \end{center}
+
+        Theorems of the first-order theory of groups\footnote{Theorems of this language are propositions true in \emph{all} groups. Mathematicians are not just interested in such statements, but also studying and classifying the structures that satisfy these axioms; whether they be types, categories, or sets. Logicians call the study of such questions model theory, which we don't consider in these notes.} consist of those formula $\alpha$ that can be derived from these axioms, along with other assumed formulae.
+    \end{eg}
+
+    By dropping, or adding, extra terms/axioms one obtains other examples of first order theories. If the inverse function and associated axiom G4 are dropped, then the resulting theory is called the theory of \emph{monoids}. Further dropping the identity and associated axioms G2 and G3, one obtains the theory of \emph{semigroups}.
+
+    \begin{eg}{Zermelo-Fraenkel Set Theory}
+
+
+    \end{eg}
+
+    \begin{definition}{First-Order Theory}
+
+    \end{definition}
+
+    First-order theories abound in mathematics. However, we will focus on a first-order theory of arithmetic called Peano Arithmetic. 
+
+    \newpage
+    \section{Peano Arithmetic}
+
+    \begin{definition}{Peano Arithmetic}
+
+        Peano Arithmetic is the first-order theory of terms $\mathbb{N}$ generated by the following signature:
+
+        $$\mathcal{P} : \{0, s, +, \times, =\}.$$
+
+        where 0 is a constant, s is a unary function called successor, $+, \times$ are binary functions sum and product respectively. These terms are subject to the following infinite list of axioms:
+
+        \vspace{0.2cm}
+
+        \begin{enumerate}
+            \item[PA1: ] $\forall x : \mathbb{N}, \ \lnot(s \ x = 0)$
+            \item[PA2: ] $\forall x,y : \mathbb{N}, \ (s \ x = s \ y) \to (x = y)$		\item[PA3: ] $\forall x : \mathbb{N}, \ (x + 0 = x)$
+            \item[PA4: ] $\forall x,y : \mathbb{N}, \ (x + (s \ y) = s(x + y))$
+            \item[PA5: ] $\forall x : \mathbb{N}, \ (x \times 0 = 0)$
+            \item[PA6: ] $\forall x,y \ (x \times (s \ y) = (x \times y) + x)$
+            \item[PA7: ] $[P(0) \land \forall x : \mathbb{N}, \ (P(x) \to P(s \ x))] \rightarrow \forall y : \mathbb{N}, \ P(y)$
+        \end{enumerate}
+
+        \vspace{0.2cm}
+
+        PA7 is really an axiom scheme; one axiom for each unary predicate $P$ on the type $\mathbb{N}$ generated by $\mathcal{P}$ the signature above. 
+
+    \end{definition}
+
+    Together the constant 0 and the unary successor function generate an infinite sequence of terms that correspond to the natural numbers: 
+
+    $$0 \hspace{1cm} s 0 \hspace{1cm} s s 0 \hspace{1cm} s s s 0 \hspace{0.5cm} \dots$$
+
+    These can be combined with arbitrarily long (finite) sequences of the binary functions $+$ and $\times$ to form terms such as: 
+
+    $$0 + 0 \hspace{1cm} (s 0) \times (s \ s \ 0) \hspace{1cm} (s s 0) + (s 0) \hspace{1cm} (s s s 0) \times (0 + s 0) \hspace{0.5cm} \dots $$
+
+    Every term of the latter form can be shown to be identical to a unique term in the first list by a sequence of applications of axioms PA3 through PA6; in otherwords the sums and products can be computed to normal forms using the recursive rules for addition and multiplication set out by PA3 through PA6. 
+
+    \begin{eg}{Computation in Peano Arithmetic}
+
+        $$ \PA \vdash 0 + 1 = 1$$
+
+    \end{eg}
+
+
+
+
+\chapter{Computation}
+
+    \newpage
+    \section{Proof Machines}
+
+    It might at first seem odd to think that computers and computation have anything at all to do with the process of proof in mathematics. These opening paragraphs aim to convey to the reader the relationship between these two subjects by considering a few strands in the history of mathematics. Much of this story can be read in more detail in Martin Davis' \emph{Universal Computer} and in many entries of the Standford Encyclopaedia of Philosophy.
+
+    % Comment on Leibniz' goal of the computability of reason. 
+
+
+    % Comment on Hilbert's dream. 
+    David Hilbert sought to settle questions about the possibilities of mathematics; so called, metamathematical questions. His declaration has come to be known as Hilbert's Program and the three primary goals of the program were to (i) show mathematics is consistent (ii) show mathematics is complete (iii) determine whether there was some ``finite procedure'' for determining theoremhood. All of the mathematics in these notes are motivated by this Program, however we turn specifically to the third; the search for a finite procedure to determine theoremhood. 
+
+    Specifically mathematicians wanted a solution to the so called ``entschiedungsproblem'' explained here by Alonzo Church: By the Entscheidungsproblem of a system of symbolic logic is here understood the problem to find an effective method by which, given any expression Q in the notation of the system, it can be determined whether or not Q is provable in the system\footnote{A note on the Entscheidungsproblem, Alonzo Church (1936)}. 
+    
+    In the language developed in these notes; determine an \emph{effective method} by which, given any well-formed formula $\phi$ of first order logic, it can determine whether $\phi$ is a theorem. One single procedure, to be carried about by Man or machine, to decide whether, for example, the Riemann Hypothesis is a theorem. When put like this it seems clear that this can't be possible. However, how does one \emph{prove} that there can be no such ``effective procedure'' or ``finite method''? Mathematicians knew  that a better understanding of the intended meaning of ``effective procedure'' was required. They had effective procedures for all manner of classes of problems e.g. addition and multiplication of numbers, approximation of roots of polynomials, and approximating solutions to differential equations. What would it mean for a class of problems to not have an effective procedure for determining their solution? To show this one needs to say precisely what an effective procedure is. Only then can one prove, using this method, one can never solve that problem. 
+
+    % Write a paragraph about G\"{o}del codes and how to make propositions and proofs objects of computation. Reducing questions about the computability of proofs to computability of functions of the natural numbers. 
+
+    % Comment on the many models of computation. 
+    In the decades that followed every man and his dog put forth their idea about what it means for a procedure to be effective. Collectively these came to be known as ``models of computation''. Alan Turing suggested his $\mathfrak{a}$-machines, later to be coined ``Turing Machines'' by his PhD thesis advisor Alonzo Church. Along with the description of his $\mathfrak{a}$-machines, Turing provided a substantial argument for why they really captured our informal notion of effective procedure. Church, and others, decreed that Turing was correct, and Turing Machines became the standard for computation against which other models of computation were judged. Procedures are considered effective if and only if they can be carried out by a Turing machine; this has come to be known as \emph{Church's Thesis}. Simultaneously, Stephen Kleene and Kurt G\"{o}del defined the class of general recursive functions and Alonso Church defined $\lambda$-calculus, both of which were promptly shown to be equivalent to the class of procedures computable by a Turing machine, hence also equivalent to one another. Like buses, Philip Wadler once said, you wait 2000 years for a concrete model of computation and all of a sudden you have three! 
+
+    % Comment on the BHK definition of the connectives. 
+
+
+    % Conclusion.
+    From the thoughts of Leibniz, to the dream of Hilbert, and the interpretation of proof given by Brouwer, Heyting, and Kolmogorov, we see that the development of computation and considerations of proof and reason have gone hand-in-hand. Logicians have been there along the entire development of the machines we now call computers, and that might have otherwise been named \emph{proofers}. Their work has contributed to both the hardware of the machines and the software we use to cast spells into the machine.\footnote{Imagery from Structure and Intepretation of Computer Programming aka ``The Wizard Work.''} For the remainder of these notes we introduce the $\lambda$-calculus and see its role in the development of modern proof assisstants. 
+
+
+    \newpage
+    \section{Untyped Lambda Calculus}
+
+    \subsection*{Alpha Reduction}
+
+    \subsection*{Beta Reduction}
+
+    % \lamabsarg{$(\lterm{x}{x})$}{$(\lterm{x}
+    %                              {\lterm{y}{x \ y}})$}
+
+    \begin{eg}{}
+        Compute the normal form of this $\lambda$-term by computing $\beta$-reductions. 
+        \begin{align*}
+            (\lterm{x}{x})(\lterm{y}{y \ (\lterm{z}{z \ w})}) &= \lamabsarg{(\lterm{x}{x})}{(\lterm{y}{y \ (\lterm{z}{z \ w})})} \\
+            &\beq \lterm{y}{y \ (\lterm{z}{z \ w})}
+        \end{align*}
+    \end{eg}
+    
+    \begin{eg}{}
+        Compute the normal form of this $\lambda$-term by computing $\beta$-reductions. 
+        \begin{align*}
+            ((\lterm{x}{\lterm{y}{y \ x}}) \ f) \ g &= (\lamabsarg{(\lterm{x}{\lterm{y}{y \ x}})}{ \ f}) \ g \\
+            &\beq \lamabsarg{(\lterm{y}{y \ f})}{ \ g} \\
+            &\beq g \ f
+        \end{align*}
+    \end{eg}
+
+    \begin{eg}{}
+        Some $\lambda$-terms do not have normal forms. 
+        \begin{align*}
+            (\lterm{x}{x \ x \ x})(\lterm{x}{x \ x \ x}) &= \lamabsarg{(\lterm{x}{x \ x \ x})}{(\lterm{x}{x \ x \ x})} \\
+            &\beq \lamabsarg{(\lterm{x}{x \ x \ x})}{(\lterm{x}{x \ x \ x})} (\lterm{x}{x \ x \ x})\\
+            & \ \ \vdots
+        \end{align*}
+        After each $\beta$-reduction an extra copy of $(\lterm{x}{x \ x \ x})$ will be added. Thus this term gets longer and longer and never settles to a normal form. 
+    \end{eg}
+
+    \subsection*{Reduction Strategies}
+
+    If there are more than one $\beta$-redex in a single $\lambda$-term, then one has to make a choice about which to compute first. Since there are choices being made, one must also consider how the computation will evolve according to that choice. We will consider two different reduction strategies; call-by-name and call-by-value. To illustrate each of these methods let's consider the following $\lambda$-term: 
+    $$(\lterm{y}{\lterm{z}{z}})((\lterm{x}{x \ x})(\lterm{x}{x \ x}))$$
+    This $\lambda$-term has two $\beta$ redex indicated by the following colourings: 
+    $$\lamabsarg{(\lterm{y}{\lterm{z}{z}})}{((\lterm{x}{x \ x})(\lterm{x}{x \ x}))}$$
+    This redex has the left most abstraction-argument pair. However, the argument of this redex is itself a $\beta$-redex indicated by the next colouring: 
+    $$(\lterm{y}{\lterm{z}{z}})(\lamabsarg{(\lterm{x}{x \ x})}{(\lterm{x}{x \ x})})$$
+    We must make a choice: do we compute the outer redex first? Or, do we compute the redex in the argument first before passing it to the leftmost abstraction? Does it matter? Or will they always lead to the same thing. The first colouring, where we pass the unevaluated argument, is known as call-by-name (or lazy) evaluation:    
+    $$\lamabsarg{(\lterm{y}{\lterm{z}{z}})}{((\lterm{x}{x \ x})(\lterm{x}{x \ x}))} \beq \lterm{z}{z}$$Following this has reduced the $\lambda$-term to normal form. If we instead compute the $\beta$-reduction on the argument first, then we are lead into an infinite loop and the $\lambda$-term never gets to a normal form. This choice of evaluation strategy does have consequences. If a $\lambda$-term has a normal form, then lazy evaluation will compute it. For this reason, if not otherwise stated, we will assume all reductions are done using call-by-name; lazy is the way!
+                                     
+    \subsection*{Eta Reduction}
+
+    \newpage
+    \section{Simply Typed Lambda Calculus}
+
+    We have seen that $\lambda$-terms may not have a normal form. For example, we may search for a solution to a predicate that has no solution <<ENTER EXAMPLE HERE>> Reductions of $\lambda$-terms may not act predictably, or nomralise, if we don't take care to use them as intended. Consider the $\lambda$-term: $$\lambda f. \ \lambda g. \ \text{COND} \ (\text{EQUAL?} \ f \ g) \ (\text{SUCC} \ f) \ (\text{SUCC} \ g) $$ This will reduce predictably if Church numerals are passed to $f$ and $g$. However, if we aren't careful, then in the course of $\beta$-reduction arbitrary $\lambda$-terms could get passed to $f$ and $g$. There is no telling what the program will do then. In order to limit these problems types were introduced to the $\lambda$-calculus by Alonso Church and Haskell Curry. Variables and data were assigned types and functions were declared with their domain (input) and codomain (output) types. 
+
+    Types should be familiar to anyone with a little bit of programming experience. Python, for example, has a number of built in types including: int, bool, and float. Type-errors will also be familiar! These are the messages we get from a compiler or interpreter when the program we have written does not obey the languages type system. We have written a program for which the types do not compose properly! We have tried to concatenate an integer, compose floats, or some other such nonsense. Instead of running the program, which could act unpredictably, the compiler just says: "No" and, if you're lucky, tells you what the type error is. These features of programming languages are conceptual descendants of the ideas of Church and Curry. Mathematics students will also be familiar with the idea, if not the word type. When functions are explained in mathematics classes, great pains are taken to stress the importance of domain and codomain. If you get that wrong, then the function maybe undefined at some input passed to it. For example, you might compute an integral over an interval for which the integrand is undefined! Mathematics, too, abounds with different types: functions, vectors, matrices, natural numbers etc. 
+
+    In this chapter we are going to study the interaction between different types, rather than study in detail any particular type. Later, in the chapter on Lean, we will consider specific types like the type of Natural numbers. Types are tags on data and programs to ensure they are used in the intended manner. First we will describe some language for talking about types and then introduce a number of ways of building types up from base types: the function type and two common algebraic data types - the product type (tuples) and the sum type (disjoint, or tagged, unions) - are studied. Since the data that we are computing with has types, we now need to take more care when writing $\lambda$-terms. We develop a calculus which we will refer to as the \emph{typing deduction calculus} to ensure our $\lambda$-terms are \emph{well-typed}. This calculus will involve a type constructor and type destructor for each new type. 
+
+    \newpage
+    \subsection*{Type Contexts}
+
+    Throughout this chapter let us assume we are given a collection of atomic base types denoted by capital English letters: $$P \ Q \ R \ S \ T \ \dots \ : \type $$ If it helps, then these abstract types can be thought of as Nat, Bool, or Float. But really they are just names that could be swapped out for concrete types when ever we want. We are treating them more like type-variables, but we will just call them types. Using these types, and the compound data types that we will soon construct, we can begin to assign types to variables and programs. Recall that $\lambda$-terms are either a variable, or constructed from component $\lambda$-terms by either abstraction or application. For the rest of this chapter we will discuss how to consistently assign types to $\lambda$-terms. 
+
+    All of our $\lambda$-terms are going to be written with respect to a set $\Sigma$ of typing declarations that we will call a \emph{typing context}, or simply a \emph{context}. For example we might declare the following typing context: $$\Sigma = \{x : P, \ \ f : P \to Q, \ \ g : (P \to Q) \to R\}$$ In this context we have a variable $x$ assigned type $P$ and two functions $f$ and $g$ assigned types $P \to Q$ and $(P \to Q) \to R$ respectively. Terms inside the typing context can be thought of as global variables available to write our programs. Much like an import statement at the top of a program in a modern programming language. 
+    
+    The problem that will be of primary interest to us is the problem of determining whether a term of a particular type can be derived from a given context. If $\Sigma$ is a typing context and $\gamma$ some type, then the following sequent is a claim that in the context $\Sigma$ the $\gamma$ is inhabited: $$\Sigma \ \vdash \ \gamma $$ In this context we will refer to $\gamma$ as the goal; it is the type that we are writing a $\lambda$-term to inhabit. It is the programmers job to calculate such a term to validate the claim made by the sequent. 
+
+    \begin{eg}{}        
+        Consider the type context $$\Sigma = \{x : P, \ \ f : P \to Q, \ \ g : (P \to Q) \to R\}$$ Although we have not yet officially defined types like $P \to Q$, they are function types. They take in a term of the type to the left of $\to$ and return a term to the right of the $\to$ symbol. For which types can terms be computed in this context?
+
+        Certainly any term in the context should be deducible from the context. Therefore the following sequents are valid: 
+
+        \begin{itemize}
+            \item[] $\Sigma \ \vdash \ P$
+            \item[] $\Sigma \ \vdash \ P \to Q$
+            \item[] $\Sigma \ \vdash \ (P \to Q) \to R$
+        \end{itemize}
+
+        We can formalise this with the following typing rule for variables.
+
+            \underline{{\bf Variable Declaration}}
+            
+            If $x : \alpha$ is a type declaration in a type context $\Sigma$, then we can always call that term in a program. That is to say, the following sequent is valid $\Sigma, \ x : \alpha \ \vdash \ \alpha$. We depict this in the following way:
+          
+            \begin{center}
+              $\begin{array}{c}
+                  \infer[\var]{x : \alpha}{\vspace{0.2cm}}
+              \end{array}$
+            \end{center}
+
+        Given $\lambda$-terms of the appropriate types, we should be able to compose them to get terms of other types. Using this idea are there any other types for which terms can be formed in the context $\Sigma$? In the next section we formally introduce the $\to$ function type and define the typing rules for application and abstraction. 
+
+    \end{eg}
+    
+    \newpage
+    \subsection*{Function Types}
+
+        To ensure that application of a $\lambda$-term is only applied to the correct type of variable, we define the following function type. If $P$ and $Q$ are types, then we denote by $P \to Q$ the type of functions that take in terms of type $P$ and reduce to a term of type $Q$. We close the collection Type under this operation. That is, if $P \ Q : \type$, then $P \to Q : \type$.
+
+        \begin{eg}{Function Types}
+            If $P \ Q \ R \ S : \type$, then the following are examples of types that can be constructed. 
+
+                \begin{itemize}
+                    \item[] $P \to R$
+                    \item[] $R \to S$ 
+                    \item[] $(P \to R) \to (P \to S)$
+                    \item[] $P \to (Q \to S)$
+                \end{itemize}
+            
+            We use the same binding convention for function types as for implication in propositional logic. 
+        \end{eg}
+
+        The function type constructor says that if a $\lambda$-term depends on a free variable $a : \alpha$, then this can be abstracted over to make a function which takes in a term of type $\alpha$. Compare this to the process of taking a global variable in a program and factoring it out to write a routine which now takes that variable as input. 
+
+        \begin{definition}{Function Type Constructor (Abstraction)}
+    
+            If $^{\Sigma}_{t : \beta}\mathcal{D}$ is a typing derivation of a term of  $t : \beta$ from a context $\Sigma$ containing an arbitrary term $a : \alpha$, then $\mathcal{D}$ can be extended to a typing derivation of a term $f : \alpha \rightarrow \beta$ from the context $\Sigma \backslash \{a : \alpha\}$, which we depict as follows: 
+    
+            \begin{center}
+                $\begin{array}{c}		
+                    \infer[\lambda I]{\lambda \ x : \alpha. \ t[a/x] \ : \ \alpha \rightarrow \beta}
+                        {\begin{array}{c} \Sigma, \ \cancel{a : \alpha} \\ \mathcal{D} \\ t : \beta \end{array}}
+                \end{array}$
+            \end{center}
+
+            Where $t[a/x]$ denotes the term $t$ with each free instance of $a$ replaced by $x$. 
+        \end{definition}
+    
+            Well-typed functions should only be passed terms of their domain type. We introduce the following function type destructor to our type derivation calculus to make sure this happens. This is function application with extra care to check the type of the input being passed to the function. 
+        
+        \begin{definition}{Function Type Destructor (Application)}
+    
+            If $^{\Sigma_{1}}_{f : \alpha \rightarrow \beta}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{a : \alpha}\mathcal{D}_{2}$ are typing derivations, then they can be extended to a derivation $^{\Sigma_{1}\cup \Sigma_{2}}_{(f \ a) : \beta}\mathcal{D}$ which we depict as follows: 
+    
+            \begin{center}
+                $\begin{array}{c}		
+                    \infer[\app]{(f \ a) : \beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ f : \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\  a : \alpha \end{array}}	
+                \end{array}$
+            \end{center}
+        \end{definition}
+    
+        \newpage
+        \begin{eg}{Function Composition}
+    
+            Provide a typing derivation to prove the following sequent: $$f : \alpha \to \beta, \ g : \beta \to \gamma \ \vdash \ \alpha \to \gamma $$
+        
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\to I,1]{\lambda x : \alpha. \ (g \ (f \ x)) : \alpha \to \gamma}
+                        {\infer[\MP]{(g \ (f \ a)) : \gamma}
+                            {\infer[\MP]{(f \ a) : \beta}
+                                {\infer[1]{\cancel{a : \alpha}}{} & f : \alpha \to \beta}
+                            &
+                            g : \beta \to \gamma}}
+                \end{array}$
+            \end{center}
+    
+        \end{eg}
+
+        \begin{eg}{I Combinator}
+        
+        \end{eg}
+    
+        \begin{eg}{S Combinator}
+            
+        \end{eg}
+    
+        \begin{eg}{K Combinator}
+            
+            Seeing this example again, now from the point-of-view of type theory, with an explicit term of type $P$, may help make it clearer. 
+    
+            $$P \ \vdash \ Q \to P$$
+    
+        \end{eg}
+
+    \newpage
+    \subsection*{Product Types}
+
+        Tuples are a data type common to both programmers and mathematicians. Programmers will often have the ability to utilise (nested) pairs to structure data. In mathematics we form the Cartesian product of two (or more) sets all the time. Our next data type will formalise this idea of forming a tuple of terms of (possibly) different types. We further close Type under the type forming operation $\times$ called the product type. That is, if $\alpha \ \beta : \type$, then $\alpha \times \beta : \type$.
+
+        \begin{eg}{Product Types}            
+            Given the atomic base types $$P \ Q \ R \ S \ T \ \dots \ : \type $$ Together with the two constructors $\to$ and $\times$ we can form types with $\to$ and $\times$ nested arbitrarily
+            
+            \begin{center}
+                $\begin{array}{l l}
+                    
+                    P \to (Q \times P) \hspace{1cm} & (P \to Q) \times P \\
+                    (P \times Q) \times R & ((P \times Q) \to R) \to (P \to (Q \to R))
+                \end{array}$
+            \end{center}
+
+        \end{eg}
+
+        Construction rules tell us how to form terms of a particular type. That is to say, they tell us how to write programs \emph{into} that type. In order to form a tuple of type $\alpha \times \beta$ is necessary and sufficient to provide (typing derivations of) terms $a : \alpha$ and $b : \beta$. This is formalised as the following type constructor.
+
+        \begin{definition}{Product Type Constructor}
+
+            If $^{\Sigma_{1}}_{a : \alpha}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{b : \beta}\mathcal{D}_{2}$ are typing derivations, then they can be extended to a deduction $^{\Sigma_{1}\cup \Sigma_{2}}_{(a, \ b) : \alpha \times \beta}\mathcal{D}$, which we depict as follows: 
+
+            \begin{center}
+                $\begin{array}{c}		
+                    \infer[\times]{(a, b) : \alpha \times \beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ a : \alpha \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\  b : \beta \end{array}}	
+                \end{array}$
+            \end{center}
+        \end{definition}
+
+        Constructors tell us how to write programs into the types they are constructing, whereas destructors tell us how to write programs out of the type they are destroying. There are two destructors for the product type, one for each component of the product. Elements of the product type are pairs and we can therefore project onto the FirST component or the SecoND component of the tuple. This is formalised in the following type destructor. 
+
+        \begin{definition}{Product Type Destructors}
+    
+            If $^{\Sigma}_{\alpha \times \beta}\mathcal{D}$ is a typing derivation of $\alpha \times \beta$ in a typing context $\Sigma$, then we can extend this derivation in two ways to obtain terms of type $\alpha$ and $\beta$ respectively: 
+    
+            \begin{center}
+                $\begin{array} { c c c }
+                
+                \begin{array}{ c  c  c }			
+                     \infer[\fst]{\fst \ t : \alpha}
+                        {\begin{array}{c}
+                            \Sigma \\
+                            \mathcal{D} \\
+                            t : \alpha \times \beta
+                        \end{array}}
+                \end{array}
+        
+                & \hspace{3cm} &
+        
+                \begin{array}{ c  c  c }			
+                    \infer[\snd]{\snd \ t : \beta}
+                    {\begin{array}{c}
+                        \Sigma \\
+                        \mathcal{D} \\
+                        t : \alpha \times \beta
+                    \end{array}}	
+                \end{array}\\		
+        
+                \end{array}$
+            \end{center}	
+        \end{definition}
+
+        With these new terms we have to say how computations work i.e. what are the $\beta$-reduction rules for $\fst$ and  $\snd$? If the structure of the term $t : \alpha \times \beta$ is known to be (e.g.) $t = (a,b)$ for $a: \alpha$ and $b: \beta$, then the following terms are considered $\beta$-redex and reduce according to the equations: 
+
+        \begin{center}
+          $\fst \ (a,b) =_{\beta} a$ 
+      
+          $\snd \ (a,b) =_{\beta} b$ 
+        \end{center}
+      
+        \begin{eg}{Product Commutative}
+
+            Provide a natural deduction to prove the follow sequent: $$ \alpha \land \beta \vdash \beta \land \alpha $$
+    
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\land I]{\beta \land \alpha}
+                        {\infer[\land E_{r}]{\beta}
+                            {\alpha \land \beta}
+                        &
+                        \infer[\land E_{l}]{\alpha}
+                            {\alpha \land \beta}}
+                \end{array}$
+            \end{center}
+            
+        \end{eg}
+    
+        \begin{eg}{Product Associative}
+    
+            Provide a natural deduction to prove the following sequent: $$(\alpha \land \beta) \land \gamma \ \vdash \ \alpha \land (\beta \land \gamma) $$
+            This proof requires unfolding the hypotheses to the left of the $\vdash$ to uncover the conclusion on the right. In the end both a proof of $\alpha$ and a proof of $\beta \land \gamma$ need to come from the hypothesis $(\alpha \land \beta) \land \gamma$. However, these can be dealt with separately and combined together at the end. 
+    
+            First, then, it suffices to provide a deduction witnessing: $$(\alpha \land \beta) \land \gamma \ \vdash \ \alpha$$
+    
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\land E_{\ell}]{\alpha}
+                        {\infer[\land E_{\ell}]{\alpha \land \beta}
+                            {(\alpha \land \beta) \land \gamma}}
+                \end{array}$
+            \end{center}
+    
+            Secondly we provide a deduction witnessing: $$(\alpha \land \beta) \land \gamma \ \vdash \ \beta \land \gamma$$
+    
+            \begin{center}
+                $\begin{array}{c}
+                    \infer[\land I]{\beta \land \gamma}
+                        {\infer[\land E_{r}]{\beta} 
+                            {\infer[\land E_{\ell}]{\alpha \land \beta}
+                                {(\alpha \land \beta) \land \gamma}}
+                        &
+                        \infer[\land E_{r}]{\gamma} 
+                            {(\alpha \land \beta) \land \gamma}}
+                \end{array}$
+            \end{center}
+    
+            Following the BHK these can be combined using $\land$ introduction to provide a proof of the original sequent 
+                \begin{center}
+                    $\begin{array}{c}
+                        \infer[\land I]{\alpha \land (\beta \land \gamma)}
+                            {\infer[\land E_{\ell}]{\alpha}
+                                {\infer[\land E_{\ell}]{\alpha \land \beta}
+                                {(\alpha \land \beta) \land \gamma}}
+                                &
+                                \infer[\land I]{\beta \land \gamma}
+                                    {\infer[\land E_{r}]{\beta} 
+                                        {\infer[\land E_{\ell}]{\alpha \land \beta}
+                                            {(\alpha \land \beta) \land \gamma}}
+                            &
+                            \infer[\land E_{r}]{\gamma} 
+                            {(\alpha \land \beta) \land \gamma}}}
+                    \end{array}$
+                \end{center}    
+        \end{eg}
+
+        \begin{eg}{Currying}
+
+
+        \end{eg}
+
+
+    \newpage
+    \subsection*{Sum Types}
+
+    Finally we introduce the sum of two types $\alpha$ and $\beta$, denote $\alpha + \beta$. This can be thought of as a bag consisting of objects that are either of type $\alpha$ or of type $\beta$ but must be \emph{tagged} with which type they are. We can throw terms of either type in $\alpha + \beta$ but we have to label them first. This loose collection of types is often referred to as an \emph{enum} type, for example C/C++ have enums which behave like sum types. By nesting sum types a programmer can create custom types consisting of what ever terms/types they require. 
+
+    In order to write a program into a sum type, it is sufficient to have a term of either type and place it in with a tag. In the constructor below we use inl(eft) to tag terms that are elements type on the left of the sum and inr(ight) to tag terms of the type on the right of the sum. 
+
+    \begin{definition}{Sum Type Constructors}
+
+        If $^{\Sigma}_{a : \alpha}\mathcal{D}$ is a typing derivation of a term $a : \alpha$ from a context $\Sigma$, then this derivation can be extended in two ways to obtain derivations of terms inhabiting either $\alpha + \beta$ and $\beta + \alpha$ respectively: 
+
+        \begin{center}
+            $\begin{array}{c c c}
+              \infer[\text{\inl}]{\inl \ a \ : \ \alpha + \beta}{a \ : \ \alpha}
+        
+              &
+              \quad
+              &
+        
+              \infer[\text{\inr}]{\inr \ a \ : \ \beta + \alpha}{a \ : \ \alpha}
+        
+            \end{array}$
+          \end{center}
+    \end{definition}
+
+    Type destructors tell us how to write a program \emph{out of} a particular type. Terms of sum types $\alpha + \beta$ are either a term of type $\alpha$ or a term of type $\beta$. Therefore, in order to write a program out of $\alpha + \beta$, we have to take into account both of these possibilities. That is, we need to provide a program to deal with the case that the term came from $\alpha$ and a program to deal with the case that the term came from $\beta$. This is formalised in the following destructor. 
+
+    \begin{definition}{Sum Type Destructor}
+
+        If $^{\Sigma_{1}}_{t : \alpha + \beta}\mathcal{D}_{1}$, $^{\Sigma_{2}}_{f : \alpha\rightarrow\gamma}\mathcal{D}_{2}$, and $^{\Sigma_{3}}_{g : \beta\rightarrow\gamma}\mathcal{D}_{3}$ are typing derivations, then together these can be extended to a derivation $^{\Sigma}_{t : \gamma}\mathcal{D}$, where $\Sigma = \Sigma_{1} \cup \Sigma_{2} \cup \Sigma_{3}$. We depict this extension as follows: 
+
+        \begin{center}
+            $\begin{array}{ c }
+	
+                \infer[\sumElim]{\sumElim \ t \ f \ g \ : \ \gamma}
+                    {
+                    \begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ t : \alpha + \beta \end{array}
+                     & 
+                    \begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ f : \alpha\rightarrow\gamma \end{array}				
+                     & 
+                    \begin{array}{c} \Sigma_{3}  \\ \mathcal{D}_{3} \\ g : \beta\rightarrow\gamma \end{array}				 
+                    }	
+            
+            \end{array}$            
+        \end{center}
+    \end{definition}
+    
+    If the term $\sumElim$ is passed a term $\inl \ a$ for $a : \alpha$, then it will apply $f$ to it. Otherwise it will be passed $\inr \ b$ for $b : \beta$ and will apply $g$ to it. These $\beta$-redex are and reduction rules are described in the following equations: 
+
+    \begin{center}
+      $\sumElim \ (\inl \ a) \ f \ g =_{\beta} f \ a$ 
+  
+      $\sumElim \ (\inr \ b) \ f \ g =_{\beta} g \ b$
+    \end{center}
+
+    \begin{eg}{Sum Commutative}
+
+        Provide a natural deduction to witness the following sequent: $$\alpha \lor \beta \ \vdash \ \beta \lor \alpha $$
+
+        As is now custom, we first look to rewrite the sequent with temporary hypotheses. In this case, we see that $\alpha \lor \beta$ is a hypothesis and therefore we will need to use disjunction elimination. Two branches of this step will be proofs of implications with $\alpha$ and $\beta$ as antecedent. For this reason we temporarily add these to our hypotheses to reduce the original problem to the following sequent: $$\alpha \lor \beta, \alpha^{1}, \beta^{2} \ \vdash \ \beta \lor \alpha $$
+        In fact we can reduce the sequent further into \emph{two} sequents: $$\alpha \vdash \beta \lor \alpha \hspace{2cm} \beta \vdash \beta \lor \alpha$$
+        We have reduced the original problem to providing separate proofs to witness these sequents. These can be achieved using $\lor$ introduction. 
+
+        \begin{center}
+            $\begin{array}{c c}
+                \infer[\to I,1]{\alpha \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{R}]{\beta \lor \alpha}
+                            {\infer[1]{\alpha}
+                                {}}}
+
+                    \hspace{1cm}
+                &
+                    \hspace{1cm}
+
+                \infer[\to I,2]{\beta \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{L}]{\beta \lor \alpha}
+                            {\infer[2]{\beta}
+                                {}}}
+            \end{array}$
+        \end{center}
+
+        Together they combine with the assumption $\alpha \lor \beta$ to get a deduction witnessing the original sequent. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\lor E]{\beta \lor \alpha}
+                    {\alpha \lor \beta
+                    &
+                    \infer[\to I,1]{\alpha \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{R}]{\beta \lor \alpha}
+                            {\infer[1]{\cancel{\alpha}}
+                                {}}}
+                    &
+                    \infer[\to I,2]{\beta \to (\beta \lor \alpha)}
+                        {\infer[\lor I_{L}]{\beta \lor \alpha}
+                            {\infer[2]{\cancel{\beta}}
+                                {}}}}
+            \end{array}$
+        \end{center}
+
+        
+    \end{eg}
+
+    \begin{eg}{Sum Associative}
+
+        Provide a natural deduction to witness the following sequent: $$(\alpha \lor \beta) \lor \gamma \ \vdash \ \alpha \lor (\beta \lor \gamma) $$
+
+        % Use this example to demonstrate how working backwards can be helpful. 
+    \end{eg}
+    
+    \newpage
+    \subsection*{Empty Type}
+
+    \begin{eg}{Modus Tollens}
+        Provide a natural deduction to prove the following sequent: $$\alpha \to \beta, \ \lnot \beta \ \vdash \ \lnot \alpha$$
+
+        Notice that this sequent is equivalent to $$\alpha \to \beta, \ \lnot \beta \ \vdash \ \alpha \to \bot$$ When it is rewritten like this it is clearer that the deduction theorem can help us reduce the sequent to the following by adding $\alpha$ as a temporary hypothesis: $$\alpha \to \beta, \ \lnot \beta, \ \alpha^{1} \vdash \ \bot$$
+
+        The following deduction witnesses the new sequent. Notice that $\lnot \beta$ is an implication and therefore modus ponens is the correct elimination rule to use on it. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\MP]{\bot}
+                        {\infer[\MP]{\beta}
+                            {\infer[1]{\alpha}
+                                {}
+                            &
+                            \alpha \to \beta}
+                        &
+                        \lnot \beta}
+            \end{array}$
+        \end{center}  
+
+        This deduction can be extended by implication introduction to witness the original sequent. Again, there is no special negation introduction rule. We just use implication introduction.
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\lnot \alpha}
+                    {\infer[\MP]{\bot}
+                        {\infer[\MP]{\beta}
+                            {\infer[1]{\alpha}
+                                {}
+                            &
+                            \alpha \to \beta}
+                        &
+                        \lnot \beta}}
+            \end{array}$
+        \end{center}        
+    \end{eg}
+
+    \begin{eg}{Contraposition}
+        Provide a natural deduction to prove the following sequent: $$\alpha \to \beta \ \vdash \ \lnot\beta \to \lnot\alpha $$
+
+        The deduction rule can be applied twice, remembering to desugar the negations into implications. This reduces the sequent to the following: $$\alpha \to \beta, \ \lnot\beta^{1}, \ \alpha^{2} \vdash \ \bot$$ The following deduction witnesses the reduced sequent: 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\MP]{\bot}
+                            {\infer[\MP]{\beta}
+                                {\alpha \to \beta
+                                &
+                                \infer[2]{\alpha}{}}
+                            &
+                            \infer[1]{\lnot\beta}{}}
+            \end{array}$
+        \end{center}   
+        
+        This sequent can be extended using implication introduction to obtain a deduction witnessing the original sequent. 
+
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\to I,1]{\lnot\beta \to \lnot\alpha}
+                    {\infer[\to I,2]{\lnot\alpha}
+                        {\infer[\MP]{\bot}
+                            {\infer[\MP]{\beta}
+                                {\alpha \to \beta
+                                &
+                                \infer[2]{\alpha}{}}
+                            &
+                            \infer[1]{\lnot\beta}{}}}}
+            \end{array}$
+        \end{center}
+    \end{eg}
+
+    \newpage
+    \section{Curry-Howard Isomorphism}
+
+    Let's compare the following natural deduction and typing derivation. 
+    \begin{center}
+        $\begin{array}{c c c}
+            
+            \begin{array}{c}
+                \infer[\to I,1]{P \to (Q \to R)}
+                    {\infer[\to I,2]{Q \to R}
+                        {\infer[\MP]{R}
+                            {\infer[\land I]{P \land Q}
+                                {\infer[1]{\cancel{P}}{} & \infer[2]{\cancel{Q}}{}}
+                            &							
+                            (P \land Q) \to R}}}
+            \end{array}
+
+            &
+
+            \hspace{2cm}
+           
+            &
+
+            \begin{array}{c}
+                \infer[\lambda,1]{\lambda x. \ \lambda y. \ f(x,y) \ : \ P\to(Q\to R)}
+                    {\infer[\lambda,2]{\lambda y. \ f(a,y) \ : \ Q\to R}
+                        {\infer[\app]{f(a,b) \ : \ R}
+                            {\infer[\times]{(a,b) : P\times Q}
+                                {\infer[1]{a:P}{}
+                                &
+                                \infer[2]{b:Q}{}}
+                            &
+                            f \ : \ (P\times Q) \to R}}}
+            \end{array} 
+        \end{array}$
+    \end{center}
+
+    On the left we have propositions. On the right we have types. On the left is a natural deduction. On the right is a typing derivation for a program. These derivations are remarkably similar! Indeed they are precisely the same after translating with the following table: 
+
+    \begin{center}
+        \begin{tabular}{l|l}
+          Logic & Type Theory \\
+          \hline
+          Proposition $P$ & Type $P$ \\
+          Proof & Program \\
+          $\to$ & Function type \\
+          $\land$ & $\times$ \\
+          $\land E_{l}$ & FST \\
+          $\land E_{r}$ & SND \\
+          $\lor$ & $+$\\ 
+          $\lor I_{l}$ & inl \\
+          $\lor I_{r}$ & inr \\
+          $\lor E$ & cases  
+        \end{tabular}
+      \end{center}
+
+    If we interpret propositions as types, then all rules of inference have their type theoretic counterpart. For each introduction rule there is a type constructor and for each elimination rule there is a type destructor. For example, implication introduction corresponds to $\lambda$-abstraction i.e. factoring out a variable. Or-elimination corresponds to the typing rule for writing a program out of a sum-type; we can't know which type in the sum we will have, so we need to account for both possibilities, just like the two branches in Or-elimination. This ability to interchange between logic and type theory is known as the Curry-Howard Isomorphism, commonly referred to as the Curry-Howard Correspondence. In so far as we have presented the isomorphism here we could state it this way:
+
+    \begin{center}
+        Minimal Logic = Simple Type Theory
+    \end{center}
+
+    In more concrete terms the isomorphism can be presented as a meta-theorem comparing those sequents that have derivations in minimal logic and those sequents which have typing derivations in simple type theory. Let $\Sigma_{L}$ denote a set of propositions, $\alpha$ another proposition, and $\vdash_{\textnormal{ML}}$ denote the usual turnstile in logic while $\vdash_{\textnormal{STT}}$ denote the usual turnstile from simple type theory. If we interpret $\Sigma_{L}$ as a set $\Sigma_{T}$ of inhabited types and $\alpha$ as a type, then 
+    $$ \Sigma_{L} \ \vdash_{\textnormal{ML}} \ \alpha \hspace{1cm} \text{if and only if } \hspace{1cm} \Sigma_{T} \ \vdash_{\textnormal{STT}} \ \alpha$$
+    Under the interpretation of propositions-as-types, the well-typed terms of simple type theory correspond to specific natural deductions; the programs encode each step of the proof. Put simply: proofs are programs. Since $\lambda x. \ \lambda y. \ f(x,y)$ encodes a proof of the proposition $P\to(Q\to R)$ we refer to the program as a \emph{proof-term} for the proposition. In order to prove the proposition it is sufficient to write a program of that type. 
+    
+    What do these programs do? Well the type signature on the abstractions $\lambda x : P. \ $ tell us the input of a program is a term of another type. We just said a term $x$ of type $P$ encodes a proof of $P$ as a proposition. So these programs take in proofs and yield other proofs. In this sense the Curry-Howard Isomorphism is a concrete realization of the BHK-interpretation of the logical connectives. For this reason BHK-interpretation is often used synonymously with Curry-Howard Isomorphism. By carefully considering the process of computation Church, Curry, and Howard have realized the hope set out by Brouwer, Heyting, and Kolmogorov.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{Lean}
+
+    This chapter is not intended to be a complete and comprehensive introduction to theorem proving in Lean, or indeed programming in Lean. However, it will give an idea of what's required to formalize mathematics and how to use the proof assistant feature of Lean. This chapter was developed by learning from the following two texts and reading mathlib. The reader is encouraged to visit these for more details about formalizing mathematics in Lean: 
+
+    \begin{itemize}
+        \item \href{https://lean-lang.org/theorem_proving_in_lean4/propositions_and_proofs.html}{Theorem Proving in Lean 4}.
+        \item \href{https://github.com/blanchette/logical_verification_2023/blob/main/hitchhikers_guide.pdf}{Hitchhiker's Guide to Logical Verification}.
+        \item \href{https://github.com/leanprover-community/mathlib4/tree/master/Mathlib}{Mathlib}.
+    \end{itemize}
+
+    \newpage
+    \section{Introduction}
+
+        David Hilbert asked whether there is an algorithm for determining theoremhood? Whether proofs could be computed? In the century that followed, logicians took this question seriously and answered it emphatically; No, there can be no one algorithm that can decide theoremhood. Throughout this course we have studied some of the ideas that arose in this quest. Formal logic was developed so that mathematics and proofs could be expressed in a precise enough way that they are amenable to computation. We have seen how number theory can be written in this language by using the Peano Axioms and how theorems about the natural numbers can be proved. In order to answer Hilbert logicians had to clarify what was meant by ``algorithm'' and ``computation''. Turing Machines were advanced by Alan Turing, Recursive Functions by Kleene and G\"{o}del, and the $\lambda$-calculus by Alonso Church - at this point there are many models of computation. In this course we first explored the nature of computation from the point-of-view of the $\lambda$-calculus. It is generally believed that the $\lambda$-calculus is capable of expressing any procedure that is deemed computable; that the general concept of computability is captured by $\beta$-reduction in the $\lambda$-calculus - this belief is known as the Church-Turing-Kleene Thesis - hereafter simply, Church's Thesis. In fact Church, Haskell, and others showed that the $\lambda$-calculus can express computations whose normalisation is undecidable. Church's thesis suggests this is saying the same thing as Turing's proof of the undecidability of the Halting Problem. There can be no $\lambda$-term which determines whether any other $\lambda$-term has a normal form. Nor any Turing machine that determines whether any other Turing machine will halt. Put plainly, Church showed that there are $\lambda$-terms which may go on computing forever, or stop in the very next second - we just can't know! In reaction to this Church, Haskell Curry, and others developed the typed $\lambda$-calculi. So long as programs were well-typed, they showed their programs were normalising. Of course this means giving up expressibility - these languages can't be Turing complete if all programs are known to normalise/halt - in favour of normalisation. 
+        
+        Following this thread in the theory of computation we were led back to the start of our story, back to natural deductions. Haskell Curry, William Howard and others have shown that the process of writing well-typed $\lambda$-terms is the very same process as intuitionistic natural deductions. This correspondence, now called the Curry-Howard Correspondence, tells us that proofs in logic can be encoded in $\lambda$-terms. If $t : T$ is a $\lambda$-term, then $t$ encodes of a proof $T$ interpreted as a proposition. Much of this work by logicians on logic, computation, and type theory is now continued in \emph{programming language theory}. All of this work on computation has informed what we now call programming languages; the languages we use to cast spells into our devices. Functional programming languages like ML, the LISP family, Miranda, and Haskell were all ultimately inspired by the  $\lambda$-calculus in both its typed and untyped variants. Following on from Curry and Howard, the logicians Jean-Yves Girard and Per Martin-L\"{o}f extended the Curry-Howard correspondence to first (and higher) order logics. These so called \emph{dependently typed $\lambda$-calculi} have formed the foundation of a number of modern programming languages; Coq, Agda, Isabelle, and Lean are just a few of the many languages available to write and check formal proofs/programs. With the development of programming languages, we now longer use typing derivations to write programs. We write the program using a specific language (e.g. Haskell) and we use a type checker (another program) to verify the program we have written has the type we claim it does. This final chapter will explain how to move away from natural deductions and typing derivations, by writing our proof-terms in the programming language Lean. 
+
+        Lean was released in 2013 by Leonardo de Moura, of Microsoft Research. At the core of the standard library of Lean are all the ideas we have studied in this course, along with many other modern developments in programming language theory. With these theoretical foundations one can write programs and have the Lean type checker check the proofs. Programmers in Lean have the ability to define their own types which allows the programmer to express mathematics in the language. More than just a type checker Lean is a \emph{proof assistant}. It is a fully fledged programming language and therefore the user is able to define meta-programs (often referred to as tactics) to help generate proof-terms. Although we have written proof-terms explicitly (and by hand), we will soon see that the ability to write meta-programs is an indispensible feature for writing proofs about mathematics of even very limited sophistication. 
+
+    \newpage
+    \section{Proof-terms in Lean}
+
+    At this point we have all but written Lean programs already. Those well-typed programs written by typing derivations in the previous chapter are a few syntax changes away from being code accepted by the Lean type-checker. All of the syntax changes for writing programs in Lean are collated in the following table: 
+
+    \begin{table}[htbp]
+    \centering
+    \begin{tabular}{p{2cm} p{2cm} p{4.5cm}}
+        \textbf{PL} & $\boldsymbol{\lambda}$ & \textbf{L$\exists\forall$N 4} \\
+        \hline
+        $\land I$& $(p,q)$ & And.intro $p$ $q$\\ 
+        $\land E_{l}$& \fst \ $t$ & And.left $t$ \\
+        $\land E_{r}$& \snd \ $t$ & And.right $t$ \\
+        $\to I$& $\lambda \ p : P. \ $ & $\lambda \ p : P =>$\\
+        $\to E$& $(f \ t)$ & $(f \ t)$ \\
+        $\lor I_{l}$& \inl \ $p$ & Or.intro\_left <right-disj> $p$ \\
+        $\lor I_{r}$& \inr \ $p$ & Or.intro\_right <left-disj> $p$ \\
+        $\lor E$& \sumElim \ $t$ $f$ $g$ & Or.elim $t$ $f$ $g$
+    \end{tabular}
+    \caption{Syntax of logic, $\lambda$-calculus, and L$\exists\forall$N 4}
+    \label{tab:lean_translate}
+    \end{table}
+
+    For example, where we would use $\land$ introduction in propositional logic, or the product $\times$ constructor in simple type theory, we use the Lean expression And.intro. Although it's not quite as simple as swapping terms out place by place, it pretty much is that simple! We have been using the $\times$ type constructor as an infix operator where as And.intro is a prefix constructor in Lean. 
+
+    Disjunction introduction requires an extra argument. If we were introducing $P \lor Q$ from a term $t: P$, then one would write Or.intro\_left $Q$ $t$ to say that a term of type $P$ is being introduced to the left of type $Q$. Previously we would have simply written $\inl \ p$ and left the type $Q$ to be inferred from the deduction tree. Similarly, if given a term $t : Q$, then one would write Or.intro\_right $P$ $t$ to introduce the term of type $Q$ to the right of the disjunction with $P$. 
+
+    \begin{eg}{Program Composition}
+
+        Earlier we derived the following proof-term witnessing the composability of programs.
+
+        $$ \lambda x : P. \ g \ (f \ x) $$
+
+        When writing a proof in Lean extra structure is needed to tell Lean the theorem you're intending to prove. The following is a complete working example of Lean code for this theorem: 
+
+        \begin{lstlisting}
+            variable (P Q R : Prop)
+    
+            --                       P → Q       Q → R  ⊢ P → R
+            theorem composition (f : P → Q) (g : Q → R) : P → R :=
+              λ p : P =>
+                g (f p)
+        \end{lstlisting}
+    
+        Line-by-line this is what the code is doing. First we declare P, Q, and R to be propositional variables. Next, lines beginning with -{}- are comments; they are for human readers only, to help illustrate what the code is doing. This comment is indicating how to align our usual syntax with that of Lean on the next line. Lean programs can be opened by the ``theorem'' keyword and have the following structure:
+        
+        \begin{center}
+            theorem <name> <hypotheses> : <goal-type> := 
+                <proof-term>
+        \end{center}
+
+        This theorem is named composition. It has two hypotheses; $(f : P \to Q)$ and $(g : Q \to R)$. Our aim is to prove, under these hypotheses, the proposition $P \to R$; this is called the \emph{goal} of the theorem. Finally, the proof-term is translated from the typing derivation earlier in the notes using the table at the beginning of this section. This proof-term has type identical to the goal and as such is sufficient for a proof of this theorem. 
+    \end{eg}
+
+    \begin{eg}{I Combinator}
+
+        In this example we consider the I combinator, or identity function. This program witnesses the proof of the following theorem: $$ \vdash \ P \to P$$
+        Notice this is a \emph{theorem} and as such has no hypotheses. For this reason, the goal is stated directly after the name of the theorem.
+
+        \begin{lstlisting}
+            variable (P : Prop)
+            
+            --                  ⊢ P → P
+            theorem Icombinator : P → P :=
+                λ p : P =>
+                    p
+        \end{lstlisting}  
+        
+    \end{eg}
+
+    \begin{eg}{S Combinator}
+        In this example we show that the bound variables of the $S$ combinator can be consistently assigned types. Again, this proof-term corresponds to a theorem with no hypotheses. Again, this is an exercise in \emph{translation} as we have already derived a proof-term for this theorem. Write the corresponding term in Lean. 
+
+        \begin{lstlisting}
+        variable (P Q R : Prop)
+
+        --                  ⊢ (P → (Q → R)) → ((P → Q) → (P → R))
+        theorem Scombinator : (P → (Q → R)) → ((P → Q) → (P → R)) :=
+        λ f : P → (Q → R) =>
+          λ g : P → Q =>
+            λ w : P =>
+              (f w) (g w)
+        \end{lstlisting}  
+        
+        There are three nested implications and therefore three abstractions. Equivalently, there are three applications of the deduction theorem.      
+    \end{eg}
+
+    \begin{eg}{K Combinator}
+
+        This theorem confuses many when viewed from the point of view of propositional logic. Some find this computational point-of-view clarifying. 
+
+        \begin{lstlisting}
+            variable (P Q : Prop)
+            
+            --                  ⊢ P → (Q → P)
+            theorem Kcombinator : P → (Q → P) :=
+            λ p : P =>
+              λ q : Q =>
+                p
+            \end{lstlisting}  
+
+        Given a term of type $P$ (i.e.  $\lambda \ p : P$ =>) how does one obtain a term of type $Q \to P$? Such a term is a function from $Q$ which returns a term of type $P$. Which $P$ does it return? It returns the input $p$ from the first abstraction. This is really the same as the I combinator proof; from a term of type $P$ one can always obtain a term of type $P$.
+    \end{eg}
+
+    \begin{eg}{Conjunction Commutative}
+
+        Earlier we derived the following proof-term witnessing the commutativity of conjunction:
+
+        $$ (\snd \ t, \fst \ t) : Q \land P $$
+
+        Using the Table this proof-term can be written as follows:
+
+        \begin{lstlisting}
+        variable (P Q : Prop)
+
+        --                     P ∧ Q  ⊢ Q ∧ P
+        theorem conj_comm (t : P ∧ Q) : Q ∧ P :=
+            And.intro (And.right t) (And.left t)
+        \end{lstlisting}        
+    \end{eg}
+
+    \begin{eg}{Conjunction Associative}
+        
+        Earlier we derived the following proof-term witnessing the associativity of conjunction:
+
+        $$ (\fst \ (\fst \ t), (\snd \ (\fst \ t), \snd \ t)) : P \land (Q \land R) $$
+
+        There is another way to project off the components of a term $t : P \land Q$ of a conjunction type. Instead of (\fst t) one can simply use t.left to get the first component and t.right to get the second component. Using this form of $\land$ elimination instead the proof term can be written as follows: 
+
+        \begin{lstlisting}
+        variable (P Q R : Prop)
+        
+        --                 ⊢ (P ∧ Q) ∧ R → P ∧ (Q ∧ R)
+        theorem conj_assoc : (P ∧ Q) ∧ R → P ∧ (Q ∧ R) :=
+            λ t : (P ∧ Q) ∧ R =>
+                And.intro (t.left.left)
+                            (And.intro (t.left.right) (t.right))
+        \end{lstlisting}        
+    \end{eg}
+
+    \begin{eg}{Currying} Let's revisit currying. Recall the following proof from earlier in the course where the two approaches have been blended together, some type theory notation with some propositional logic notation.
+
+    $$f : (P\times Q) \rightarrow  R \vdash  P \rightarrow (Q \rightarrow  R)$$		    
+        \begin{center}
+            $\begin{array}{c}
+                \infer[\lambda,1]{\lambda x. \lambda y. \ f(x,y) \ : \ P\to(Q\to R)}
+                    {\infer[\lambda,2]{\lambda y. \ f(a,y) \ : \ Q\to R}
+                        {\infer[\MP]{f(a,b) \ : \ R}
+                            {f \ : \ (P\land Q) \to R
+                            &
+                            \infer[\land I]{(a,b) : P\land Q}
+                                {\infer[1]{a:P}{}
+                                &
+                                \infer[2]{b:Q}{}}}}}
+            \end{array}$
+        \end{center}    
+
+    The resulting explicitly typed $\lambda$-term below
+    $$ \lambda x : P. \ \lambda y : Q. \ f \ (x,y) \ : \ P \to (Q \to R)$$
+    is the proof-object witnessing the proof of the sequent. According to the syntax table (Table \ref{tab:lean_translate}) this is translated into the following Lean code:
+
+    \begin{lstlisting}
+        variable (P Q R : Prop)
+
+        --                 (P ∧ Q) → R  ⊢ P → (Q → R)
+        theorem curry (f : (P ∧ Q) → R) : P → (Q → R) :=
+            λ p : P =>
+                λ q : Q =>
+                    f (And.intro p q)
+    \end{lstlisting}
+
+    This theorem is named ``curry'' and it uses one hypothesis $f : (P \land Q) \to R$ to prove the goal $P \to (Q \to R)$. In fact curry is a function that takes in a term $f : (P \land Q) \to R$ and returns a term of type $P \to (Q \to R)$; the program it returns is the proof-term derived above. So if one ever has a term of type $(P \land Q) \to R$, the program curry will turn it use it to write a term of type $P \to (Q \to R)$. This means it can be reused in future proofs.
+    \end{eg}
+
+    \begin{eg}{Uncurry}
+            \begin{lstlisting}
+                variable (P Q R : Prop)
+
+                --                    P → (Q → R)  ⊢  (P ∧ Q) → R 
+                theorem uncurry (f :  P → (Q → R)) :  (P ∧ Q) → R :=
+                λ t : P ∧ Q =>
+                  (f (And.left t)) (And.right t)
+            \end{lstlisting}
+    \end{eg}
+
+    The previous two examples show that the two propositions are logically equivalent $$(P \land Q) \to R \dashv \vdash \ P \to (Q \to R)$$ We can prove this in Lean using the following code: 
+    
+    \begin{eg}{Logical Equivalence}
+        \begin{lstlisting}
+            variable (P Q R : Prop)
+
+            theorem curry_equiv : (P ∧ Q) → R ↔ P → (Q → R) :=
+                Iff.intro
+                    -- (P ∧ Q) → R ⊢ P → (Q → R)
+                    (curry P Q R)
+                    -- P → (Q → R) ⊢ (P ∧ Q) → R
+                    (uncurry P Q R)
+        \end{lstlisting}
+        Iff.intro (read: If and only if intro) has two arguments corresponding to the forward and reverse direction of the proof. One could explicitly write the proofs of these implications again. However, it suffices to state the name of the corresponding theorem with the appropriate arguments. In this case the arguments are simply the propositional variables used in the statement of the theorem. 
+    \end{eg}
+
+    \newpage
+    \begin{eg}{Disjunction Commutative}
+
+        Earlier we derived the following proof-term witnessing the commutativity of disjunction:
+
+        $$ \sumElim \ t \ (\lambda \ p : P. \ \inr \ p) \ (\lambda \ q : Q. \ \inl \ Q) : Q \lor P $$
+
+        Using the Table \ref{tab:lean_translate} this proof-term can be written as follows:
+
+        \begin{lstlisting}
+        variable (P Q : Prop)
+
+        --           P ∨ Q  ⊢ Q ∨ P
+        example (t : P ∨ Q) : Q ∨ P :=
+        Or.elim t
+          (λ p : P =>
+            Or.intro_right Q p)
+          (λ q : Q =>
+            Or.intro_left P q)  
+        \end{lstlisting}
+    \end{eg}
+
+    \begin{eg}{Disjunction Associative}
+        
+        Earlier we derived the following proof-term witnessing the associativity of conjunction:
+        $$ \sumElim \ t \ (\lambda \ x : P \lor Q. \ \sumElim \ x \ (\lambda p : P. \ \inl \ p) \ (\lambda q : Q. \ \inr \ (\inl \ q))) \ (\lambda r : R. \ \inr \ (\inr \ r)) : P \lor (Q \lor R) $$
+        Table \ref{tab:lean_translate} can be used to translate this proof-term. There are three inputs for the cases (Or.elim) constructor, using indenting and aligning the components can help keep the code clear. 
+
+        \begin{lstlisting}
+        variable (P Q R : Prop)
+        
+        --                      (P ∨ Q) ∨ R  ⊢ P ∨ (Q ∨ R)
+        theorem disj_assoc (t : (P ∨ Q) ∨ R) : P ∨ (Q ∨ R) :=
+            Or.elim t
+            (λ w1 : P ∨ Q =>
+                Or.elim w1
+                (λ w2 : P =>
+                    Or.intro_left (Q ∨ R) w2)
+                (λ w3 : Q =>
+                    Or.intro_right P (Or.intro_left R w3)))
+            (λ w4 : R =>
+                Or.intro_right P (Or.intro_right Q w4))
+        \end{lstlisting}        
+    \end{eg}
+
+    \begin{eg}{Modus Tollens}
+        
+        Earlier we derived the following proof-term witnessing Modus Tollens:
+        $$ \lambda x : P. \ g \ (f \ p) : \lnot P $$
+        Table \ref{tab:lean_translate} can be used to translate this proof-term. Notice that since the hypotheses and goal are stated as part of the theorem, Lean is able to infer the correct type of the abstraction and we need not write it explicitly. 
+
+        \begin{lstlisting}
+        variable (P Q : Prop)
+        
+        --                         P → Q       ¬Q  ⊢ ¬P
+        theorem modus_tollens (f : P → Q) (g : ¬Q) : ¬P :=
+        λ p => g (f p)
+        \end{lstlisting}        
+    \end{eg}
+
+    \begin{eg}{Contraposition}
+        \begin{lstlisting}
+            variable (P Q : Prop)
+            
+            --                           P → Q  ⊢ ¬Q → ¬P
+            theorem icontraposition (f : P → Q) : ¬Q → ¬P :=
+            λ w : ¬Q =>
+              modus_tollens P Q f w
+            \end{lstlisting}    
+    \end{eg}
+    
+    \newpage
+    \section{Classical Logic in Lean}
+
+    In so far as we have covered the idea of propositions-as-types, the correspondence is typically considered to be between intuitionistic logic and type theory\footnote{Work by Timothy Griffin has shown there to be a computational interpretation of classical logic, although this is not how Lean implements classical logic and not covered in these notes}. Lean's type system has an axiom, called the axiom of choice, which allows for a \emph{proof} of the Law of Excluded Middle. This result is often referred to as Diaconescu's theorem. This means that Lean is capable of expressing and checking theorems in classical logic. Typing the following prompt into Lean: 
+
+    \begin{lstlisting}
+    open Classical
+
+    -- em : ∀ P : Prop, P ∨ ¬P
+    #print em 
+    \end{lstlisting}
+    
+    Shows a long proof of LEM following the proof of Diaconescu's Theorem. Notice that the ``Classical'' name space must be open before this term is available. There are other elements of Lean's underlying type theory that allow for this proof, but these will not be covered here. For more on this the reader is encouraged to see the final chapter of \href{https://lean-lang.org/theorem\_proving\_in\_lean4/axioms\_and\_computation.html}{Theorem Proving in Lean 4}.
+
+    For those interested in proving theorems of classical logic in Lean it is enough to know a term in the Classical namespace can be called upon to use LEM in a proof. For example, we can write the proof that double negation elimination follows from the law of excluded middle in Lean as follows: 
+
+    \begin{lstlisting}
+        variable (P : Prop)
+        open Classical
+    
+        --          ⊢ ¬¬P → P
+        theorem dne : ¬¬P → P :=
+          λ nnp : ¬¬P =>
+            Or.elim (em P)
+              (λ p : P => p)
+              (λ np : ¬P => False.elim (nnp np))
+    \end{lstlisting}
+
+    In fact the classical namespace allows for notation to write a proof by contradiction. Here is the same proof written with the byContradiction pattern:
+
+    \begin{lstlisting}
+        variable (P : Prop)
+        open Classical
+    
+        --          ⊢ ¬¬P → P
+        theorem dne : ¬¬P → P :=
+            λ nnp : ¬¬P =>
+                byContradiction
+                    (λ np : ¬P => nnp np)
+    \end{lstlisting}
+
+    These are sufficient for our purposes in this course. Further patterns for classical logic can be found in \href{https://lean-lang.org/theorem\_proving\_in\_lean4/axioms\_and\_computation.html}{Theorem Proving in Lean 4}. 
+
+    \newpage
+    \section{Tactic Proofs in Lean}
+
+    % When lecturing/demonstrating tactic proofs it might be good to have the hand-written natural deduction visible. Indicating how each tactic corresponds to a move in that proof. This should amount to reading the proof backwards. 
+
+    We have seen that Lean is capable of checking proofs that we write. In this section we will see that Lean is also a good assistant, capable of helping us compose proof-terms. This is indispensible for proofs of even moderate difficulty. Lean is a general purpose programming language, which means programmers can write programs to help generate proof-terms; so called, \emph{metaprograms} or \emph{tactics}. Therefore it is not necessary to write proof terms directly, but rather use (and write new) tatics to help expedite the process of writing proofs. In a sense this is similar to how computers understand binaries, but we write programs in higher level languages that are closer to how we think. CPUs don't naturally understand the language we write, our source-code must first be compiled (interpreted, or assembled) down to something the CPU can make sense of. Our proof-terms are the certificates checked by the type checker, but that does not mean we have to write them explicitly in that way. We can use higher-order tactics and ``compile'' them down to explicit proof terms; this processes is called \emph{elaboration}. That is, elaboration takes source code using higher-order procedures to proof-terms, as compilation takes source code to binaries. 
+
+    Tactics focus on the goal. Changing the goal and proof state into equivalent states. This is akin to our use of the deduction theorem when using temporary hypotheses. Or breaking an Or-elimination proof up into a few steps. By applying a tactic we are telling Lean ``in order to prove this goal from these hypotheses, it suffices to prove this new goal from this new set of hypotheses''. It can be helpful to have the corresponding natural deduction at hand when writing these proofs. 
+
+    \begin{eg}{Meta-programs aka Tactics}
+        Let us return to the type corresponding to the $S$-combinator. In the previous section we wrote the corresponding proof-term directly into Lean. This time we will illustrate the use of ``tactic mode'' in Lean to prove this theorem. 
+        
+        \begin{center}
+            \begin{lstlisting}
+                variable (P Q R S T : Prop)
+
+                -- S combinator
+                theorem scombinator : (P → (Q → R)) → ((P → Q) → (P → R)) :=
+                    by
+                        intro f 
+                        intro g 
+                        intro p
+                        exact (f p) (g p)
+            \end{lstlisting}
+        \end{center}
+
+        First notice the use of the keyword ``by'' to indicate that tactic mode is being used. Each line after that must begin with a tactic. In this example two tactics are being used; intro, and exact. Along with the simplified syntax, tactic mode (in VSCode) has a second panel that keeps track of the proof state, or proof state; the live hypotheses and the goal. This changes each time a tactic is applied; this dynamic process is difficult to illustrate in a static document so make sure to watch the demonstrations in lectures and in labs. 
+
+        Initially the proof state reads as follows: 
+
+        \begin{center}
+            \begin{lstlisting}
+                1 goal
+                P Q R S T : Prop
+                ⊢ (P → Q → R) → (P → Q) → P → R
+            \end{lstlisting}
+        \end{center}
+
+        Indicating the hypotheses and the goal. Note the only hypothesis is the fact that P Q R S T are all propositions. 
+
+        Intro is analogous to our use of the deduction theorem. It moves the antecedent of an implication into the context and changes the goal accordingly. We are assuming the antecedent and Lean knows that it needs to be discharged later, so we don't bother writing the discharge line in the proof. There are three implications, therefore three introductions. Lean has the ability to infer the type being introduced, so it is sufficient to supply a name to the term of the type. After the first use of the intro tactic, the proof state changes to the following
+
+        \begin{center}
+            \begin{lstlisting}
+                1 goal
+                P Q R S T : Prop
+                f : P → Q → R
+                ⊢ (P → Q) → P → R
+            \end{lstlisting}
+        \end{center}
+
+        Notice both the hypotheses and goal have changed. Lean infers the type to assign the term $f$ and changes the goal according this new hypotheses. Two further introductions change the proof state to the following: 
+
+        \begin{center}
+            \begin{lstlisting}
+                1 goal
+                P Q R S T : Prop
+                f : P → Q → R
+                g : P → Q
+                p : P
+                ⊢ R
+            \end{lstlisting}
+        \end{center}        
+        
+        Under the assumption of two more hypotheses it is sufficient to give a term of type $R$. Exact is a line to say the proof is finished. It takes as an argument a term with the same type as the goal; in this case a term of type $R$ must be supplied. Finally the proof state reads as follows: 
+
+        \begin{center}
+            \begin{lstlisting}
+                No goals    
+            \end{lstlisting}
+        \end{center}        
+        
+        Glorious! Our one goal has been achieved and we are done! But what does this tactic proof give us? It produces a proof term. This can always be accessed by the following command: 
+
+        \begin{center}
+            \begin{lstlisting}
+                variable (P Q R : Prop)
+
+                -- S combinator
+                theorem scombinator : (P → (Q → R)) → ((P → Q) → (P → R)) :=
+                  by
+                    intro f
+                    intro g
+                    intro p
+                    exact (f p) (g p)
+                
+                #print scombinator 
+
+                ------------------------
+                
+                ∀ (P Q R : Prop), (P → Q → R) → (P → Q) → P → R :=
+                fun P Q R f g p => f p (g p)
+            \end{lstlisting}            
+        \end{center}    
+    \end{eg}
+
+    Notice that the proof-term written by our tactic proof is the same proof-term that we wrote explicitly in the previous section and, indeed, in the previous chapter on simple type theory. Tactic proofs still write $\lambda$-terms, these are the certificates that we use to verify the proof. This new method allows for a different experience in \emph{writing the proof} but leads to the same output. 
+
+    \newpage
+    \begin{eg}
+        In the previous example the two tactics were applied to the goal. Tactics can also change the proof state by working on hypotheses. In this example we will prove the commutativity of disjunction using a new tactic called ``apply''. Setting up the theorem and using the keyword ``by'' to indicate the proof will be written in tactic-mode, the proof state is presented as follows:
+        \begin{center}
+            \begin{lstlisting}
+                1 goal
+                P Q R S T : Prop
+                t : P ∨ Q
+                ⊢ Q ∨ P
+            \end{lstlisting}            
+        \end{center}
+        The key step in the pen-and-paper version of this proof is the use of $\lor$ elimination. Although this is (in some sense) the last step in the proof, it is often the first thing we would write down. From there we would proceed \emph{backwards} up the two implication branches. This ``backwards'' working can be implemented in Lean using tactics. Lets ``apply'' $\lor$-elimination to the hypothesis $t : P \lor Q$: 
+        \begin{center}
+            \begin{lstlisting}
+                variable (P Q : Prop)
+                
+                theorem disj_comm (t : P ∨ Q) : Q ∨ P :=
+                by
+                  apply Or.elim t
+            \end{lstlisting}            
+        \end{center}
+        First thing one might notice is the redline underneath ``by''; that's simply saying we are not done yet. One will also see that we have moved from 1 goal to 2 goals!
+        \begin{center}
+            \begin{lstlisting}
+                2 goals
+
+                case left
+                P Q : Prop
+                t : P ∨ Q
+                ⊢ P → Q ∨ P
+                
+                case right
+                P Q : Prop
+                t : P ∨ Q
+                ⊢ Q → Q ∨ P
+            \end{lstlisting}            
+        \end{center}
+        Each new goal, or case, corresponds to the two implications required for the $\lor$ elimination step. These have to be tackled in the order presented when using this tactic.
+        \begin{center}
+            \begin{lstlisting}
+                variable (P Q : Prop)
+                
+                theorem disj_comm (t : P ∨ Q) : Q ∨ P :=
+                by
+                  apply Or.elim t
+                  -- case left 
+                  intro p
+                  apply Or.intro_right
+                  exact p
+                  -- case right
+                  intro ?
+                  apply ?
+                  exact ?
+            \end{lstlisting}            
+        \end{center} 
+        First we prove the implication $P \to Q \lor P$. This requires supposing the antecedent using the intro tactic. One can also ``apply'' terms to the goal. Since we are to prove a disjunction we can apply Or.intro\_right. This amounts to saying, in order to prove the current goal, it is sufficient to prove $P$. This changes the goal to $P$ and we can use (exact) the assumption $p$ introduced in this case. Finish the right-hand case by filling in the ? with the appropriate terms. 
+    \end{eg}
+
+    \newpage
+    \begin{eg}
+        In this example we will prove the associativity of conjunction. With this proof we will illustrate the use of one new tactic, the ``have'' tactic. Setting up the theorem and using ``by'' to indicate tactic mode we are presented with the following proof state: 
+        \begin{center}
+            \begin{lstlisting}
+                1 goal
+                P Q R S T : Prop
+                t : (P ∧ Q) ∧ R
+                ⊢ P ∧ Q ∧ R
+            \end{lstlisting}            
+        \end{center}
+        As we are to prove a conjunction, the first move is to apply And.intro. This says it is sufficient to prove both sides of the conjunct and therefore splits the proof into two subproofs, or two cases. 
+        \begin{center}
+            \begin{lstlisting}
+                2 goals
+
+                case left
+                P Q R S T : Prop
+                t : (P ∧ Q) ∧ R
+                ⊢ P
+                
+                case right
+                P Q R S T : Prop
+                t : (P ∧ Q) ∧ R
+                ⊢ Q ∧ R
+            \end{lstlisting}            
+        \end{center}
+        To settle the first goal, we must provide a term of type $P$. This can be obtained from our hypothesis $t$ with two applications $\land$-elimination; being careful to pick the correct side. This can be done inline by nesting applications of And.elim. However, we will illustrate the use of ``have'' to break the proof down into steps. On the path proving $P$ we first prove $P \land Q$. This can written in Lean in the following way:
+        \begin{center}
+            \begin{lstlisting}
+variable (P Q R S T : Prop)
+
+theorem conj_assoc (t : (P ∧ Q) ∧ R) : P ∧ (Q ∧ R) :=
+by
+    apply And.intro
+    have h1 : P ∧ Q := And.left t
+            \end{lstlisting}            
+        \end{center}
+        Accordingly the proof state (case left) updates to indicate the introduction of a new hypothesis. 
+        \begin{center}
+            \begin{lstlisting}
+2 goals
+
+case left
+P Q R S T : Prop
+t : (P ∧ Q) ∧ R
+h1 : P ∧ Q
+⊢ P
+            \end{lstlisting}            
+        \end{center}
+        Exact can close this case in one-line, but we will grab $P$ of the term h1 using have again to illustrate the tactic.
+        \begin{center}
+            \begin{lstlisting}
+variable (P Q R S T : Prop)
+
+theorem conj_assoc (t : (P ∧ Q) ∧ R) : P ∧ (Q ∧ R) :=
+by
+    apply And.intro
+    -- case left
+    have h1 : P ∧ Q := And.left t
+    have h2 : P     := And.left h1
+    exact h2
+            \end{lstlisting}            
+        \end{center}
+
+        At this point in the proof we are to prove the second case, the conclusion of which is also a conjunction. Another application of And.intro will split the second case into two sub-cases, thus we have nested cases - we best keep our wits about us; we can use the proof state display to keep track of which sub-(sub-sub-...) proof we are currently working on. 
+
+        \begin{center}
+            \begin{lstlisting}
+variable (P Q R S T : Prop)
+
+theorem conj_assoc (t : (P ∧ Q) ∧ R) : P ∧ (Q ∧ R) :=
+by
+    apply And.intro
+    -- case left
+    have h1 : P ∧ Q := And.left t
+    have h2 : P     := And.left h1
+    exact h2
+    -- left case of right case
+    apply ?
+    have h3 : ?   := ?
+    have h4 : ?   := ?
+    exact ?
+    -- right case of right case
+    exact ?
+            \end{lstlisting}            
+        \end{center}
+        Complete the remainder of the proof by replacing ? with appropriate terms.  
+    \end{eg}
+
+    \newpage
+    \section{First-Order Logic in Lean}
+
+    Our discussion on the Curry-Howard isomorphism has so far shown us that there is an equivalence between natural deductions in (intuitionistic) propositional logic and typing derivations of well-typed $\lambda$-terms in simple type theory. In fact the Curry-Howard isomorphism can be extended to intuitionistic first-order predicate logic. Natural deductions in first-order logic correspond to typing derivations in \emph{dependent type theory}. Rather than cover dependent type theory by hand, like we did simple type theory, we will jump straight to writing proofs in Lean once a few preliminary ideas have been covered. For further reading about dependent types one can consult with either of the following \cite{thompson} \cite{hottbook}.
+
+    % Predicates.
+    First-order predicate logic introduced predicates and quantifers to propositional logic. Let us first consider how we think of predicates in dependent type theory. We defined predicates as functions from the domain of quantification into the set Prop of propositions. Each value(s) of the domain is mapped to a particular proposition. 
+
+    \begin{eg}
+        Parity (even/odd) provide examples of unary predicates on the type of natural numbers. For each natural number $n$ the predicate ``even'' determines a proposition ``even $n$'' which may either be provable, or refutable. In Lean we can express this predicate as follows:         
+    \end{eg}
+
+    In the previous example the predicate ``even'' is a device that generates propositions from natural numbers. That is, for each natural number $n$ the predicate ``even'' generates a different proposition ``even $n$''. Under the propositions-as-types isomorphism this is equivalent to saying that the predicate ``even'' generates a different type ``even $n$'' for each natural number. Since these types \emph{depend} on the particular natural number $n$, they are referred to as \emph{dependent types}. Verification of (e.g.) ``even $2$'' or ``$\lnot$ even $71$'' requires providing a term of these type. What this looks like depends on the definition of even. We will return to this later. 
+
+    \begin{eg}
+        Binary predicates, like ``divides'' or ``equality'', require two values in order to obtain a proposition. Therefore a binary predicate is a family of types parameterised by (depending on) two values of the domain type. 
+
+        % Show Lean definition of divides. 
+
+    \end{eg}
+
+    In general then an $n$-ary predicate on a domain type is a device for taking $n$ terms of the domain type and returning a Prop: 
+
+    % Lean code for this level of generality. 
+
+    We can therefore reason about an arbitrary predicate on an arbitrary type as we had been doing in the exercises of the first order logic tutorials. This will require understanding the type theoretic interpretation of the quantifers. 
+    
+    % Quantifiers.
+    Since the Curry-Howard isomorphism is the rigourous realization of the BHK interpretation, it is sufficient for our purpose of writing proofs in Lean to revist the BHK interpreation of the quantifiers \cite{sep-mathematics-constructive}. Intuitionistic proofs introducing quantifiers must be of the following form for an arbitrary predicate $P$: 
+	
+	\vspace{0.2cm}
+	
+	\begin{center}
+		\begin{tabular}{p{1.5cm}p{8cm}}
+		$\forall$ & a proof of $\forall x \ P \ x$ is an algorithm that, applied to \emph{any} object $x$ proves that $P(x)$.\\
+		$\exists$ & to prove $\exists x \ P \ x$ one must construct an object $x$ and prove that $P(x)$ holds. 
+		\end{tabular}
+	\end{center}
+    
+    Universally quantified statements (with no free variables) $\forall x \ P \ x$ are propositions. We aim to either prove them, or refute them. Under the Curry-Howard isomorphism this proposition is interpreted as a type $\forall x \ P \ x$. What does it mean to have a term of this type? We turn to the BHK to tell us; a term of type $\forall x \ P \ x$ is a function\footnote{Notice that the domain type \emph{depends} on the specific value of the input. For this reason such terms are oftern referred to as \emph{dependent functions}.} that takes in an \emph{arbitrary} term $x$ (of some domain) and returns a proof/term of the proposition/type $P \ x$. Thus to write a proof of such a statement in Lean we are required to write such a program. Furthermore, any hypotheses that are universally quantified act according to this definition; namely, as functions that return terms of specific types. 
+
+
+$\forall$-modus ponens. In this example we prove a universally quantified version of the common modus ponens rule of inference that we have been using. Instead of declaring propositional variables, we now declare type variables ($\alpha$) and arbitrary (unary) predicates $F, G,$ and $H$ on that arbitrary type. First we write the statement of the theorem: 
+
+\begin{center}
+\begin{lstlisting}
+    
+variable (α : Type)
+variable (F G H : α → Prop)
+
+theorem universal_mp (f1 : ∀ x : α, F x → G x) (f2 : ∀ x : α, F x) :
+    ∀ x : α, G x := sorry
+
+\end{lstlisting}            
+\end{center}
+
+Our two hypotheses are $f1$ and $f2$, each of which are terms of types corresponding to universal quantifiers. For each $a : \alpha$, the term $f1$ gives a term $(f1 \ a) : F \ a \to G \ a$. Notice that the name of the type \emph{depends} on the $a : \alpha$ that is passed to the function $f1$. Similarly, for each $a : \alpha$, the term $f2$ gives a term $(f2 \ a) : F \ a$. Where, again, the type of the codomain depends on the term passed to the function. 
+
+
+\begin{center}
+\begin{lstlisting}
+                
+variable (α : Type)
+variable (F G H : α → Prop)
+
+theorem universal_mp (f1 : ∀ x : α, F x → G x) (f2 : ∀ x : α, F x) :
+    ∀ x : α, G x :=
+        by
+        intro a
+\end{lstlisting}            
+\end{center}
+
+
+
+
+\begin{center}
+\begin{lstlisting}
+    
+variable (α : Type)
+variable (F G H : α → Prop)
+
+theorem universal_mp (f1 : ∀ x : α, F x → G x) (f2 : ∀ x : α, F x) :
+    ∀ x : α, G x :=
+        by
+        intro a
+        have w1 : F a := f2 a
+        have w2 : G a := (f1 a) w1
+        exact w2
+\end{lstlisting}            
+\end{center}
+
+
+Existentially quantified statements are also propositions and are thus equally well thought of as types. Here the BHK tells us that a term of type $\exists x \ P \ x$ is a pair consisting of a term $t$ of the domain and a term of the type $P \ t$ witnessing the proof that $t$ satisfies the predicate $P$. 
+
+\newpage
+\section{Peano Arithmetic in Lean}
+
+We have seen that the propositions-as-types correspondence allows for the encoding of first-order logic into type theory and now into Lean. Using this correspondence we can prove theorems about arbitrary propositions and first-order statements; theorems of logic. In order to prove statements about familiar mathematical objects - such as the natural numbers - these too must be encoded into our type theory. Rather than cover the pen-and-paper details of encoding the natural numbers into type theory, we will instead jump straight into writing the relevant Lean code. We will stop writing proof terms explicitly from now on and rely heavily on in-built tactics to aid our authoring of proofs. 
+
+We will use the Peano axioms to guide the representation of the type of natural numbers $\mathbb{N}$ in Lean. There are precisely two ways to construct a new natural number: either stating that zero is a natural number, or applying the successor constructor to a natural number already at hand. In Lean we can define the type as follows: 
+
+\begin{center}
+    \begin{lstlisting}
+    inductive ℕ where
+    | zero : ℕ
+    | succ : ℕ → ℕ
+    \end{lstlisting}
+\end{center}
+
+This defines the term ``zero'' to be a natural number and ``succ'' to be a function from natural numbers to natural numbers. Peano axioms 1 and 2 are implicit in this definition: Lean treats any two terms constructed with a different sequence of constructors as not equal, and succ as an injective function. For completeness we state the code for these ``theorems" below, however for the purposes of the assessment it is not necessary to know how the tactic injection works.
+
+\begin{center}
+    \begin{lstlisting}
+        theorem PA1 : ∀ x : ℕ, ¬(zero = succ x) :=
+        by
+          intro a
+          intro t
+          injection t
+      
+      theorem PA2 : ∀ m n : ℕ, (succ m) = (succ n) → m = n :=
+        by
+          intro m n
+          intro t
+          injection t
+    \end{lstlisting}
+\end{center}
+
+For more on the tactic ``injection'' one can consult this ??? document. At this point we can prove statments like $1 \neq 2$ 
+
+\begin{center}
+    \begin{lstlisting}
+theorem one_neq_two : (succ zero) ≠ succ (succ zero) :=
+  by
+    intro t
+    have h : zero = succ zero
+      := PA2 zero (succ zero) t
+    exact PA1 zero h
+    \end{lstlisting}
+\end{center}
+
+\subsection*{Addition of Natural Numbers}
+
+Axioms 3 - 6 are recursive definitions for addition and multiplication of natural numbers. These axioms are encoded as functions on the type $\bn$. Axiom three is the base case for the recursive definition of addition and axiom four is the recursive step. In Lean they determine the following function: 
+
+\begin{center}
+    \begin{lstlisting}
+    def add (m n : ℕ) : ℕ :=
+    match n with
+        | zero   => m
+        | succ n => succ (add m n)
+    \end{lstlisting}
+\end{center}
+
+In order to be consistent with the notation from earlier in the course we can use this definition of addition to prove theorems corresponding to PA3 and PA4. 
+
+\begin{center}
+    \begin{lstlisting}
+    theorem PA3 (m : ℕ) : m + zero = m := by rfl
+    theorem PA4 (m n : ℕ) : m + (succ n) = succ (m + n) := by rfl
+    \end{lstlisting}
+\end{center}
+
+These theorems introduce a new tactic ``rfl'' which is telling Lean these two things are \emph{defined} to be equal, so there is nothing to prove. We have also denoted the add function with the infix ``\_+\_'' notation, rather than the prefix notation ``add'' which the function was defined with; this uses the typeclass system in Lean. It is enough for us to know that addition can be denoted with the infix notation. For more on the typeclass system and operator overloading one may consult this.
+
+\begin{eg}{Rewrite Tactic}
+
+    We have written a natural deduction for the following theorem in the first-order language of Peano artihmetic. $$ \PA \ \vdash \ \forall x : \bn, \ \suc \ x = x + \ (\suc \ \zero)$$ We enter the theorem in as follows: 
+    \begin{center}
+        \begin{lstlisting}
+        theorem succ_eq_plusone : ∀ x : ℕ, succ x = x + (suc zero) :=
+            by
+                intro a
+        \end{lstlisting}
+    \end{center}
+    We start with ``intro a'' because we are proving a universally quantified statement. We need an arbitrary natural number to write the program showing the equation always holds. At this point the goal is as follows: 
+    \begin{center}
+        \begin{lstlisting}
+            1 goal            
+            a : ℕ            
+            ⊢ succ a = a + succ zero
+        \end{lstlisting}
+    \end{center}
+    Here we begin to depart from the natural deduction format setout earlier in the course. Of course, underneath the hood proof-terms are written. But the point of using meta-programs (tactics) is to make the process of writing proof-terms easier for the mathematician and computer scientist. Here we really begin to feel the difference.
+
+    Here we introduce a new tactic ``rewrite'' (forever abbreviated as ``rw'') which \emph{acts on the goal} by applying known equations in the form of theorems. Each time we use a rw statement is as if we are saying ``in order to prove the current goal, it would be sufficient to prove this updated goal'' where the updated goal is obtained using a theorem. Which theorems do we apply? We consider the terms in the goal and use what we know to rw them. 
+
+    In this case there is only one step of computation that could happen. On the right of the equation we see an instance of PA4; the right addition of a successor. This means we can apply PA4 - rw according to PA4 - to change the goal. 
+    \begin{center}
+        \begin{lstlisting}
+        theorem succ_eq_plusone : ∀ x : ℕ, succ x = x + (succ zero) :=
+        by
+            intro a
+            rw [PA4]
+        \end{lstlisting}
+    \end{center}
+    With this step in the proof the goal changes to the following: 
+    \begin{center}
+        \begin{lstlisting}
+            1 goal
+            a : ℕ
+            ⊢ succ a = succ (a + zero)
+        \end{lstlisting}
+    \end{center}
+    Again, there is only one step that can be made; rw according to PA3 the right addition of zero. 
+    \begin{center}
+        \begin{lstlisting}
+        theorem succ_eq_plusone : ∀ x : ℕ, succ x = x + (succ zero) :=
+        by
+            intro a
+            rw [PA4]
+            rw [PA3]
+        \end{lstlisting}
+    \end{center}
+    At this point the goal changes to succ a = succ a which can be closed by Lean. You might wonder where rfl has gone? It is tied up in the ``rw'' tactic. Lean always checks for rfl when rw are performed. 
+
+\end{eg}
+
+In the previous example we used rw to substitute equal terms for equal terms thus (hopefully!) simplyfying the goal to something we can prove. In fact, one application of PA4 performs one step of computation; it computes the sum in the term. Similarly, one application of PA3 computes the resulting sum. In other words, we are applying $\beta$-reduction on redexes. Lean is able to do this itself using rfl! Terms don't have to be literally the same in order for rfl to close a goal; it is sufficient for them to be the same ``upto computation''. This simplifies the previous example considerably. 
+\begin{center}
+    \begin{lstlisting}
+    theorem succ_eq_plusone : ∀ x : ℕ, succ x = x + (succ zero) :=
+    by
+        intro a
+        rfl
+    \end{lstlisting}
+\end{center}
+This is only possible because \_+\_ is \emph{defined} this way. We will need to write explicit rw statements when we are invoking theorems and not simply definitions. Note the ``intro a'' is still required because rfl works on equations, not on universally quantified statements. 
+
+\begin{eg}{Mere Computation}
+
+    It should not come as a surprise that 2 + 1 = 3. So go ahead and prove this following the same idea as above. Give two proofs; one writing the rw statements explicitly, the other not. 
+
+    \begin{center}
+        \begin{lstlisting}
+            theorem two_plus_one : 
+                (succ (succ zero)) + succ zero = succ (succ (succ zero)) :=
+                by
+                    ...
+        \end{lstlisting}
+    \end{center}
+\end{eg}
+
+\begin{eg}{rfl}
+
+    Although zero + zero is not literally the same string as the string zero, they are equivalent by definition of addition. That is, they are equivalent upto some computation. Therefore rfl will close this goal.
+
+    \begin{center}
+        \begin{lstlisting}
+theorem basecase1 : zero + zero = zero :=
+    by
+        rfl
+        \end{lstlisting}
+    \end{center}
+
+    What is the one explicit rw statement that will also close this goal? 
+\end{eg}
+
+\newpage
+\begin{eg}{No Mere Computation}
+    Consider the following theorem of Peano arithmetic $$\PA, \ 0 + n = n \ \vdash \ 0 + \suc \ n = \suc \ n$$Here we have hypotheses other than simply the Peano axioms, so rfl won't close the goal. Go ahead and try it anyway and read the error message ``zero + succ n is not definitionally equal to rhs succ n
+    ''. Of course this true. However, in the context of this theorem we have extra information, we have a witness to the equality $0 + n = n$. Close the following goal with two rw statements, one of which will use the hypotheses. 
+
+    \begin{center}
+        \begin{lstlisting}
+theorem inductionstep1 {n : ℕ} (t : zero + n = n) : 
+    zero + (succ n) = succ n :=
+        by
+            ...
+        \end{lstlisting}
+    \end{center}
+\end{eg}
+
+\newpage
+\subsection*{Induction Proofs in Lean}
+
+The previous examples were the base case and inductive step for the proof by induction of the theorem $$\PA \ \vdash \ \forall x : \bn, \ zero + x = x$$. Lean has a straightforward syntax for induction proofs. 
+\begin{center}
+    \begin{lstlisting}
+    -- PA ⊢ ∀ x : ℕ, 0 + succ x = succ x
+    theorem zero_add : ∀ x : ℕ, zero + x = x :=
+        by
+        intro k
+        induction k with
+        | zero      =>  rw [basestep1]
+        | succ k ih =>  rw [inductionstep1 ih]
+    \end{lstlisting}
+\end{center}
+Induction first has a base case, corresponding to the line ``| zero => '' afterwhich follows the proof of the base case. Since we have already proved the base case, it is sufficient to call the name of that theorem. Next is the induction step ``| succ k ih => '' afterwhich follows the proof of the induction step using the induction hypotheses with name ``ih''. Again we have already provided a proof of the induction step, so it suffices to call that. In this case, the theorem has an argument so we need to supply that when calling the theorem.
+
+One can instead write the proofs of the base case and induction step in place as follows: 
+\begin{lstlisting}
+-- PA ⊢ ∀ x : ℕ, 0 + succ x = succ x
+theorem zero_add : ∀ x : ℕ, zero + x = x :=
+  by
+    intro k
+    induction k with
+    | zero      =>  rfl
+    | succ k ih =>  rw [PA4, ih]
+\end{lstlisting}
+Notice that successive rewrites can be separated by commas, rather than writing each rw explicitly. It is considered good form to factor one's programs and this now extends to factoring proofs. Therefore one should prove the base case and induction step separately, and combine them together in another theorem. This factoring of proofs is not new to mathematicians, we push details to lemma all the time and simply refer to them when proving the more interesting theorems. 
+
+\newpage
+\subsection*{Multiplication of Natural Numbers}
+
+Peano axioms PA5 and PA6 suggest the following recursive definition of multiplication:
+
+\begin{center}
+    \begin{lstlisting}
+    def mul (m n : ℕ) : ℕ :=
+    match n with
+        | zero   => zero
+        | succ n => add (mul m n) m
+    \end{lstlisting}
+\end{center}
+
+In order to be consistent with the notation from earlier in the course we can use this definition of multiplication to prove theorems corresponding to PA5 and PA6. 
+
+\begin{center}
+    \begin{lstlisting}
+    theorem PA5 (m : ℕ) : m * zero = zero := by rfl
+    theorem PA6 (m n : ℕ) : m * (succ n) = (m * n) + m := by rfl
+    \end{lstlisting}
+\end{center}
+
+\begin{eg}{Computation}
+    Prove that $3 \times 2 = 6$ using Lean. Remember you don't have to explicitly write each rw statement; but you can if you want. 
+    \begin{lstlisting}
+        example: (succ (succ (succ zero))) * (succ (succ zero)) 
+                    = (succ (succ (succ ( succ (succ (succ zero)))))) :=
+        by
+            ...
+    \end{lstlisting}
+\end{eg}
+
+\begin{eg}{Calling Theorems as Procedures}
+    Earlier in the course we proved the theorem $$\PA \ \vdash \ \forall x : \bn, \ x * 1 = x$$ With multiplication defined we can write this proof in Lean and verify it! 
+    \begin{center}
+        \begin{lstlisting}
+        theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
+            by
+                intro a
+                ...
+        \end{lstlisting}
+    \end{center}
+    Will rfl close this? Are the two sides of this equation definitionally equal? No. Computation will simplify the left hand side, but not all the way down to x. To finish the proof we will need to call on a theorem. 
+    \begin{center}
+        \begin{lstlisting}
+        theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
+            by
+                intro a
+                rw [PA6,PA5,...]
+        \end{lstlisting}
+    \end{center}
+    After applying the definition of multiplication with PA6 and PA5 (i.e. after computation) the goal is simplified to the following:
+        \begin{lstlisting}
+            1 goal
+            a : ℕ
+            ⊢ zero + a = a
+        \end{lstlisting}    
+    Complete the proof by applying one more rw statement. 
+    % \begin{center}
+    %     \begin{lstlisting}
+    %     theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
+    %      by
+    %         intro a
+    %         rw [PA6,PA5,]
+    %     \end{lstlisting}
+    % \end{center}
+\end{eg}
+
+When will rfl close the goal and when do we need more? In the context of Peano arithmetic, we may use rfl when we are asking Lean to apply the \emph{definition} of addition and/or multiplication. In other words, rfl will close the goal if one needs only axioms PA3 - PA6. Anything else is outside the \emph{definition} of addition and multiplication. For Peano arithmetic, this implies that the proof explicitly, or implicitly by calling a theorem, relies on induction. Induction is an axiom extra to those of addition and multiplication and equalities proven by it are not proven \emph{by the definition of addition and multiplication}. If explicit rw are required, then the ``calc'' tactic, illustrated in the next example, can make for more readable proofs. 
+
+\begin{eg}{Calc Tactic}
+    In this example we will revisit the theorem $$\PA \ \vdash \ \forall x : \bn, \ x * 1 = x$$ for the purposes of introducing the calc tactic. 
+    \begin{lstlisting}
+        theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
+        by
+          intro a
+          calc a * (succ zero)
+            _ = a * zero + a := by rw [PA6]
+            _ = zero + a     := by rw [PA5]
+            _ = a            := by rw [zero_add]
+    \end{lstlisting}
+    By using the calc tactic we can express the proof closer to how we would write it on paper in high school i.e. prior to learning how to write natural deductions. Starting on the left and performing algebraic manipulations (justified by relevant theorems, of course) line-by-line to eventually arrive at the right-hand side. 
+\end{eg}
+
+When using the calc tactic one can jump multiple steps in one-line, so long as it's justified in the rw statement. Indeed, one could write the above calc proof in a single line, rather than use three as in the example. 
+
+
+
+\newpage
+\subsection*{Lean Tactic Summary}
+
+% by, intro, exact, apply, have, rfl, rw, induction, calc
+At this stage we have introduced a number of tactics for helping us write proof-terms. Each of them are summarised in the table below, along with a sense of what they correspond to in a natural language, or pen-and-paper, proof of a theorem. 
+
+% \begin{table}[htbp]
+%     \centering
+%     \renewcommand{\arraystretch}{1.5}
+%     \textbf{Lean 4 Tactics}\\
+%     \vspace{0.2cm}
+%     \begin{tabular}{|l|p{0.7\textwidth}|}
+%     \hline
+%     \textbf{Tactic} & \textbf{Summary} \\
+%     \hline
+%     by & Opens tactic mode. \\
+%     intro(s) & Either (i) implication introduction, or (ii) $\forall$ introduction.\\
+%     exact & This term has the same type as the goal.\\
+%     apply & \\
+%     have & Introduces a local variable, or intermediate step.\\
+%     rfl & Closes goals that are (upto normalisation) definitionally equal.\\
+%     rw & Substitutes equals for equals. \\
+%     induction & Wraps base case and induction step into $\forall$ proof.\\
+%     calc & Line-by-line calculation showing $a = \dots = b$.\\
+%     \hline
+%     \end{tabular}
+% \end{table}
+
+
+\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \textbf{Lean 4 Tactics}\\
+    \vspace{0.2cm}        
+    \footnotesize
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Tactic} & \textbf{Summary} & \textbf{Natural Language} \\
+    \hline
+    by & Opens tactic mode. & \\
+    intro(s) & Either (i) implication introduction, or (ii) $\forall$ introduction. & Let $n$ be some natural...\\
+    exact & This term has the same type as the goal. & ... as required \\
+    apply & & \\
+    have & Introduces a local variable, or intermediate step. & So far we have... \\
+    rfl & Closes goals that are (up to normalization) definitionally equal. & ... by definition \\
+    rw & Substitutes equals for equals. & \\
+    induction & Wraps base case and induction step into $\forall$ proof. & By induction...\\
+    calc & Line-by-line calculation showing $a = \dots = b$. & Algebra calculation!\\
+    \hline
+    \end{tabular}
+\end{table}
+
+Below are incomplete portions of proofs from this chapter reproduced here just to have a note of their syntax on this summary page. 
+
+This is an example of the use of the induction tactic. One has to give the induction hypotheses a name in the second branch; it doesn't have to be ih, but it might as well be. 
+\begin{lstlisting}
+    induction k with
+    | zero      =>  rfl
+    | succ k ih =>  rw [PA4, ih]
+\end{lstlisting}
+    
+
+This is an example of the use of the calc tactic. One must justify each line of the calculation; notice this means that each line needs its own subproof openned using the by keyword. 
+\begin{lstlisting}
+    calc a * (succ zero)
+    _ = a * zero + a := by rw [PA6]
+    _ = zero + a     := by rw [PA5]
+    _ = a            := by rw [zero_add]
+\end{lstlisting}
+
+\newpage
+\subsection*{Natural Numbers in Lean}
+
+\begin{lstlisting}
+    inductive ℕ where
+    | zero : ℕ
+    | succ : ℕ → ℕ
+  
+    open ℕ
+  
+    theorem PA1 : ∀ x : ℕ, ¬(zero = succ x) :=
+        by
+        intro a t
+        injection t
+    
+    theorem PA2 : ∀ m n : ℕ, (succ m) = (succ n) → m = n :=
+        by
+        intro m n t
+        injection t
+    
+    def add (m n : ℕ) : ℕ :=
+        match n with
+        | zero   => m
+        | succ n => succ (add m n)
+    
+    -- The following two lines allow for the infix _+_
+    instance : Add ℕ where
+        add := add
+    
+    theorem PA3 (m : ℕ) : m + zero = m := by rfl
+    theorem PA4 (m n : ℕ) : m + (succ n) = succ (m + n) := by rfl
+    
+    def mul (m n : ℕ) : ℕ :=
+        match n with
+        | zero   => zero
+        | succ n => add (mul m n) m
+        
+    -- The following two lines allow for the infix _*_
+    instance : Mul ℕ where
+        mul := mul
+    
+    theorem PA5 (m : ℕ) : m * zero = zero := by rfl
+    theorem PA6 (m n : ℕ) : m * (succ n) = (m * n) + m := by rfl
+\end{lstlisting}
+
+\newpage
+\section{Prediates, Parity, and Order}
+
+It was once said that: God made the integers; all else is the work of Man. In this section we will see how the work of humans can be written in the language of Lean. Mathematicians are concerned with answering questions about the \emph{properties} of natural numbers and how they \emph{relate} to each other. We saw in the chapter on Formal Mathematics that these are encoded using predicates; the same is true in Lean. 
+
+Recall that a unary predicate on $\bn$ is a function from $\bn$ to Prop. Under the Curry-Howard correspondence this means that a predcicate is a function which takes in an $n : \bn$ and returns a type parameterised by $n$; unless it's a constant type. For example, the parity of a natural number is a unary predicate on $\bn$ which we may define as: 
+
+\begin{lstlisting}
+    def even (m : ℕ) : Prop :=
+        ∃ n : ℕ, m = 2*n
+
+    def odd (m : ℕ) : Prop :=
+        ∃ n : ℕ, m = 2*n + 1
+\end{lstlisting}
+
+Similarly we can deifne binary predicates on $\bn$ such as $\leq$ or divisibility. 
+
+\begin{lstlisting}
+    def lte (m n : ℕ) : Prop :=
+        ∃ x : ℕ, n = m + x
+
+    infix:40 " ≤ " => lte
+\end{lstlisting}
+
+\begin{lstlisting}
+    def divides (m n : ℕ) : Prop :=
+        ∃ x : ℕ, n = m * x -- Uniqueness!
+
+    -- To avoid clash with the vertical bar in pattern matching
+    -- We use the symbol obtained by typing \mid into the editor. 
+    infix:30 " | " => divides
+\end{lstlisting}
+
+With these defintions more mathematics can be written in Lean. One can now prove a number of theorems from elementary  number theory and verify the properties of the $\leq$ relation. 
+
+
+\newpage
+\printbibliography
+
+\end{document}

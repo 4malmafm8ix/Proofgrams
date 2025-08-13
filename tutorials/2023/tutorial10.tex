@@ -1,0 +1,125 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial XY}
+\end{center}
+\begin{center}
+	{\bf Subtitle}
+\end{center}
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas and learning outcomes
+			\begin{itemize}
+				\item Write Turing machines for propositional logic, 
+				\item Comment your code!
+				\item Work on your assignment.
+			\end{itemize}
+
+		Relevant lectures: Turing machine slides\\
+		Relevant reading: Linked in the Turing section on learn. 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 7 and 8
+	}
+}
+
+% New page for tutorial exercises.
+\noindent {\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Negation. 
+		
+		\begin{itemize}
+			\item[] Input: Single bit. 
+			\item[] Output: Single bit, the negation of the input bit.
+			\item[] Test: Input = 1 Output = 0
+		\end{itemize}
+
+	\item Disjunction of two bits. 
+
+		\begin{itemize}
+			\item[] Input: Two bits. 
+			\item[] Output: Single bit, the disjunction of the input bits. 
+			\item[] Test: Input = 10 Output = 1
+		\end{itemize}		
+
+	\item Conjunction of two bits. 
+
+		\begin{itemize}
+			\item[] Input: Two bits. 
+			\item[] Output: Single bit, the conjunction of the input bit. 
+			\item[] Test: Input = 10 Output = 0
+		\end{itemize}		
+		
+	\item Implication. 
+
+		\begin{itemize}
+			\item[] Input: Two bits $(b_{1}b_{2})$. 
+			\item[] Output: Single bit, representing $v(b_{1}\to b_{2})$. 
+			\item[] Test: (i) Input = 10 Output = 0 (ii) Input = 00 Ouput = 1.
+		\end{itemize}
+
+		
+	\item Bitwise-ORs of two binary strings. 
+
+		\begin{itemize}
+			\item[] Input: two space separated equal length binary strings. 
+			\item[] Output: a binary string corresponding to the bitwise OR of input strings.
+			\item[] Test: (i) Input = 10 10 Output = 10 (ii) Input = 10 01 Ouput = 11.
+		\end{itemize}
+	
+	\newpage
+	\item Bitwise-ANDs of two binary strings. 
+
+		\begin{itemize}
+			\item[] Input: Two space separated equal length binary strings. 
+			\item[] Output: Binary string corresponding to the bitwise AND of the input strings.
+			\item[] Test: (i) Input = 01 10 Output = 00 (ii) Input = 01 01 Ouput = 01.
+		\end{itemize}	
+
+	\item Disjunction of $n$-bits. 
+
+		\begin{itemize}
+			\item[] Input: One finite binary string.
+			\item[] Output: Single bit corresponding to the disjunction of input bits.
+			\item[] Test: Input = 1010101110 Output = 1.
+		\end{itemize}
+	
+	\item Conjunction of $n$-bits. 
+
+		\begin{itemize}
+			\item[] Input: One finite binary string. 
+			\item[] Output: Single bit corresponding to the conjunction of input bits.
+			\item[] Test: Input = 1010101110 Output = 0.
+		\end{itemize}		
+	 
+\end{enumerate}
+	
+\end{document}

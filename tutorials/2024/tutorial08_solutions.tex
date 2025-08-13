@@ -1,0 +1,362 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eight}
+\end{center}
+\begin{center}
+	{\bf Curry Howard Correspondence}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write well-typed programs simple type theory, 
+				\item Interpret programs as proofs of propositions.
+			\end{itemize}
+
+		Relevant lectures: Lectures x,y, and z\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: \\ 
+	{\bf Due Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item Show the following type is inhabited in the given local context:
+	$$ f : P\rightarrow  Q \vdash  P\rightarrow ( P\times  Q)$$
+	
+	\vspace{3cm}
+
+	\item Show the following type is inhabited in the given local context:
+	$$ P\vdash \lnot \lnot  P$$
+	
+	\vspace{3cm}
+
+	\item Show the following type is inhabited in the given local context:
+	$$( P\times  Q) +  R \ \vdash \ ( P + R) \times (Q + R)$$
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item This exercise breaks the proof that the following type is inhabited
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when local variables are introduced. 
+
+	\begin{enumerate}
+
+		\item Using local variables (much like temporary hypotheses) introduce as many terms as possible into the local context (left of the turnstile $\vdash$) to get a new sequent. Proof that this type is inhabited in the local context will ultimately lead to a proof that the original type is inhabited. 
+		
+		(!) Remember $\lnot P \equiv P \to \bot$.
+
+		\item Prove the following type is inhabited in the stated syntax 
+		
+		$$ f : P \to Q, \ g : \lnot Q, \ p : P \ \vdash \ \bot$$
+
+		\item Extend the typing derivation above, through the use of $\lambda$ abstraction, to a proof that the original type is inhabited.
+
+	\end{enumerate}
+	
+	\item Each sequent below defines a local context (terms to the left of the $\vdash$ turnstile) and a goal (the type on the right of the $\vdash$ turnstile) - Using the terms of the local context, show that the goal is inhabited.
+
+	\begin{enumerate}
+		\item $f : ( P\times Q) \rightarrow  R \vdash  P \rightarrow (Q \rightarrow  R)$
+		
+		{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \lambda y. \ f(x,y) \ : \ P\to(Q\to R)}
+							{\infer[\lambda,2]{\lambda y. \ f(a,y) \ : \ Q\to R}
+								{\infer[\APP]{f(a,b) \ : \ R}
+									{f \ : \ (P\times Q) \to R
+									&
+									\infer[\times]{(a,b) : P\times Q}
+										{\infer[1]{a:P}{}
+										&
+										\infer[2]{b:Q}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+			
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$(P \land Q) \rightarrow R \ \vdash \ P \rightarrow (Q \rightarrow  R) $$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{P\to(Q\to R)}
+							{\infer[\to I,2]{Q\to R}
+								{\infer[\MP]{R}
+									{(P\land Q) \to R
+									&
+									\infer[\land I]{P\land Q}
+										{\infer[1]{P}{}
+										&
+										\infer[2]{Q}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \lambda y. \ f(x,y) \ : \ P\to(Q\to R)$$
+			is the proof-object witnessing the proof of the sequent.
+		
+		\newpage
+		\item $f : P \rightarrow (Q \rightarrow  R) \ \vdash \ (P\times Q) \rightarrow  R $
+		
+		{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ (f \ (\FST \ x)) \ (\SND \ x) \ : \ (P\times Q)\to R}
+							{\infer[\APP]{(f \ (\FST \ p)) \ (\SND \ p) \ : \ R}
+								{\infer[\APP]{f \ (\FST \ p) \ : \ Q\to R}
+									{f : P \to (Q \to R)
+									&
+									\infer[\FST]{\FST \ p \ : \ P}
+										{\infer[1]{p : P\times Q}
+											{}}}
+								&
+								\infer[\SND]{\SND \ p : \ Q}
+									{\infer[1]{p : P\times Q}
+										{}}}}
+					\end{array}$
+				\end{center}				
+			\end{mdframed}
+
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+
+			$$P \rightarrow (Q \rightarrow  R) \ \vdash \ (P \times  Q) \rightarrow  R $$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{(P\land Q)\to R}
+							{\infer[\MP]{R}
+								{\infer[\MP]{Q\to R}
+									{P \to (Q \to R)
+									&
+									\infer[\land E_{l}]{P}
+										{\infer[1]{P\land Q}
+											{}}}
+								&
+								\infer[\land E_{r}]{Q}
+									{\infer[1]{P\land Q}
+										{}}}}
+					\end{array}$
+				\end{center}				
+			\end{mdframed}
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ (f \ (\FST \ x)) \ (\SND \ x) \ : \ (P\times Q)\to R$$
+			is the proof-object witnessing the proof of the sequent.
+
+		\item $t : \lnot P + \lnot Q \ \vdash \ \lnot(P\times  Q)$
+		\item $f : \lnot(P + Q) \ \vdash \ \lnot P \times \lnot Q$
+		\item $t : \lnot P \times \lnot Q \ \vdash \ \lnot(P + Q) $
+		\item $f : P\rightarrow  Q, \  g : Q \rightarrow  R \ \vdash \ P \rightarrow R$
+		
+		{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ g (f \ x) \ : \ P \to R}
+							{\infer[\APP]{g (f \ a) \ : \ R}
+								{g \ : \ Q \to R
+								&
+								\infer[\APP]{f \ a \ : \ Q}
+									{f : P \to Q
+									&
+									\infer[1]{a : P}{}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+
+			$$P \rightarrow  Q, \ Q \rightarrow R \vdash \ P \rightarrow  R$$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{P \to R}
+							{\infer[\MP]{R}
+								{Q \to R
+								&
+								\infer[\MP]{Q}
+									{P \to Q
+									&
+									\infer[1]{P}{}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ g (f \ x) \ : \ P \to R$$
+			is the proof-object witnessing the proof of the sequent.
+
+		\item $t : P + Q,\ \ f : P \to  R,\ \  g : Q \to S \vdash \ R + S$
+		
+		{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\sumElim]{\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ R + S}
+							{p : P + Q
+							&
+							\infer[\lambda,1]{\lambda x. \ \inl \ (f \ x) : P \to R + S}
+								{\infer[\inl]{\inl \ (f \ a) : R + S}
+									{\infer[\APP]{f \ a : R}
+										{f : P \to R
+										&
+										\infer[1]{a : P}
+											{}}}}
+							&
+							\infer[\lambda,2]{\lambda y. \ \inl \ (g \ y) : Q \to R + S}
+								{\infer[\inr]{\inr \ (g \ b) : R + S}
+									{\infer[\APP]{g \ b : S}
+										{g : Q \to S
+										&
+										\infer[2]{b : Q}
+											{}}}}}
+					\end{array}$}
+				\end{center}
+			\end{mdframed}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$P \lor Q,\ P \to  R,\ Q \to  S \vdash \ R \lor S$$
+
+			\begin{mdframed}
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\lor E]{R \lor S}
+							{P \lor Q
+							&
+							\infer[\to I,1]{P \to R\lor S}
+								{\infer[\lor I]{R \lor S}
+									{\infer[\MP]{R}
+										{P \to R
+										&
+										\infer[1]{P}
+											{}}}}
+							&
+							\infer[\to I,2]{Q \to R\lor S}
+								{\infer[\lor I]{R \lor S}
+									{\infer[\MP]{S}
+										{Q \to S
+										&
+										\infer[2]{Q}
+											{}}}}}
+					\end{array}$}
+				\end{center}
+			\end{mdframed}			
+			The resulting $\lambda$-term (i.e. program) below
+			$$\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ R + S$$
+			is the proof-object witnessing the proof of the sequent.
+
+		\item $f : P \to  R,\ \ g : Q \to  S,\ \ t : \neg R + \neg S \ \vdash \ \neg P + \neg Q$
+		\item $p : P,\ \ f : \neg P \ \vdash \ \neg Q$
+	   	\item $f : P \rightarrow Q, \  g : P\rightarrow \lnot Q \ \vdash \ \lnot P$
+	\end{enumerate}	
+	
+	\newpage
+	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
+	
+	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
+	
+	\begin{center}
+		$\begin{array}{c}		
+		  \infer[\to, 1]{A \land B \to B}
+		  	{\infer[\land E_{L}]{B}
+				{\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{\infer[1]{A \land B}{}} 
+					\hspace{0.5cm}	&	\hspace{0.5cm}
+					\infer[\land_{L}]{A}{\infer[1]{A \land B}{}}}}}
+		\end{array}$
+	  \end{center}
+
+	  	\begin{enumerate}
+			\item Determine the corresponding proof-object for this proof. 
+			\item Why does the proof-object have a redex in it? 
+			\item Perform the $\beta$-reduction on the proof object from (a).
+			\item What proof does the reduced proof-object correspond to?
+		\end{enumerate}
+
+		{\bf Solution:}
+
+		The natural deduction proof stated in the question corresponds to the following type construction:
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\lambda, 1]{\lambda x : A \times B. \ \FST (\SND x, \FST x) \ : \ A \times B \to B}
+					{\infer[\FST]{B}
+					{\infer[\times]{B \times A}
+						{\infer[\SND]{B}{\infer[1]{p \ : \ A \times B}{}} 
+						\hspace{0.5cm}	&	\hspace{0.5cm}
+						\infer[\FST]{A}{\infer[1]{p \ : \ A \times B}{}}}}}
+			\end{array}$
+		\end{center}
+
+		The corresponding proof-object is $$\lambda x : A \times B. \ \FST (\SND x, \FST x) \ : \ A \times B \to B$$
+
+		Which can be $ B$-reduced to $$\lambda x : A \times B. \ \SND x \ : \ A \times B \to B$$
+
+		This proof-object takes in a pair and returns the second of the pair. 
+		
+		As a natural deduction this corresponds to the following: 
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\to, 1]{A \land B \to B}
+					{\infer[\land E_{R}]{B}
+						{\infer[1]{A \land B}
+							{}}}
+			\end{array}$
+		\end{center}
+
+		This simplified program corresponds to a shorter proof. In this sense $ B$-reduction (i.e. computation!) is related to the simplification of proofs. 
+
+\end{enumerate}
+	
+\end{document}

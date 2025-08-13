@@ -1,0 +1,60 @@
+#####################################
+#       Reverse Binary String       #
+#####################################
+# 0 -> * and 1 -> $
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,0,R,qzeroRight;
+q0,1,1,R,qoneRight;
+# Once Zero detected, shift it to the right.
+qzeroRight,0,0,R,qzeroRight;
+qzeroRight,1,1,R,qzeroRight;
+qzeroRight,b,b,L,qprintZero;
+qzeroRight,*,*,L,qprintZero;
+qzeroRight,$,$,L,qprintZero;
+qprintZero,0,*,L,qzeroLeft;
+qprintZero,1,*,L,qoneLeft;
+# Once One detected, shift it to the right.
+qoneRight,0,0,R,qoneRight;
+qoneRight,1,1,R,qoneRight;
+qoneRight,b,b,L,qprintOne;
+qoneRight,*,*,L,qprintOne;
+qoneRight,$,$,L,qprintOne;
+qprintOne,0,$,L,qzeroLeft;
+qprintOne,1,$,L,qoneLeft;
+# Now this is repeated to the left
+# Once zero detected, shift it to the left. 
+qzeroLeft,0,0,L,qzeroLeft;
+qzeroLeft,1,1,L,qzeroLeft;
+qzeroLeft,@,@,R,qplintZero;
+qzeroLeft,*,*,R,qplintZero;
+qzeroLeft,$,$,R,qplintZero;
+qplintZero,0,*,R,qnext;
+qplintZero,1,*,R,qnext;
+qplintZero,$,$,L,qDone;
+qplintZero,*,*,L,qDone;
+qnext,1,1,R,qoneRight;
+qnext,0,0,R,qzeroRight;
+qnext,*,*,L,qDone;
+qnext,$,$,L,qDone;
+# Once one detected, shift it to the left.
+qoneLeft,0,0,L,qoneLeft;
+qoneLeft,1,1,L,qoneLeft;
+qoneLeft,@,@,R,qplintOne;
+qoneLeft,*,*,R,qplintOne;
+qoneLeft,$,$,R,qplintOne;
+qplintOne,0,$,R,qnext;
+qplintOne,1,$,R,qnext;
+qplintOne,$,$,L,qDone;
+qplintOne,*,*,L,qDone;
+# Return home and then substitute for numerals
+qDone,*,*,L,qDone;
+qDone,$,$,L,qDone;
+qDone,@,@,R,qSwap;
+qSwap,$,1,R,qSwap;
+qSwap,*,0,R,qSwap;
+qSwap,b,b,L,qtoHalt;
+qtoHalt,1,1,L,qtoHalt;
+qtoHalt,0,0,L,qtoHalt;
+qtoHalt,@,@,N,HALT;
+# End of instructions.

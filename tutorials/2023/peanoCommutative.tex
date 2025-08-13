@@ -1,0 +1,157 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{a2paper, top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Experimenting to get long proofs to fit on a page.
+\usepackage{pdflscape}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{epstopdf}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+\pagestyle{empty}
+\begin{sidewaysfigure}
+
+	$$\PA \ \vdash \ \forall x \ \forall y \ [y + x = x + y]$$
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\IND]{\forall x \ \forall y \ [y+x = x+y]}
+				{\infer[\land I]{[\forall y \ [y+0 = 0+y] \land \forall x \ (\forall y \ [y+x = x+y] \to \forall y \ [y+s(x) = s(x)+y])]}
+					{\infer[\forall I]{\forall y \ [y+0 = 0+y]}
+						{\infer[=E]{a + 0 = 0 + a}
+							{\infer[=E]{a + 0 = a}
+								{\infer[=I]{a=a}{}
+								&
+								\infer[\forall E]{a + 0 = a}
+									{\forall x \ (x + 0 = x)}}
+							&
+							\infer[\forall E]{0 + a = a}
+								{\infer[\IND]{\forall x \ (0 + x = x)}
+								{\infer[\land I]{[(0 + 0 = 0) \land \forall x \ ((0 + x = x) \to (0 + s(x) = s(x)))]}
+									{\infer[\forall E]{(0 + 0 = 0)}
+										{\forall x \ (x + 0 = x)}
+									&
+									\infer[\forall I]{\forall x \ [(0 + x = x) \to (0 + s(x) = s(x))]}
+										{\infer[\to I, \IH]{(0+n=n) \to (0 + s(n) = s(n))}
+											{\infer[=E]{(0 + s(n) = s(n))}
+												{\infer[\forall E]{0 + s(n) = s(0+n)}
+													{\forall x \ \forall y \ (x + s(y) = s(x + y))}
+												&
+												\infer[\IH]{0+n=n}				{}}}}}}}}}
+					&
+					\infer[\forall I]{\forall x \ (\forall y \ [y+x = x+y] \to \forall y \ [y+s(x) = s(x)+y])}
+						{\infer[\to I, \IH]{\forall y \ [y+n = n+y] \to \forall y \ [y+s(n) = s(n)+y]}
+							{\infer[\forall I]{\forall y \ [y+s(n) = s(n)+y]}
+								{\infer[=E]{a + s(n) = s(n) + a}
+									{\infer[=E]{a + s(n) = s(n + a)}
+										{\infer[\forall E]{a + s(n) = s(a+n)}
+											{\forall x \ \forall y \ (x + s(y) = s(x + y))}
+										&
+										\infer[\forall E]{a + n = n + a}
+											{\infer[\IH]{\forall y \ [y + n = n + y]}{}}}
+									&
+									\infer[\forall E]{s(n) + a = s(n+a)}
+										{\infer[\IND]{\forall x \ \forall y \ [s(y) + x = s(y+x)]}
+										{\infer[\land I]{[\forall y \ [s(y) + 0 = s(y+0)] \land \forall x \ (\forall y \ [s(y) + x = s(y+x)] \to \forall y \ [s(y) + s(x) = s(y+s(x))])]}
+											{\infer[\forall I]{\forall y \ [s(y) + 0 = s(y+0)]}
+												{\infer[=E]{s(a) + 0 = s(a + 0)}
+													{\infer[=E]{s(a) + 0 = s(a)}
+														{\infer[=I]{s(a)=s(a)}{}
+														&
+														\infer[\forall E]{s(a)+0=s(a)}{\forall x \ (x + 0 = x)}}
+													&
+													\infer[\forall E]{a = a + 0}{\forall x \ (x + 0 = x)}}}
+											&
+											\infer[\forall I]{\forall x \ [(\forall y \ [s(y) + n = s(y+n)] \to \forall y \ [s(y) + s(n) = s(y+s(n))])]}
+												{\infer[\to I, \IH]{(\forall y \ [s(y) + n = s(y+n)] \to \forall y \ [s(y) + s(n) = s(y+s(n))])}
+													{\infer[\forall I]{\forall y \ s(y)+s(n) = s(y + s(n))}
+														{\infer[=E]{s(a)+s(n) = s(a + s(n))}
+															{\infer[]{s(a)+s(n)=s(s(a+n))}
+														{\infer[\forall E]{s(a)+s(n)=s(s(a)+n)}{\forall x \ \forall y \ (x + s(y) = s(x + y))}
+														&
+														\infer[\forall E]{s(a) + n = s(a+n)}
+															{\infer[\IH]{\forall y \ (s(y) + n = s(a+n))}{}}}
+													&
+													\infer[\forall E]{a + s(n) = s(a + n)}{\forall x \ \forall y \ (x + s(y) = s(x + y))}}}}}}}}}}}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+\end{sidewaysfigure}	
+
+%\forall y \ [y+x = x+y]
+%\forall y \ [y+s(x) = s(x)+y]
+%\forall y \ [y+0 = 0+y]
+
+% \newpage
+% \begin{sidewaysfigure}
+% 	\begin{mdframed}
+% 		\begin{center}
+% 			$\begin{array}{c}
+% 				\infer[\IND]{\forall x \ (0 + x = x)}
+% 					{\infer[\land I]{[(0 + 0 = 0) \land \forall x \ ((0 + x = x) \to (0 + s(x) = s(x)))]}
+% 						{\infer[\forall E]{(0 + 0 = 0)}
+% 							{\forall x \ (x + 0 = x)}
+% 						&
+% 						\infer[\to I, IH]{\forall x \ ((0 + x = x) \to \forall x \ (0 + s(x) = s(x)))}
+% 							{\infer[\forall I]{\forall x \ (0 + s(x) = s(x))}
+% 								{\infer[=E]{(0 + s(n) = s(n))}
+% 									{\infer[\forall E]{0 + s(n) = s(0+n)}
+% 										{\forall x \ \forall y \ (x + s(y) = s(x + y))}
+% 									&
+% 									\infer[\forall I]{0+n=n}				{\infer[\IH]{\forall x \ 0 + x = x}{}}}}}}}				
+% 			\end{array}$
+% 		\end{center}
+% 	\end{mdframed}
+% \end{sidewaysfigure}
+
+% \newpage
+% \begin{sidewaysfigure}
+% 	\begin{mdframed}
+% 		\begin{center}
+% 			$\begin{array}{c}
+% 				\infer[\IND]{\forall x \ \forall y \ [s(y) + x = s(y+x)]}
+% 				{\infer[\land I]{[\forall y \ [s(y) + 0 = s(y+0)] \land \forall x \ (\forall y \ [s(y) + x = s(y+x)] \to \forall y \ [s(y) + s(x) = s(y+s(x))])]}
+% 					{\infer[\forall I]{\forall y \ [s(y) + 0 = s(y+0)]}
+% 						{\infer[=E]{s(a) + 0 = s(a + 0)}
+% 							{\infer[=E]{s(a) + 0 = s(a)}
+% 								{\infer[=I]{s(a)=s(a)}{}
+% 								&
+% 								\infer[\forall E]{s(a)+0=s(a)}{\forall x \ (x + 0 = x)}}
+% 							&
+% 							\infer[\forall E]{a = a + 0}{\forall x \ (x + 0 = x)}}}
+% 					&
+% 					\infer[\forall I]{\forall x \ (\forall y \ [s(y) + x = s(y+x)] \to \forall y \ [s(y) + s(x) = s(y+s(x))])}
+% 						{\infer[=E]{s(a)+s(n) = s(a + s(n))}
+% 						{\infer[]{s(a)+s(n)=s(s(a+n))}
+% 							{\infer[\forall E]{s(a)+s(n)=s(s(a)+n)}{\forall x \ \forall y \ (x + s(y) = s(x + y))}
+% 							&
+% 							\infer[\IH]{s(a) + n = s(a+n)}{}}
+% 						&
+% 						\infer[\forall E]{a + s(n) = s(a + n)}{\forall x \ \forall y \ (x + s(y) = s(x + y))}}}}}		
+% 			\end{array}$
+% 		\end{center}
+% 	\end{mdframed}
+% \end{sidewaysfigure}
+
+\end{document}

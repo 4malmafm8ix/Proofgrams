@@ -1,0 +1,978 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Bibliography
+\usepackage[style=verbose]{biblatex}
+\addbibresource{../../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+% Definition format options. 
+\newtheoremstyle{indentDefn}
+{\topsep} % Space above
+{\topsep} % Space below
+{\it} % Body font
+{2cm} % Indent amount
+{\bf} % Theorem head font
+{:} % Punctuation after theorem head
+{0.5em} % Space after theorem head
+{} % Theorem head spec
+
+\theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
+
+\title{First Order Predicate Logic}
+\author{MATH230}
+\institute{Te Kura P\=angarau \\ Te Whare W\=ananga o Waitaha}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Motivation}
+
+\begin{frame}
+  \frametitle{Motivation}
+
+  Recall that we have introduced logic so that we can write mathematics in a precise enough manner to analyse proof and provability. 
+  
+  \vspace{5mm}
+  
+	In defining propositional logic we suppressed a lot of detail into a single propositional variable $P$. It's time now to look at each proposition in more detail and parse out different components. 
+  
+  \vspace{5mm} 
+  
+  In this lecture we will approach the topic of first-order logic by determining which components are still missing from our language. 
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Fundamental Theorem of Arithmetic}
+	
+	For all integers $n > 1$ either $n$ is a prime or $n$ is a finite product of primes. 
+	
+	\vspace{60mm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Details of Propositions}
+	
+	In the statement of the fundamental theorem of arithmetic was found the following details within' propositions: 
+
+	\begin{tabular}{l c r}
+		T & : & ``Universe of discourse'' or ``Type'' or ``Set''. \\
+		n : T & : & Terms of that type. \\
+		is prime & : & ``Predicate'' or ``Property'' which makes propositions. \\
+		For all & : & Quantification over the Type. 
+	\end{tabular}
+
+	If we consider ``is prime'' or ``n > 1'', then we find even more structure. Each of these are making ``existential'' claims; that is, claims about whether or not certain other terms exist. Previously we put all of these details into one propositional variable. First Order Predicate Logic brings this information out into the open, hence allowing for more nuanced propositions. 
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Terms and their Properties}
+
+	Mathematicians and computer scientists speak about terms of specific types:
+
+	\begin{tabular}{c c c c c}
+		$3 : \mathbb{N}$ & & $-4 : \mathbb{Z}$ & & $\pi : \mathbb{R}$  \\
+		 & True : Bool & & [1,2,3] : List $\mathbb{N}$ & 	
+	\end{tabular}
+
+	Furthermore they are interested in proving that these terms have certain properties: 
+
+	\begin{center}
+		\begin{tabular}{l c l}
+			even : $\mathbb{N} \to $ Prop & & $2 \mapsto \text{even } 2$ \\
+			prime : $\mathbb{N} \to $ Prop & & $4 \mapsto \text{prime } 4$ \\
+			null : List $\mathbb{N} \to $ Prop & & [1,2,3] $\mapsto$ null [1,2,3] \\
+			equal : $\mathbb{N}\times\mathbb{N} \to $ Prop & & $(a,b) \mapsto a = b$
+		\end{tabular}
+	\end{center}
+
+	These properties are called predicates. In first order predicate logic they are thought of as functions that return propositions. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Variables: $x,y,z...$}
+	
+	Some of these statements are written \emph{generally}. That is to say, the values associated to the particular letters are left open to be anything within' the domain of discourse: 
+	
+	\vspace{0.2cm}
+	
+	\begin{itemize}
+		\item If $n$ is an integer...
+		\item If $a,b$ are integers...
+		\item If $p$ is some prime...
+		\item There exists an integer $n$...
+	\end{itemize}
+
+	\vspace{0.2cm}
+	
+	So our language will need the ability to express \emph{variables} which can be interpreted in some specific \emph{type}. We will also refer to a general type and general predicates on types; thus we will use variables for terms, types, and predicates. Lowercase variables will be used for terms, whereas uppercase variables will be used to denote types and predicates. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Quantification: $\forall$ and $\exists$}
+	
+	Quantification goes hand-in-hand with this expression of generality and use of variables. What we mean when we say: 
+	
+	\begin{center}
+		If $n$ is an integer, then even $(n) \ \lor $ odd $(n)$ 
+	\end{center}
+
+	\emph{Every} integer satisfies the proposition even $(n) \ \lor $ odd $(n)$.
+	
+	\vspace{0.5cm} 
+	
+	Similarly claims like \emph{there exists} an $n$ such that $\phi(n)$, are quantifiying over some type. Of all the terms in that type, at least one of them satisfies the predicate $\phi(n)$. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Functions: $f,g,h,...$}
+	
+	Sums, products, and exponentiation were used to state the above claims. These are examples of the fundamental notion of \emph{function}. Mathematicians and computer scientists use functions to express all sorts of things: we would be lost with them. 
+	
+	\vspace{3mm}
+	
+	The idea being that functions take in some number of inputs (from the domain) and return one element of the domain of discourse. 
+	
+	\vspace{3mm} 
+	
+	Note: this makes them different from predicates/relations as predicates do not return elements of the domain. Rather, they return propositions.
+
+	\vspace{3mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{PL to First-Order Logic}
+	
+	In summary, we need to add the following to propositional logic: 
+	
+	\begin{itemize}
+		\item Domain type
+		\item Constants
+		\item Functions
+		\item Variables
+		\item Properties/Relations (Predicates)
+		\item Quantifiers
+	\end{itemize}
+	
+	These, with propositional logic, form the language of \emph{first-order predicate logic}. 
+	
+	\vspace{2mm} 
+	
+\end{frame}
+
+\section{Language and Grammar}
+
+\begin{frame}
+	\frametitle{Alphabet of FoL}
+	
+	We use the following standard language of \emph{first-order predicate logic} to build terms and well-formed formula.
+	
+	\begin{itemize}
+		\item Type variables $P, Q, R, S, T, ...$
+		\item Term variables $x,y,z,...$ or $x_{1}, x_{2}, x_{3},...$
+		\item Constants $a,b,c, ...$ or $c_{1}, c_{2}, c_{3}, ...$
+		\item Predicate (relation) symbols $R_{0}, R_{1}, R_{2}, ... $
+		\item Function symbols $f_{0}, f_{1}, f_{2}, ... $
+		\item Logical connectives from propostional logic $\lnot, \land, \lor, \rightarrow, \bot$
+		\item Quantifiers $\forall$ and $\exists$
+	\end{itemize}
+	
+	{\bf Note:} For clarity we also use parentheses and commas when writing expressions. These can be included in the symbols of our language as well.
+	
+	% Propositional logic used the logical connectives symbols and letters from various alphabets to stand in form atomic variables. We now add in extra elements to our language in order to express the structures of mathematics (and more complicated natural language statements.)
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Universal and Existential Quantifiers}
+	
+	The symbol $\forall$ will be interpreted as ``for all...''
+	
+	The symbol $\exists$ will be interpreted as ``there exists...''
+	
+	\vspace{0.5cm}
+	
+	{\bf Example:}
+	For all real numbers $\epsilon >0$ there exists another real number $\delta > 0$
+	
+	\vspace{2cm}
+	
+	For us, in these notes, quantifiers will always be stated with a domain of quantification; so called bounded quantification. This departs from most of the literature on logic which considers unbounded quantification. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Grammar of FoL}
+	
+	Terms of a domain $T$ are defined inductively as follows: 
+	
+	\begin{itemize}
+		\item Variables and constants are terms
+		\item If $f$ is an $n$-ary function and $t_{1}, ... , t_{n}$ are terms, then $f(t_{1}, ... , t_{n})$ is a term.
+	\end{itemize}
+
+	% Terms are like words: they have no truth value. 
+	% WFF (combinations of words) are the statements which may be T/F in a model. 	
+
+	\vspace{2mm}
+
+	Propositions are defined inductively as follows: 
+	
+	\begin{itemize}
+		\item $\bot$ : Prop
+		\item An $n$-ary predicate applied to $n$-terms $R(t_{1}, ... , t_{n})$ is a Prop.
+		\item If $\alpha, \beta$ is a Prop, then $\lnot \alpha$, $(\alpha \lor \beta)$, $(\alpha \land \beta)$, and $(\alpha \rightarrow \beta)$ are Prop.
+		\item If $\alpha$ is a Prop and x is a variable, then $(\forall x : T, \ \alpha)$ and $(\exists x :T, \ \alpha)$ are Prop. 
+	\end{itemize}
+	% WFF are the strings that will have truth values.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Examples}
+	
+	Let $T$ be a type, $R$ be a two-place (binary) predicate, $P$ a one-place (unary) predicate, $f$ a binary function, and $a,b$ be constants.	Determine which of the following are wff and which are not. 
+	
+	\begin{enumerate}
+		\item $Pa$
+		\item $a$
+		\item $Pab$
+		\item $\exists x : T, \ Rxb \rightarrow Px$
+		\item $\exists x (Px \lor Rbx)$
+		\item $\forall x : T, \ (\exists y : T, \ (R(x,y)))$
+		\item $\exists x : T, \ (\forall y : T, \ (R(x,y)P(y)P(x)))$
+		\item $f(y,b)$
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Binding Conventions}
+	
+	If you want to drop parentheses, then your expressions will be interpreted using the following binding conventions: 
+	
+	\begin{itemize}
+		\item $\forall, \exists, \lnot$ bind most tightly; 
+		\item $\land$ and $\lor$ bind more tightly than $\rightarrow$; 
+		\item $\rightarrow$ binds more tightly than $\leftrightarrow$. 
+	\end{itemize}
+
+	\vspace{0.5cm}
+
+	With this convention one can unambiguously interpret the string:
+	
+	$$ \lnot \exists x : T, \ Rx \rightarrow \lnot Q \land \forall x : T, \ \lnot Px$$
+	
+	as the following wff:	
+	
+	\vfill
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Comments}
+	
+	The last few slides have said how we can build strings that are part of the language of first order logic. So far, these are just strings of symbols that fit together into terms and wff with the grammar defined. 
+	
+	\vspace{5mm}
+	
+	They have no meaning, \emph{yet}. We don't work this abstractly. Instead we choose construct specific base types with constants, functions, and predicates to express ideas and data precisely. It's this choice of ``signature'' that determines the meaning of the strings in this language. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{First Order Languages}
+	
+	In practice we decide on a few constants, predicates, and functions depending on the part of mathematics (or computer science) we want to study. Thus specifying a \emph{first order language} by defining the \emph{signature} of the language.
+	
+	{\bf Example} 
+	
+	Let us say we have the constant $0$, unary function $s$, binary functions $+$ and $\times$, and $=$ as the only relation.
+	\vspace{0.5cm}	
+	
+	We collect these together into a first order language, which we can denote $\mathcal{L}$, with signature $\{0,s,+,\times,=\}$
+	% Specifying the signature determines the form of the terms in the type it generates. 
+	\vspace{10mm}
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{WFF in a First Order Language}
+	
+	Given a first order language $\mathcal{L}$ with signature $\{0,s,+,\times,=\}$ we see that the constants and function symbols generate the base type of the first order language: 
+	
+	\vspace{60mm}
+
+	% \begin{itemize}
+	% 	\item $0$
+	% 	\item $1$
+	% 	\item $s \ 0$
+	% 	\item $s \ (s \ 0)$
+	% 	\item $s \ (s \ (s \ 0))$
+	% 	\item $+(0,1)$
+	% \end{itemize}
+		
+	% Talk about prefix, infix, postfix. 
+	% Ask for more.	
+	% Point out some non-examples. WFF are not terms.
+	% Signature generates the type. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Prop in a First Order Language}
+	
+	Given a first order language $\mathcal{L}$ with signature $\{0,s,+,\times,=\}$ whose terms generate type $\mathbb{N}$ we may write the following Propositions:
+	
+	\begin{itemize}
+		\item  $\forall x : \mathbb{N}, \ \forall y : \mathbb{N}, \ (=(x,y) \lor \lnot(=(x,y)))$
+		\item  $\exists x : \mathbb{N}, \ (\forall y : \mathbb{N}, \ \lnot(=(x,s(y))))$
+		%\item  $\exists x (\forall y \ \lnot(x = s(y))$ Rewrite previous in lecture
+		\item $=(+(0,s(0)),0)$
+	\end{itemize}
+	
+	\vspace{40mm}
+	% Ask for more.	
+	% These are not terms. 
+	% These are propositions. Statements to be proved, or refuted. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Prefix, Infix, Postfix}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	In the textbook \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}\footnote{Note: this uses an outdated version of Lean, but is still a good resource for the theory of this course.} they pick the following first order language for the entire chapter on first order logic: 
+	
+	$$\mathcal{L}: \{1,2,3,add,mul,square,even,odd,prime,lt,=\}$$
+	
+	\begin{itemize}
+		\item Every natural number is even or odd, but not both. \vspace{5mm}
+		
+		\item $Even(n) \leftrightarrow \exists x : \mathbb{N}^{+}, \ (n = mul(2,x))$. \vspace{5mm}
+		
+		\item If $x$ is even, then $x^{2}$ is even. \vspace{5mm}
+		
+		\item There exists a prime number that is even.
+				
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{L$\exists\forall$N Example}
+	
+	$$\mathcal{L}: \{1,2,3,add,mul,square,even,odd,prime,lt,=\}$$
+	
+	\vspace{60mm}	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bool}
+
+	$$\mathcal{L}_{\mathbb{B}} : \{\text{True}, \text{False}, \land, \lor, \lnot, \to, =\}$$
+
+	\vspace{65mm}
+
+\end{frame}
+
+\section{First Order Rules of Inference}
+
+\begin{frame}
+	\frametitle{Arguments and Proofs}
+	
+	Recall that our intention is to understand when an argument written in our formal language is valid; when one wff is said to follow from a set of other wff. 
+  
+	\vspace{2mm}
+	
+	To this end we now write down rules of inference for the new structure of first-order predicate logic. Namely, introduction and elimination rules for the quantifiers. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Bounded Quantification}
+
+	Thus far we have considered the terms generated by the signature of a first-order language and collecting them together into a type. We have taken the quantifiers to range over this type. 
+
+	% Annotate with an example. 
+	\vspace{3cm}
+
+	This explicit mention of the type appears atypical of presentations of first-order logic. {\bf For better, or for worse, we will present the rules of inference without explicit reference to a type of terms.}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{BHK Interpretation}
+	
+	% This is a philosophical ideal. But vague.
+	% What should such algorithms look like?
+	We turn, again, to the BHK for some idea of what it means to introduce/eliminate quantifiers: 
+	
+	\vspace{0.2cm}
+	
+	\begin{center}
+		\begin{tabular}{p{1.5cm}p{8cm}}
+		$\forall$ & a proof of $\forall x \ P(x)$ is an algorithm that, applied to \emph{any} object $t$ returns a proof of $P(t)$.\\
+		$\exists$ & to prove $\exists x \ P(x)$ one must construct an object $t$ and a proof of $P(t)$. 
+		\end{tabular}
+	\end{center}
+	
+	This presentation is taken from the \href{https://plato.stanford.edu/archIves/fall2024/entries/mathematics-constructive/}{Standford Encyclopedia of Philosophy article by Bridges, Palmgren, and Ishihara}.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Universal Quantification}
+	
+	Suppose we had, in the course of a proof, deduced the statement $\forall x \alpha$, where $\alpha$ is a well-formed formula that (may) contain the variable $x$. What can we conclude from that? 
+	
+	\vspace{5mm}
+	
+	\begin{center}
+	$\begin{array}{c}
+		\infer[\forall E]{\hspace{0.3cm} ? \hspace{0.3cm}}{\begin{array}{c} 
+			\Sigma \\
+			\mathcal{D} \\ 
+			\forall x \ \alpha			
+			\end{array}}
+	\end{array}$
+	\end{center}
+
+	Following the BHK interpretation of $\forall$ we should then be able to \emph{substitute} any term, $t$, in place of each instance of the variable $x$ in the well formed formula $\alpha$.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Substitution Rules}
+	
+	If we don't take care when substituting for variables, then we can go astray. 
+	
+	\vspace{0.5cm}	
+
+	\begin{defn}
+		If a variable, $x$, is used to quantify over $\alpha$ --- as in $\gamma = \forall x \alpha$ --- then we say any instance of $x$ in $\alpha$ is \emph{bound} in $\gamma$ by the quantifer. Similarly for the existential quantifier. 
+	\end{defn} 
+
+	% Lecture: make clear that it's bound in the wff that includes the quantifier.
+	
+	\vspace{0.5cm} 
+
+	\begin{defn}
+		If a variable, $x$, is not bound in $\gamma$, then we say that it is free in $\gamma$.
+	\end{defn}
+
+	\vspace{0.5cm} 
+	
+	Bound and free variables act differently when interpreted; they play different roles. 
+	
+	% Lecture: Technically a variable can be both in the same formula. But, in that case, it's better to rename the bound variable. So you should never have a variable that is both.	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Free vs. Bound Variables}
+	
+	We can translate the first-order expression: $\forall x (x < y)$ as ``every $x$ is less than \_\_\_\_". The interpretation of this statement depends on the interpretation of $y$; because $y$ is free. It's truth will depend on the interpretation of $y$.
+	
+	\vspace{0.5cm} 
+	
+	On the other hand the interpretation of $\exists y (\forall x (x < y))$ doesn't depend on $y$. As there either exists something that satisfies this sentence, or there doesn't. 
+	
+	\vspace{0.5cm}
+
+	{\bf For this reason we should not make free variables bound, or vice versa, when substituting.}
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Substitution Notation}
+
+	If $\alpha$ is a well-formed formula in which $x$ is a free variable and $y$ is free to be substituted in for $x$, then we denote 
+
+	$$\alpha[x/y] \hspace{10mm} \alpha\text{ with \underline{all} x replaced by y}$$
+
+	\textbf{Example}
+
+	$\alpha \equiv x + y = s(x) \hspace{7mm} \beta \equiv \forall x \forall y \ x + y = y + x \hspace{7mm} \gamma \equiv \forall x \ x + y = x$
+
+	\vspace{40mm}
+
+	% Consider the following substitutions: 
+	% a[x/t] a[x/0+0] b[x/t] (! x not free) c[y/0]
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Examples}
+
+	\begin{itemize}
+		\item[]	$x_{2}$ is free for $x_{0}$ in $\exists x_{3} (P(x_{0},x_{3}))$, \vspace{0.2cm}
+		\item[] $f(x_{0},x_{1})$ is not free for $x_{0}$ in $\exists x_{1} (P(x_{0},x_{3}))$, \vspace{0.2cm}
+		\item[] $x_{5}$ is free for $x_{1}$ in $P(x_{1},x_{3})\rightarrow \exists x_{1} (Q(x_{1},x_{2}))$.
+	\end{itemize}	
+		
+\end{frame}
+
+\begin{frame}
+	\frametitle{What Can Go Wrong?}
+	
+	Consider the formula over the type of natural numbers: 
+	
+	$$\forall x \exists y (y > x).$$
+	
+	This asserts that there is always a larger natural number. Notice that $x$ is free in the formula $\exists y (y > x)$. So if we aren't careful and substitute $x \mapsto y+1$, then we obtain the statement 
+	
+	$$ \exists y (y > y+1)$$
+	
+	Which is not true. {\bf This problem arose because $y$ is bound in the formula, so we can't substitute $t=y+1$ for $x$.}
+	
+	\footnotesize{Example from Section 7.3 of \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}}
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Universal Elimination}
+	
+	If $^{\Sigma}_{\forall x \alpha}\mathcal{D}$ is a derivation of $\forall x \ \alpha$ from hypotheses $\Sigma$, where $y$ is free for $x$ in $\alpha$, then
+	
+	\vspace{0.5cm}
+	
+	\begin{center}
+		$\begin{array}{c}
+		\infer[\forall E]{\alpha[x/y]}{\begin{array}{c} 
+			\Sigma \\
+			\mathcal{D} \\ 
+			\forall x \ \alpha			
+			\end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\alpha[x/y]$ from hypotheses $\Sigma$. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Aside: Empty Types?}
+
+	An interpretation closer to the BHK would have two branches. First we use a proof that any term $x : T$ necessarily has property $\alpha$ and then provide a term $t : T$ to substitute into the predicate.  
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\forall E]{\alpha[x/t]}
+				{\begin{array}{c} 
+					\Sigma_{1} \\
+					\mathcal{D}_{1} \\ 
+					\forall x : T, \ \alpha[x]	
+					\end{array}
+				&
+				\begin{array}{c} 
+					\Sigma_{2} \\
+					\mathcal{D}_{2} \\ 
+					t : T			
+					\end{array}}
+		\end{array}$
+	\end{center}
+
+	In practice these are the same \emph{under the assumption that $T$ is non-empty.} Since logicians\footnote{Gentzen, for example, did not consider this in Section 2.21 of Investigations Into Logical Deduction.} do not concern themselves with empty types (models), they (and we) will just use the definition from the previous slide. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	Every human is mortal. Sherlock is Human. Therefore, Sherlock is mortal. 
+	
+	\vspace{6cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof of For All}
+	
+	What does it mean to prove something ``for all x''?
+	
+	A proof of the irrationality of $\sqrt{2}$ starts as follows: 
+	
+	\begin{center}
+		Assume there are some integers $A,B$ such that $\sqrt{2} = A/B$.... Eventually deriving a contradiction from this assumption.
+	\end{center}
+	
+	The proof itself, in the end, assumes \emph{nothing} of the integers $A,B$ apart from their (possible) existence. Thus it shows that no matter which integers are in place of $x,y$, the equation 
+	
+	$$(x^{2} = 2y^{2})$$
+	
+	can have no integer solutions and hence we may conclude 
+	
+	$$\forall x,y \ \lnot (x^{2} = 2y^{2})$$
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Universal Introduction}
+	
+	If $^{\Sigma}_{\alpha[x/y]}\mathcal{D}$ is a derivation of $\alpha[x/y]$ from hypotheses $\Sigma$, where $y$ does not appear free in $\Sigma$ nor $\alpha$, then
+	
+	\vspace{0.5cm}
+	
+	\begin{center}
+		$\begin{array}{c}
+		\infer[\forall I]{\forall x \alpha}{\begin{array}{c} 
+			\Sigma \\
+			\mathcal{D} \\ 
+			\alpha[x/y]
+			\end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\forall x \alpha$ from hypotheses $\Sigma$. 
+	
+	\vspace{5mm} 
+	
+	{\bf Properties of $y$ can't play a role in the proof of $\alpha[x/y]$. They can't appear in the hypotheses $\Sigma$ of the proof.} \\
+	
+	{\bf Nor can any y be free in alpha. You should be replacing all instances of y with an x when using the $\forall$ introduction.}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x Px \hspace{0.5em} \vdash \hspace{0.5em} \forall x Qx$
+	
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x (Qx \rightarrow Rx) \hspace{0.5em} \vdash \hspace{0.5em} \forall x (Px \rightarrow Rx)$
+	
+	% Make a point about the $a$ being part of the assumptions, but by the time the \forall comes in we have already discharged it from the assumption list. 
+	
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: When Things Go Wrong}
+	
+	Sherlock is a person. Gladstone is not a person. Therefore, Moriarty is the Queen.
+	
+	\vspace{0.5cm}
+	
+	Show $Ps, \ \lnot Pg \hspace{0.5em} \vdash \hspace{0.5em} Q$
+	
+	% Make a point about the $a$ being part of the assumptions. This causes the problem, in the first step.
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\bot]{Q}
+				{\infer[MP]{ \ \bot \ }{\lnot Pg & \infer[\forall E]{ \ Pg \ }{\infer[\forall I]{ \ \forall x Px \ }{Ps\vspace{0.2cm}}}}}
+		\end{array}$
+	\end{center}
+	
+	\pause
+	{\bf From one instance (Sherlock's Personhood) we cannot assume all objects are people.}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: When Things Go Wrong}
+	
+	Let $\alpha \equiv (x = y)$ and hence $\alpha[x/y] \equiv (y = y)$.
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\forall I]{\forall x \ (x = y)}
+				{\begin{array}{c} \vdots \\ \mathcal{D} \\ y = y \end{array}}
+		\end{array}$
+	\end{center}
+
+	This claims that if something is equal to itself, then everything is equal to that one thing. Obviously not something one would want in their logic!
+
+	{\bf Note:} This is an example of an error resulting from not replacing all $y$s with $x$s in the $\forall$ introduction step i.e. not making sure $y$ does not appear free after the substitution. 
+
+	\vspace{1cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Existential Introduction}
+	
+	If $^{\Sigma}_{\alpha[x/y]}\mathcal{D}$ is a derivation of $\alpha[x/y]$ from hypotheses $\Sigma$, where $y$ is free for $x$ in $\alpha$, then
+	
+	\vspace{0.5cm}
+	
+	\begin{center}
+		$\begin{array}{c}
+		\infer[\exists I]{\exists x \alpha}{\begin{array}{c} 
+			\Sigma \\
+			\mathcal{D} \\ 
+			\alpha[x/y]			
+			\end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\exists x \alpha$ from hypotheses $\Sigma$. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example(!!!)}
+	
+	$\forall x \ Px \ \vdash \ \exists x \ Px$
+	% Could revisit the discussion of the empty type. 
+	
+	\vspace{60mm}
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$\forall x (Px \rightarrow Qx), \lnot Qa \ \vdash \ \exists x \ \lnot Px$
+	
+	\vspace{60mm}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Existential Elimination}
+
+	Under the BHK interpretation a proof of $\exists x \ P(x)$ has the form: 
+	$$(t : T, p : P(t)) : (\exists x : T, p(x))$$
+	If we have as a hypothesis $\exists x \ P(x)$, then how are we to make use of this in a proof? 
+
+	\vspace{50mm}
+
+	% All we know is that there is *some* term out there that satisfies the predicate P. If we then argue that gamma follows from the existence of an *arbitrary* term satisfying the predicate P then we may conclude gamma. 
+	% For, we know there is some term satisfying the predicate. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Existential Elimination}
+	
+	If $^{\Sigma_{1}}_{\exists x \alpha}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\alpha[x/y]\rightarrow\gamma}\mathcal{D}_{2}$ are derivations, and $y$ is neither free in $\gamma$ nor $\Sigma_{1} \cup \Sigma_{2
+	}$, then
+	
+	\begin{center}
+	$\begin{array}{ c }
+	
+	\infer[\exists E]{\gamma}
+	{
+		\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \exists x \alpha \end{array}
+		& 
+		\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \alpha[x/y]\rightarrow\gamma \end{array}				
+	}	
+	
+	\end{array}$
+	\end{center}
+
+	is a derivation of $\gamma$ from hypotheses $\Sigma_{1} \cup \Sigma_{2}$. 
+	
+	% Take time to explain that if $y$ is arbitrary, then we can put in the term we know to exist from the first deduction. The fact that $y$ is arbitrary is encoded by not being free in $\gamma$ nor $\Sigma$. 
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$\forall x (Px \rightarrow Qx), \ \exists x Px \ \vdash \ \exists x Qx$
+	
+	% There are a few wrong things one might do here which are worth pointing out. 
+	
+	\vspace{65mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: When Things Go Wrong I}
+	
+	Sherlock is a detective. Therefore, everyone is a detective. 
+	
+	\vspace{5mm}
+	
+	$$ \exists x Dx \ \vdash \ \forall x Dx $$
+	
+	\vspace{5mm}
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\forall I]{\forall x Dx}{\infer[\exists E]{Da}
+					{\exists x Dx & \infer[\rightarrow I, 1]{Da \rightarrow Da}{\infer[1]{ \ Da \ }{}}
+				}
+			}		
+		 \end{array}$
+	\end{center}
+
+	\vspace{20mm}	
+\end{frame}
+	
+\begin{frame}
+	\frametitle{Example: When Things Go Wrong II}
+	
+	Sherlock is a human. Gladstone is a dog. Therefore, there exists something that is both a human and a dog. 
+	
+	\vspace{5mm}
+	
+	$$ Hs, \ \exists x Dx \ \vdash \ \exists x (Hx \land Dx) $$
+	
+	\vspace{5mm}
+	
+	\begin{center}
+		$\begin{array}{c}	
+			\infer[\exists E]{\exists x (Hx \land Dx)}{\exists x Dx & \infer[\rightarrow I, 1]{Ds \rightarrow \exists x (Hx \land Dx)}
+				{\infer[\exists I]{\exists x (Hx \land Dx)}
+					{\infer[\land I]{Hs \land Ds}
+						{Hs & \infer[1]{Ds}
+							{}}}}}
+	     \end{array}$
+	\end{center}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof Strategy}
+	
+	$$\exists x Px \lor \exists x Qx \ \vdash \ \exists x (Px \lor Qx)$$
+
+	{\bf Note:} Our hypothesis is a disjunction. So we will need the disjunction elimination rule to make use of it. 
+	
+	\vspace{20mm}
+	
+	This breaks the proof into two steps: 
+	
+	\begin{center}
+	\begin{enumerate}
+		\item $\exists x Px \rightarrow \exists x (Px \lor Qx)$
+		\item $\exists x Qx \rightarrow \exists x (Px \lor Qx)$		
+	\end{enumerate}
+	\end{center}
+	
+	Both of these steps will have the same form, so let's focus on the first.		
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof Strategy}
+
+	We have reduced the problem to showing:	
+
+	 $$ \ \vdash \ \exists x Px \rightarrow \exists x (Px \lor Qx)$$
+	\pause	
+	The deduction theorem ($\rightarrow I$) implies this is equivalent to showing:	
+	$$\exists x Px \ \vdash \  \exists x (Px \lor Qx)$$	
+	\pause	
+	Now our hypothesis has an existential quantifier in it, so we need to use the corresponding elimination rule. Our proof will have a line of the form: 	
+	\vspace{5mm}	
+	$$ \infer[\exists E]{\exists x (Px \lor Qx)}{\exists x Px \ & \infer[?]{\ Pa \rightarrow \exists x (Px \lor Qx)}{} } $$
+	How can we complete the proof? 
+		
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof Strategy}
+	
+	We want to show $ \ \vdash \ \exists x Px \rightarrow \exists x (Px \lor Qx)$ and so far our proof looks like this. What can we do to finish this proof?
+	
+	$$ \infer[\exists E]{\exists x (Px \lor Qx)}{\infer[2]{\exists x Px}{} \ & \infer[\rightarrow I,1]{\ Pa \rightarrow \exists x (Px \lor Qx)}{\infer[\exists I]{\exists x (Px \lor Qx)}
+			{\infer[\lor I]{Pa \lor Qa}
+				{\infer[1]{ \ Pa \ }{}}}}} $$
+	
+	\vspace{30mm}		
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proof Strategy}
+	
+	We have proven the first of our subgoals. Go through the same process to prove the second subgoal. 
+	
+	\begin{center}
+		\begin{enumerate}
+			\item $\exists x Px \rightarrow \exists x (Px \lor Qx)$
+			\item $\exists x Qx \rightarrow \exists x (Px \lor Qx)$		
+		\end{enumerate}
+	\end{center}	
+	
+	Use the disjunction elimination to tie these goals together into a proof of the original statement
+	
+	$$\exists x Px \lor \exists x Qx \ \vdash \ \exists x (Px \lor Qx)$$
+	
+	\vspace{2cm}
+	
+	%\hspace{6cm}\footnotesize{See tutorials for a full proof.}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	$\lnot \exists x \ Px \ \vdash \ \forall x \ (\lnot Px)$
+
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Reading}
+
+	Dirk van Dalen, \href{https://libcat.canterbury.ac.nz/Record/112862}{Logic and Structure}. 
+
+	\vspace{10mm}
+
+	Simon Thompson, \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Type Theory and Functional Programming}. 
+	
+	Chapters 1 - 4. 
+
+	\vspace{10mm}
+
+	Jeremy Avigad et al, \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}\footnote{Note: this uses an outdated version of Lean, but is still a good resource for the theory of this course.}. 
+	
+	Chapters 7, 8, and 9.
+\end{frame}
+\end{document}

@@ -1,0 +1,22 @@
+#####################################
+#   Tutorial 10 :: Question **      #
+#####################################
+# If first bit is 0, then implication is True 
+# If first bit is 1, then second bit needs checking
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,0,R,qTrue;
+q0,1,1,R,qCheck;
+qCheck,1,b,L,qTrue;
+qCheck,0,b,L,qFalse;
+qTrue,1,b,L,qTrue;
+qTrue,0,b,L,qTrue;
+qTrue,@,@,R,qPrintOne;
+qPrintOne,b,1,L,qPrintOne;
+qPrintOne,@,@,N,HALT;
+qFalse,@,@,R,qPrintZero;
+qFalse,1,b,L,qFalse;
+qFalse,0,b,L,qFalse;
+qPrintZero,b,0,L,qPrintZero;
+qPrintZero,@,@,N,HALT;
+# End of instructions.

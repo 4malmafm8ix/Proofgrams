@@ -1,0 +1,654 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Three (Solutions)}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions: Classical Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write some natural deductions using RAA,
+				\item Prove LEM and DNE,
+				\item Understand the induction step in the soundness theorem,
+				\item Appreciate the oddities of classical theorems. 
+			\end{itemize}
+
+		Relevant lectures: Lectures 6,7,8, and 9\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4,5}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1e, 2a, 2b\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item If $\Sigma_{1} \models \alpha \to \beta$ and $\Sigma_{2} \models \alpha$, then show $\Sigma_{1} \cup \Sigma_{2} \models \beta$.
+	% This is one of the steps in the proof of the soundness theorem. Draw the rule of inference (MP) that this corresponds to. 
+	
+	\hspace{0.2cm}{\bf Solution}
+	
+	Let $v$ be a valuation that satisfies $\Sigma_{1} \cup \Sigma_{2}$. It follows that $v$ satisfies $\Sigma_{1}$ and hence $\alpha \to \beta$. Therefore $v(\alpha) = v(\alpha)v(\beta)$. Similarly $v$ satisfies $\Sigma_{2}$ and hence $v(\alpha) = 1$. 
+
+	Together these imply $v(\beta) = 1$. Therefore any valuation satisfying $\Sigma_{1} \cup \Sigma_{2}$ must also satisfy $\beta$. It follows that modus ponens is a truth preserving rule of inference. 
+
+	% \item Tips for identifying when RAA is appropriate. 
+	
+	\newpage
+	\item $\lnot (A \land B) \vdash \lnot A \lor \lnot B$
+
+	\hspace{0.2cm}{\bf Solution}
+
+	Proofs that use RAA have a different approach to minimal and intuitionistic proofs. They require more than just unpacking the logical connectives in the hypotheses and conclusion. 
+
+	However, there are common elements to all the RAA proofs in this tutorial. All RAA proofs require adding the negation of the conclusion to the hypotheses. Once you have identified that you're to write an RAA proof, you can immediately add the negation of the conclusion to the hypotheses - it will be discharged at the RAA step. 
+
+	The RAA step only occurs once $\bot$ has been derived. Where is $\bot$ going to come from? Typically from the negated conclusion added to the hypotheses, via modus ponens. Counterintuitively, this means we need to now derive the statement we are trying to prove - but we do so with extra assumptions that will be discharged along the way. NOTE: This step may need to be done twice in order to remove all of the hypotheses added to make the proof. That is, you will arrive at the final conclusion multiple times in the proof; but you will still have hypotheses to discharge. Be mindful of the hypotheses that are still in use at any stage in the proof. 
+
+	In summary, when writing an RAA proof add the negation of the conclusion to the hypotheses, together with assumptions that allow the proof of the conclusion in the context of the question. All of these extra assumptions must be discharged with either implication introduction or RAA. 
+
+	{\bf Hypotheses:} $\lnot (A \land B)$ with $\lnot(\lnot A \lor \lnot B)$ added for RAA and then $A,B$ added in order to obtain $\lnot A \lor \lnot B$ to derive $\bot$ for the RAA step. 
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[RAA,3]{\lnot A \lor \lnot B}
+					{\infer[]{\bot}
+						{\infer[\lor I]{\lnot A \lor \lnot B}
+							{\infer[\to I,1]{\lnot A}
+								{\infer[MP]{\bot}
+									{\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}
+										{}
+									&
+									\infer[\lor I]{\lnot A \lor \lnot B}
+										{\infer[\to I,2]{\lnot B}
+											{\infer[MP]{\bot}
+												{\lnot(A \land B)
+												&
+												\infer[\land I]{A \land B}
+													{\infer[1]{\cancel{A}}{}
+													&
+													\infer[2]{\cancel{B}}{}}}}}}}}
+						&
+						\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}{}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+	
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item Make sure you have finished all of the minimal and intuitionistic natural deductions before doing this tutorial. It is more important that you understand those.
+	
+	\hspace{0.2cm}{\bf Solution}
+	
+	See the solutions for Tutorial Two. 
+
+	\item \textbf{Classical derivations.} Provide natural deduction proofs of the following. All rules may be required.
+	
+	\begin{enumerate}
+		\item $\vdash   A \lor \neg A$ \hfill (law of excluded middle - RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Hypotheses:} $\lnot(A \lor \lnot A)$ for RAA and $A$ to obtain $A \lor \lnot A$ for the derivation of $\bot$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[RAA,2]{A \lor \lnot A}
+						{\infer[MP]{\bot}
+							{\infer[\lor I]{A \lor \lnot A}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[MP]{\bot}
+										{\infer[]{A \lor \lnot A}{\infer[1]{\cancel{A}}{}}
+										&
+										\infer[2]{\cancel{\lnot (A \lor \lnot A)}}{}}}}
+							&
+							\infer[2]{\cancel{\lnot(A \lor \lnot A)}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		Notice the final conclusion $A \lor \lnot A$ is arrived at three times in the course of this proof. Only the last time ``counts'' as only then have all the hypotheses been discharged. This will happen for each RAA proof below. 
+
+		%\newpage
+		\item $\neg\neg A \vdash A$ \hfill (double negation elimination - RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Hypotheses:} RAA comes in the proof below through the use of $A \lor \lnot A$. This might be called a \emph{proof by cases}. It still relies on RAA, because the proof relies on $A \lor \lnot A$ being provable from no hypotheses; which is a classical theorem. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{A}
+						{A \lor \lnot A
+						&
+						A \to A
+						&
+						\infer[\to I,1]{\lnot A \to A}
+							{\infer[XF]{A}
+								{\infer[MP]{\bot}
+									{\infer[1]{\cancel{\lnot A}}{}
+									&
+									\lnot \lnot A}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		\newpage
+		\item $\neg( A \land  B) \vdash  \neg  A \lor \neg  B$ \hfill (De Morgan - RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Hypotheses:} $\lnot (A \land B)$ with $\lnot(\lnot A \lor \lnot B)$ added for RAA and then $A,B$ added in order to obtain $\lnot A \lor \lnot B$ to derive $\bot$ for the RAA step. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[RAA,3]{\lnot A \lor \lnot B}
+						{\infer[]{\bot}
+							{\infer[\lor I]{\lnot A \lor \lnot B}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[MP]{\bot}
+										{\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}
+											{}
+										&
+										\infer[\lor I]{\lnot A \lor \lnot B}
+											{\infer[\to I,2]{\lnot B}
+												{\infer[MP]{\bot}
+													{\lnot(A \land B)
+													&
+													\infer[\land I]{A \land B}
+														{\infer[1]{\cancel{A}}{}
+														&
+														\infer[2]{\cancel{B}}{}}}}}}}}
+							&
+							\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item $ A \to  B \vdash  \neg  A \lor  B$ \hfill (material implication - RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Hypotheses:} $\lnot(\lnot A \lor B)$ for the RAA step. Also add $A$ to obtain $\lnot A \lor B$ for the derivation of $\bot$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[RAA,2]{\lnot A \lor B}
+						{\infer[MP]{\bot}
+							{\infer[\lor I]{\lnot A \lor B}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[MP]{\bot}
+										{\infer[2]{\cancel{\lnot(\lnot A \lor B)}}{}
+										&
+										\infer[\lor I]{\lnot A \lor B}
+											{\infer[MP]{B}
+												{\infer[1]{\cancel{A}}{}
+												&
+												A \to B}}}}}
+							&
+							\infer[2]{\cancel{\lnot(\lnot A \lor B)}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item $\vdash  (A \to  B) \lor (B \to  C)$ \hfill (Challenge! - RAA)
+
+		{\bf Hypotheses:} $\lnot(( A \to  B) \lor ( B \to  C))$ for RAA and just $B$ to obtain $\bot$ in the course of the proof. 	
+
+		\hspace{0.2cm}{\bf Solution}
+		%\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[RAA,2]{(A \to B) \lor (B \to C)}
+						{\infer[]{\bot}
+							{\infer[\lor I]{(A \to B) \lor (B \to C)}
+								{\infer[\to I,1]{B \to C}
+									{\infer[XF]{C}
+										{\infer[MP]{\bot}
+											{\infer[2]{\cancel{\lnot[(A \to B) \lor (B \to C)]}}{}
+											&
+											\infer[\lor I]{(A \to B) \lor (B \to C)}
+												{\infer[\to I]{A \to B}
+													{\infer[1]{\cancel{B}}{}}}}}}}
+							&
+							\infer[2]{\cancel{\lnot[(A \to B) \lor (B \to C)]}}{}}}				
+				\end{array}$
+			\end{center}
+		%\end{mdframed}
+
+		\newpage
+		\item \(\vdash (A \land \neg A) \to  B\) \hfill (the \emph{paradox of entailment})
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		RAA not needed. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(A \land \lnot A) \to B}
+						{\infer[XF]{B}
+							{\infer[MP]{\bot}
+								{\infer[\land E_{l}]{A}
+									{\infer[1]{\cancel{A \land \lnot A}}{}}
+								&
+								\infer[\land E_{r}]{\lnot A}
+									{\infer[1]{\cancel{A \land \lnot A}}{}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item \(\vdash A\to B\lor\neg B\) \hfill (LEM)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Since $B \lor \lnot B$ is a classical theorem, we can extend the proof of LEM (Exercise 2 a) by an implication introduction to get this theorem. 
+
+		%\newpage
+		\item \(\vdash A\to( B\to A)\) \hfill (weakening)
+		
+		\hspace{0.2cm}{\bf Solution}
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{A \to (B \to A)}
+						{\infer[\to I,2]{B \to A}
+							{\infer[1]{\cancel{A}}{}
+							&
+							\infer[2]{\cancel{B}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item \(\vdash  \neg A\to( A \to B)\) \hfill (a form of \emph{ex falso})
+		
+		\hspace{0.2cm}{\bf Solution}
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot A \to (A \to B)}
+						{\infer[\to I,2]{A \to B}
+							{\infer[XF]{B}
+								{\infer[MP]{\bot}
+									{\infer[1]{\cancel{\lnot A}}{}
+									&
+									\infer[2]{\cancel{A}}{}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item $\vdash (\neg A\to A)\to A$ \hfill (RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{mdframed}	
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(\lnot A \to A) \to A}
+						{\infer[RAA,2]{A}
+							{\infer[MP]{\bot}
+								{\infer[MP]{A}
+									{\infer[1]{\cancel{\lnot A \to A}}{} & \infer[2]{\cancel{\lnot A}}{}} 
+								&
+								\infer[2]{\cancel{\lnot A}}{}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		\newpage
+		\item $(A \to  B) \land (C \to D) \vdash (A \rightarrow D) \lor (C \rightarrow B)$ \hfill (Challenge! - RAA)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		%\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[RAA,3]{(A \to D) \lor (C \to B)}
+						{\infer[MP]{\bot}
+							{\infer[\lor I]{(A \to D) \lor (C \to B)}
+								{\infer[\to I,1]{C \to B}
+									{\infer[XF]{B}
+										{\infer[MP]{\bot}
+											{\infer[3]{\cancel{\lnot[(A \to D) \lor (C \to B)]}}{}
+											&
+											\infer[\lor I]{(A \to D) \lor (C \to B)}
+												{\infer[\to I]{A \to D}
+													{\infer[MP]{D}
+														{\infer[1]{\cancel{C}}{}
+														&
+														\infer[\land E_{r}]{C \to D}{(A \to B) \land (C \to D)}}}}}}}}
+							&
+							\infer[3]{\cancel{\lnot[(A \to D) \lor (C \to B)]}}{}}}
+				\end{array}$
+			\end{center}
+		%\end{mdframed}
+		
+		%\newpage
+		\item $\lnot (A \to  B) \dashv\vdash  A \land \lnot B$ \hfill (Challenge! - RAA helps)
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		The first proof below makes use of the theorem $\vdash \lnot A \to (A \to B)$.
+
+		First prove the sequent $\lnot ( A \to  B) \vdash  A \land \lnot B$
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{A \land \lnot B}
+					{\infer[RAA,1]{A}
+						{\infer[MP]{\bot}
+							{\infer[MP]{A \to B}
+								{\infer[1]{\cancel{\lnot A}}{}
+								&
+								\lnot A \to (A \to B)}
+							&
+							\lnot(A \to B)}}
+					&
+					\infer[\to I,2]{\lnot B}
+						{\infer[MP]{\bot}
+							{\infer[\to I]{A \to B}
+								{\infer[2]{\cancel{B}}{}}
+							&
+							\lnot(A \to B)}}}
+			\end{array}$
+		\end{center}
+
+		Now prove the other sequent $A \land \lnot B \vdash \lnot ( A \to  B)$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot(A \to B)}
+						{\infer[MP]{\bot}
+							{\infer[MP]{B}
+								{\infer[\land E_{l}]{A}{A \land \lnot B}
+								&
+								\infer[1]{\cancel{A \to B}}{}}
+							&
+							\infer[\land E_{r}]{\lnot B}
+								{A \land \lnot B}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}			
+
+	\end{enumerate}
+
+\newpage
+\item {\bf Soundness Proof}	
+
+Complete the induction step of the soundness theorem by answering the following. 
+
+		\begin{enumerate}
+			\item Implication introduction
+			
+			If $\Gamma \models \beta$, then show $\Gamma \backslash\{\alpha\} \models \alpha \rightarrow \beta$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			It is sufficient to show any valuation satisfying $\Gamma \backslash\{\alpha\}$ must also satisfy $\alpha \rightarrow \beta$. 
+			
+			To this end, let $v$ be a valuation that satisfies $\Gamma \backslash\{\alpha\}$.
+
+			There are two cases: either $v$ satisfies $\alpha$ or it does not. 
+
+			If $v$ also satisfies $\alpha$, then $v$ satisfies all of $\Gamma$ and hence ($\Gamma \models \beta$) $v(\beta)=1$. In this case 
+
+			$$v(\alpha \to \beta) = 1 - v(\alpha) + v(\alpha)v(\beta) = 1 - 1 + 1 = 1$$
+
+			In the other case, $v(\alpha) = 0$ and hence 
+			$$v(\alpha \to \beta) = 1 - v(\alpha) + v(\alpha)v(\beta) = 1 - 0 + 0 = 1$$
+			
+			So it follows, in both cases, that if $\Gamma \models \beta$ then any valuation satisfying $\Gamma \backslash\{\alpha\}$ will also satisfy $\alpha \to \beta$. Therefore implication introduction is truth preserving rule of inference. 
+			
+			\vspace{0.2cm}
+
+			\item Disjunction introduction
+					
+			If $\Gamma \models \alpha$, then show $\Gamma \models \alpha \lor \beta$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Suppose $v$ is a valuation satisfying $\Gamma$. 
+
+			\begin{align*}
+					v(\alpha \lor \beta) &= v(\alpha) + v(\beta) - v(\alpha)v(\beta) & \\
+					&= 1 + v(\beta) - 1 \times v(\beta) & \Gamma \models \alpha\\
+					&= 1 & 
+			\end{align*}
+
+			This shows that, if $\Gamma \models \alpha$ and $v$ satisfies $\Gamma$, then $v$ necessarily satisfies $\alpha \lor \beta$. Therefore disjunction introduction is a truth preserving rule of inference. 
+			
+			\newpage
+			\item Disjunction elimination
+			
+			If $\Gamma_{1} \models \alpha \lor \beta$, $\Gamma_{2} \models \alpha \rightarrow \gamma$, and $\Gamma_{3} \models \beta \rightarrow \gamma$ then show the following is valid $\Gamma_{1}\cup\Gamma_{2}\cup\Gamma_{3} \models \gamma$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Suppose $v$ satisfies $\Gamma_{1}\cup\Gamma_{2}\cup\Gamma_{3}$.
+
+			Certainly $v$ satisfies $\Gamma_{1}$ and hence $v(\alpha\lor\beta)=1$.
+
+			\begin{equation}
+				1 = v(\alpha) + v(\beta) - v(\alpha)v(\beta)
+			\end{equation}
+
+			Also, since $v$ satisfies $\Gamma_{2}$ and hence $v(\alpha \to \gamma)=1$
+			
+			\begin{equation}
+				\begin{split}
+					1 &= v(\alpha \to \gamma) \\
+					&= 1 - v(\alpha) + v(\alpha)v(\gamma) \\
+					&\text{Therefore } v(\alpha) = v(\alpha)v(\gamma)
+				\end{split}
+			\end{equation}
+
+			Finally, since $v$ satisfies $\Gamma_{3}$ and hence $v(\beta \to \gamma)=1$
+			
+			\begin{equation}
+				\begin{split}
+					1 &= v(\beta \to \gamma) \\
+					&= 1 - v(\beta) + v(\beta)v(\gamma) \\
+					&\text{Therefore } v(\beta) = v(\beta)v(\gamma)
+				\end{split}
+			\end{equation}
+			
+			To see that $v(\gamma) = 1$ one can multiply (1) on both sides by $v(\gamma)$ and use (2) and (3) to simplify. This shows that disjunction elimination is a truth preserving rule of inference.  
+			
+			\vspace{0.2cm}
+
+			\item Conjunction introduction
+			
+			If $\Gamma_{1} \models \alpha$ and $\Gamma_{2} \models \beta$, then we need to show that $\Gamma_{1} \cup \Gamma_{2} \models \alpha \land \beta$. 
+
+			\hspace{0.2cm}{\bf Solution}
+
+			If $v$ satisfies $\Gamma_{1} \cup \Gamma_{2}$, then $v$ satisfies $\Gamma_{1}$ and $\Gamma_{2}$ separately. Therefore $v$ satisfies $\alpha$ and $\beta$. So $v(\alpha \land \beta) = v(\alpha)v(\beta)=1$.
+			
+			Conjunction introduction is therefore seen to be a truth preserving rule of inference.  
+			
+			\vspace{0.2cm}
+
+			\item Conjunction elimination
+			
+			If $\Gamma \models \alpha \land \beta$, then show $\Gamma \models \alpha$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			If $v$ satisfies $\Gamma$, then 
+			
+			$$v(\alpha \land \beta) = v(\alpha)v(\beta) = 1$$
+
+			Therefore $v(\alpha) = 1$. 
+			
+			Conjunction elimination (left and right instances are basically the same) is therefore seen to be truth preserving. 
+
+			\vspace{0.2cm}
+
+			\item Ex Falso Quodlibet
+			
+			If $\Gamma \models \bot$, then show $\Gamma \models \alpha$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Let $v$ be a valuation that satisfies $\Gamma$. It follows from $\Gamma \models \bot$, that $v(\bot) = 1$. This is impossible! Therefore there can be no such $v$ and hence no counterexample to $\Gamma \models \alpha$.
+			
+			\item Reductio Ad Absurdum
+			
+			If $\Gamma, \lnot \alpha \models \bot$, then show $\Gamma \models \alpha$.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Let $v$ be a valuation that satisfies $\Gamma$. We want to show that this valuation  must also satisfy $\alpha$.
+			
+			Such a valuation either satisfies $\alpha$ or satisfies $\lnot \alpha$. We need to consider each case in turn. 
+
+			If $v$ satisfies $\lnot \alpha$, then by $\Gamma, \lnot \alpha \models \bot$, we conclude that $v(\bot) = 1$. This is impossible, so there can be no such valuation. 
+
+			Since all such $v$ don't satisfy $\lnot \alpha$, they must satisfy $\alpha$. For either $v(\alpha) = 1$ or $v(\lnot \alpha) = 1$. 
+
+			Therefore, given $\Gamma, \lnot \alpha \models \bot$, we may conclude that any valuation satisfying $\Gamma$ must also satisfy $\alpha$ i.e.  $\Gamma \models \alpha$.
+	
+		\end{enumerate}
+
+	\newpage
+	\item Ex Falso Quodlibet (The Law of Explosion) states that, for any propositions $P,Q$ we have the sequent $\{P \land \lnot P\} \ \vdash \ Q$. 
+	
+	Show that the rule of inference {\bf XF} can be \emph{derived} from {\bf minimal logic + RAA}. In this sense we might say classical logic is more powerful the intuitionistic logic.
+
+	\hspace{0.2cm}{\bf Solution}
+
+	The rules are the same except for the discharge of a hypothesis. One can \emph{always} swap an instance of XF for RAA --- whether or not there is a $\lnot P$ to discharge. 
+
+	\newpage
+	\item In class we discussed how Classical Logic can be obtained from intuitionistic logic by adding the rule of inference \emph{Reductio Ad Absurdum.} 
+	
+	If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+	
+	\begin{center}		
+		$\begin{array}{c}		
+		\infer[RAA]{\alpha}
+		{\begin{array}{c} \hline \cancel{\lnot\alpha} \\ \Sigma \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
+
+	In this question we will explore this extension of logics in more detail. We will see that there are different methods for obtaining classical logic from intuitionistic logic.
+
+		\begin{enumerate}
+			\item Show that adding the rule of inference \emph{reductio ad absurdum} to intuitionistic propositional logic is equivalent to asserting that all the formulae $P \lor \lnot P$ for each proposition $P$ are theorems.
+			
+			% We have seen {\bf RAA} implies {\bf LEM} in class. Therefore, it suffices to show that we can derive the {\bf RAA} rule of inference from the assumption that $P \lor \lnot P$ is a theorem for every $P$.
+
+			That is, if given a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$, then show that it can be extended (without using RAA) using the assumption of LEM i.e. $\vdash P \lor \lnot P$ to a derivation of $P$ with the assumption $\lnot P$ eliminated.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Suppose we have a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$. Extend this derivation using the assumption of LEM i.e. $P\lor \lnot P$ in a manner equivalent to RAA. 
+
+			That is to say, derive $P$ and eliminate $\lnot P$ without using RAA. 
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lor E]{P}
+							{P \lor \lnot P	&
+							P \to P &
+							\infer[\to I,1]{\lnot P \to P}
+								{\infer[XF]{P}
+									{\infer[]{\bot}
+										{\infer[]{\mathcal{D}}
+											{\Sigma & \infer[1]{\cancel{\lnot P}}{}}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			This shows RAA = LEM in the presence of XF i.e. adding either to intuitionistic logic yields the same theorems. 
+			
+			\newpage
+			\item Show that adding the rule of inference reductio ad absurdum to intuitionistic propositional logic is equivalent to adding the rule of inference of double negation elimination. 
+			
+			% We have seen {\bf RAA} implies {\bf DNE} in class. Therefore, it suffices to show that we can derive the {\bf RAA} rule of inference from the assumption that $\lnot \lnot P \to P$ is a theorem for every $P$. 
+
+			That is, if given a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$, then show that it can be extended (without using RAA) using the assumption of DNE i.e. $\lnot \lnot P \ \vdash P$ to a derivation of $P$ with the assumption $\lnot P$ eliminated.
+
+			\hspace{0.2cm}{\bf Solution}
+
+			Suppose we have a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$. Extend this derivation using the assumption of DNE i.e. $\lnot \lnot P \vdash P$ in a manner equivalent to RAA. 
+
+			That is to say, derive $P$ and eliminate $\lnot P$ without using RAA. 
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[DNE]{P}
+							{\infer[\to I,1]{\lnot \lnot P}
+								{\infer[]{\bot}
+									{\infer[]{\mathcal{D}}	
+										{\Sigma & \infer[1]{\cancel{\lnot P}}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			This shows RAA = DNE in the presence of XF i.e. intuitionistic logic. 
+
+			Note that although this direction only requires minimal logic, the proof we gave of RAA implies DNE (Tutorial Exercise 2 b) used XF. 
+
+			% \item {\bf RAA} = {\bf LEM} = {\bf DNE} Conclude that adding any of these three to intuitionistic logic all have the same strength. That is, adding any of them to intuitionistic logic allows for the proof of the same theorems.  
+
+			% \hspace{0.2cm}{\bf Solution}
+
+			% We have seen that steps in proofs using one of RAA, LEM, or DNE can be swapped out for (possibly multiple steps) using any of RAA, LEM, or DNE. Therefore they all yield same natural deductions and hence the same theorems. 
+
+		\end{enumerate}
+
+	\end{enumerate}	
+\end{document}

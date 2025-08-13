@@ -1,0 +1,46 @@
+#####################################
+#   Tutorial 09 :: Question 03      #
+#####################################
+# This program looks for the end of the binary string. 
+# Marks that cell and then returns home. 
+# Next it starts moving the digits back until 
+# the end of the string is reached. 
+### Beginning of instructions.
+# Mark the end of the tape:
+q0,@,@,R,q0;
+q0,b,b,R,q0;
+q0,0,0,R,q00;
+q0,1,1,R,q00;
+q00,b,*,L,q1;
+q00,0,0,R,q00;
+q00,1,1,R,q00;
+# Return home:
+q1,1,1,L,q1;
+q1,0,0,L,q1;
+q1,b,b,L,q1;
+q1,@,@,L,q2;
+# Now begin moving the bits: 
+# q2 searches for next bit to move.
+q2,@,@,R,q2;
+q2,b,b,R,q2;
+q2,0,b,L,qmove0;
+q2,1,b,L,qmove1;
+q2,*,b,L,qdone;
+# Code for the moving:
+qmove0,b,b,L,qmove0;
+qmove0,1,1,R,qprint0;
+qmove0,0,0,R,qprint0;
+qmove0,@,@,R,qprint0;
+qprint0,b,0,R,q2;
+qmove1,b,b,L,qmove1;
+qmove1,1,1,R,qprint1;
+qmove1,0,0,R,qprint1;
+qmove1,@,@,R,qprint1;
+qprint1,b,1,R,q2;
+# Code to return home. 
+qdone,*,*,L,qdone;
+qdone,0,0,L,qdone;
+qdone,1,1,L,qdone;
+qdone,b,b,L,qdone;
+qdone,@,@,L,HALT;
+# End of instructions.

@@ -1,0 +1,135 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Five}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions in First Order Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Interpret formulae in particular models.
+				\item Natural deductions with $\forall$ $\exists$ rules.
+			\end{itemize}
+
+		Relevant lectures: Lectures 10,11,12,13\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N} Sections 7,8, and 10.
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1e, 1g, 1i \\ 
+	{\bf Due following Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Consider the first order language with signature $\mathcal{L}: \{\emptyset, \in, \subset, =\}$ and the following well-formed formulae in this language 
+	
+		\begin{itemize}
+			\item $\forall x \ \forall y \ [\forall z \ (z \in x \leftrightarrow z \in y) \rightarrow x = y]$
+			\item $\lnot \exists x (x \in \emptyset)$
+			\item $\forall x \ \exists y \ \forall z \ (z \subset x) \rightarrow z \in y$
+		\end{itemize}
+
+	Interpret these wff in a model of sets i.e. a model such that elements of the universe of discourse are sets. State an interpretation of the elements of the signature in this model. Translate each of the wff into English using that interpretation. 
+
+	\vspace{0.5cm}
+
+	\item In the language above write down a first-order wff that can be interpreted (in a particular model) as defining what it means for $x$ to be a subset of $y$. 
+
+	\vspace{0.5cm}
+
+	\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+\end{enumerate}
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Prove the following in the predicate calculus. 
+	
+		\emph{Propositional rules together with the rules for either $\forall$ or $\exists$ alone:}
+
+		\begin{enumerate}
+			\item $\forall x (Fx \to Gx) \vdash  \forall x Fx \to \forall x Gx$
+			\item $\forall x ((Fx \lor Gx) \to Hx),\quad \forall x \neg Hx \vdash  \forall x \neg Fx$
+			\item $\forall x (Fx\land Gx) \dashv \vdash  \forall x Fx\land \forall x Gx$
+			\item $\forall x (P \to Fx) \dashv \vdash  P \to \forall x Fx$
+			\item $\exists x (P \to Fx) \dashv \vdash  P \to \exists x Fx$
+
+			\emph{All propositional and predicate rules:}
+
+			\item $\exists x \neg Fx \dashv \vdash  \neg  \forall x Fx$
+			\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+			\item $\forall x (Fx \to P) \dashv \vdash  \exists x Fx \to P$
+			\item $\forall x (Fx \lor Gx) \vdash  \forall x Fx \lor \exists x Gx$
+			\item $\exists x (Fx \to Gx) \dashv \vdash  \forall x Fx \to \exists x Gx$
+			\item $\exists x Fx \dashv\vdash \lnot \forall x \ \lnot Fx$
+			\item $\forall x Fx \dashv\vdash \lnot \exists x \ \lnot Fx$
+		\end{enumerate}	
+
+	\item Presburger arithmetic has signature $\mathcal{P}: \{0,1,+,=\}$ and axioms
+
+		\begin{enumerate}
+			\item $\forall x \ \lnot(0 = x + 1)$
+			\item $\forall x \ \forall y \ ((x + 1  = y + 1) \rightarrow x = y)$
+			\item $\forall x \ (x + 0 = x)$
+			\item $\forall x \ \forall y \ (x + (y + 1) = (x + y) + 1)$
+			\item $(P(0) \land \forall x \ (P(x) \to P(x+1))) \rightarrow \forall y (P(y))$
+		\end{enumerate}
+			
+			The standard model for $\mathcal{P}$ is the natural numbers with (the logical symbol) $0$ interpreted as (the number) $0$, $1$ as $1$, $+$ as addition of natural numbers, and $=$ as equality as natural numbers. Translate these axioms into English using the standard model of arithmetic. 
+			
+			For (e) assume $P$ is a wff which can take one input from the universe of discourse. 
+			
+	% Write down a model in which this true. Write down a model in which this is false.
+	\item Consider the first-order language with signature $\mathcal{L}: \{0, +, =\}$ such that $0$ is a constant, $+$ is a binary function, and $=$ is a binary predicate.
+			
+	The following are three well-formed formulae in $\mathcal{L}$
+			
+		\begin{itemize}
+			\item $\forall x \ \forall y \ (x + y = y + x)$
+			\item $\forall x \ \exists y \ (x + y = 0)$
+			\item $\forall x \ (x + 0 = x)$
+		\end{itemize}
+		
+		\begin{enumerate}
+	  		\item State a model in which all of these wff are \textit{true}. 
+	  		\item State a model in which at least one of these wff are \textit{false}.
+		\end{enumerate}
+	  
+
+\end{enumerate}
+	
+\end{document}

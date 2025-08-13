@@ -1,0 +1,1775 @@
+% Load required themes and packages.
+\documentclass{beamer}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Bibliography
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+\title{$\lambda$ Calculus}
+\author{MATH230}
+\institute{Te Kura P\=angarau \\ Te Whare W\=ananga o Waitaha}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{What is computation?}
+
+	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{G\"{o}del Encoding}
+	% Why should propositions or proofs be considered objects
+	% amenable to some sort of computation? 
+	% Numbers are used in computation. 
+	% This doesn't seem so strange now with String and Char data types. 
+
+	Since data can be encoded to natural numbers, questions about the computability of proofs come down to questions about the computablility of functions on the natural numbers. 
+
+	% ASCII and Unicode turn symbols to sequences of numbers. 
+	% This was ultimately G\"{o}del's idea!
+\end{frame}
+
+\begin{frame}
+	\frametitle{Language for Computation}
+	What was wanted by the mathematicians of the early 1900s was a single precise language which could express \emph{all possible computations} on the natural numbers.
+	
+	% If you can think of an algorithm, then it must be expressible in this language. 
+	
+	\begin{center}
+		\begin{tabular}{l c l}
+			Alan Turing & & Turing Machine \\
+			Stephen Kleene & & $\mu$ Recursive Functions \\
+			Alonso Church & & $\lambda$-Calculus
+		\end{tabular}
+	\end{center}
+
+	It was quickly shown that any function expressible in one of these languages was also expressible in each of the others. In other words, they all agree on which procedures are ``computable''. 
+
+	% For these reason Church made the claim.
+	% Not this can't be proven. 
+	% This defines what is meant by ``effective procedure''
+	{\bf Church-Turing-Kleene Thesis:} a function on the natural numbers can be calculated by an ``effective procedure'' if and only if it is computable by a Turing machine. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Church's Thesis}
+
+	Since then many languages for computation have been defined. 
+
+	% List obviously(?) not exhaustive.
+	\begin{itemize}
+		\item Register machines
+		\item Finite state automata
+		\item Post machines
+		\item Python
+		\item C
+		\item Java
+		\item FRACTRAN
+	\end{itemize}
+
+	None have been shown more expressive than Turing machines.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Lambda Calculus}
+
+	In this course we will stick to studying lambda calculi. 
+
+	Other models, like Turing machines, are very fun to work with! However, other courses at UC already teach you about these and other models. Lambda calculi are not taught elsewhere. 
+
+	Moreover, focusing on the lambda calculi leads us to interesting ideas about the possibility of proof and the future of mathematics. 
+	% ... if you don't mind such a claim!
+
+\end{frame}
+
+\section{Lambda Calculus}
+
+\begin{frame}
+	\frametitle{What is Computation?}
+
+	Recall the natural deductions we did from the axioms of Peano Arithmetic. Many of the steps we performed in those proofs were of one of the following forms: 
+
+		\begin{itemize}
+			\item $\forall$ E - substituting terms.
+			\item $=$ E - substituting identical terms.
+			\item $\forall$ I - abstracting over patterns. 
+		\end{itemize}
+
+	The process of computing proofs of those theorems largely consisted of substitution steps. Computation was substitution. 
+
+	If you reflect on the many computations that you've done over your lifetime, you will find that this is a large part of what you do too.
+
+	Alonso Church's $\lambda$-calculus can be thought of as a formalisation of this observation. 
+
+	% I don't claim to know Church's motivations. But it doesn't hurt to try...
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Lambda Calculus}
+
+	The lambda calculus is a formal language with rules of formation, manipulation, and simplification of strings called $\lambda$-expressions. All programs we write, and computations we carry out, will be expressed in this language.
+
+	It is the process of ``simplification'' - known as $\beta$-reduction - that is the process of computation in this model.
+
+	Some of the ideas of the lambda calculus go back to Gottlob Frege, but Alonso Church took those ideas and developed the theory proper through a series of papers in the 1930s. 
+
+	This (with its typed counterparts) has fascinating links to proofs in first-order logic and through this to program and proof verification.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Intuition}
+
+	\bf{\underline{Everything} is a function.}
+
+	% Give some comparison between the usual function notation from mathematics
+	% and the new notation of the lambda calculus.
+
+	\begin{center}
+		\begin{tabular}{l c l}
+			Mathematics & \hspace{1cm} & $\lambda$-Calculus \\
+			\hline
+			$f(x) = x^{2} + 3$ & & $\lambda \ x. \ x^{2} + 3$ \\
+			$g(x,y) = x^{2}y + 2y$ & & $\lambda \ x. \ (\lambda \ y. \ x^{2}y + 2y)$\\
+			$f(3)$ & & $(\lambda \ x. \ x^{2} + 3) \ (3)$ \\
+			$g(4,2)$ & & $((\lambda \ x. \ (\lambda \ y. \ x^{2}y + 2y)) \ (4)) \ (2)$\\
+			% Data too is a lambda expression.
+			0 & & $\lambda \ s. \ (\lambda x. \ x)$\\
+			3 & & $\lambda \ s. \ (\lambda x. \ s \ (s \ (s \ x)))$\\
+		\end{tabular}
+	\end{center}
+
+	\vspace{30mm}
+	% Do some function evaluation examples. 
+	% Highlight partial application aka Currying.
+	% Notice what happens in the evaluation of 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Grammar of Lambda Calculus}
+
+	% In other words, how do we write programs in the lambda calculus! 
+
+	Lambda calculus has countably many variables $x,y,z,a,b,c,\dots$
+
+	Terms of the $\lambda$-calculus i.e. $\lambda$-terms are constructed using the following three mechanisms.
+
+	\begin{itemize}
+		\item[] Variables: $x,y,z, \dots$
+		\item[] Application: $(t \ u)$ for $\lambda$-expressions $t,u$
+		\item[] Abstraction: $(\lambda x. \ e)$ for variable $x$ and $\lambda$-expression $e$
+	\end{itemize}
+
+	The term $e$ in the $\lambda$ abstraction is referred to as the body of the abstraction. 
+
+	{\bf Examples}
+	
+	\begin{itemize}
+		\item[] $g$
+		
+		\item[] $(\lambda x. \ x \ x)$
+
+		\item[] $((\lambda x. \ x \ x) \ g)$
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{BNF $\lambda$-Terms}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Syntax Trees}
+
+	$\lambda$-terms can be represented in a syntax tree. 
+
+	\vspace{70mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Notation Conventions}
+
+	As with well-formed formulae in logic, we may opt to drop brackets. All $\lambda$-expressions will be interpreted under the following conventions.
+
+	Application associates to the left e.g. 
+	
+	$$t \ u \ v = ((t \ u) \ v)$$
+
+	Abstraction associates to the right e.g. $$\lambda x. \lambda y. \lambda z. \ t \ = \ \lambda x. (\lambda y. (\lambda z. \ t))$$
+
+	Application binds tighter than abstraction e.g. $$\lambda x. \ t \ u \ = \ \lambda x. \ (t \ u) \ \neq \ (\lambda x. \ t) u $$
+
+	Keep all brackets if that helps.  
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Interpreting $\lambda$-expressions}
+
+	All $\lambda$-expressions are to be thought of as functions.
+
+	Application, $(t \ u)$, is thought of as applying $t$ to the input $u$.
+
+	Abstraction $(\lambda x. \ u)$ is a function which takes input into $x$ and substitutes that value in every (free) instance of $x$ in the $\lambda$-expression $u$.
+
+	This means we have analogous free, bound, and substitution definitions as discussed for first-order logic and quantifiers. 
+
+	\vspace{30mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Free \& Bound Variables}
+
+	The $\lambda$ abstraction operator binds instances of its variable within the body of the abstraction expression. If $x$ is a variable and $e$ is a $\lambda$-expression, then $x$ is bound in any expression of the form 
+	
+	$$\lambda x. \ e$$
+
+	Any variable in $e$ that is not bound by an abstraction is called free. Instances of a variable bound by an abstraction are said to be in the \emph{scope} of the abstraction. 
+	% Draw the syntax tree to illustrate the ``scope'' of an abstraction.
+	
+	{\bf Examples}
+
+	\begin{itemize}
+
+		\item[] $(\lambda x. \ \lambda y. \ y \ x)$ \vspace{0.2cm}
+
+		\item[] $(\lambda z. \ z \ x)(x) $ \vspace{0.2cm}
+
+		\item[] $(\lambda x. \ \lambda y. \ y \ x)((\lambda z. \ z \ x)(x))$
+	
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Substitution}
+
+	% Add in an extra slide showing what is intended by substitution
+	% *before* students scared off by the overly abstract definition.
+	$$M = (x \ x) \hspace{10mm} N = (\lambda x. \ x + z)(\lambda x. \ x)(\lambda y. \ y \ x) \hspace{10mm} t = \lambda z. \ z $$
+
+	Substitutions of a term $t$ occur for all free instances of a variable in another expression $M$.
+
+	\begin{itemize}
+		\item[] $M[x:=t]$\vspace{5mm}
+		% Not all instances of x are free in N - take care!
+		\item[] $N[x:=t]$
+	\end{itemize}
+
+	\vspace{50mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Substitution Rules}
+	
+	When we substitute one $\lambda$-expression $N$ into another $\lambda$-expression $M$ for a variable $x$ we replace all \emph{free occurences} of $x$ in $M$ with $N$: this is denoted $M[x:=N]$. 
+	
+	Substitution of $\lambda$-expressions is defined recursively as follows
+
+	\begin{itemize}
+		\item[] $x[x:=N] = N$ \vspace{0.2cm}
+		\item[] $y[x:=N] = y$ when $y \neq x$ \vspace{0.2cm}
+		\item[] $(M_{1} \ M_{2})[x:=N] = (M_{1}[x:=N] \ M_{2}[x:=N])$ \vspace{0.2cm}
+		\item[] $(\lambda x. \ e)[x:=N] = \lambda x. \ e$ \vspace{0.2cm}
+		\item[] $(\lambda y. \ e)[x:=N] = \lambda y. \ e[x:=N]$
+	\end{itemize}
+
+	This will become clear with more examples.
+	% As with substitution of well-formed formulae in first-order logic, this formal definition looks more complicated than the intuitive idea of substituting one term for another. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\alpha$-reduction}
+
+	% We do not want to make free variables bound when substituting.
+
+	% \vspace{0.1cm}
+
+	Bound variables are \emph{dummy variables} in the sense that their name is not important. Compare the following functions 
+
+	$$f(x) = x^2 \hspace{2cm} f(t) = t^2$$
+
+	The fact that one is written in terms of $x$, while the other is in terms of $t$ does not change the fact that these functions \emph{do} the same thing: square their input. 
+
+	In the same way, we are free to rename bound variables in $\lambda$-expressions without changing the meaning of the expression. This process is called $\alpha$-reduction. 
+
+	{\bf Examples}
+
+	$\lambda x. \ x =_{\alpha} \lambda y. \ y$
+
+	\vspace{0.1cm}
+
+	$(\lambda x. \ (\lambda y. \ y \ x)) \ y =_\alpha$
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\beta$-reduction}
+
+	Abstractions $(\lambda x. \ e)$ are intended to be interpreted as functions which take in an $x$ and substitute this into free x in the body $e$ of the abstraction. 
+
+	$$(\lambda x. \ e) \ M =_{\beta} e[x:=M]$$
+
+	$\lambda$-expressions of the form $(\lambda x. \ e) \ M$ are called $\beta$-redex. These are the terms that can be simplified.
+
+	\vspace{30mm}
+
+	{\bf Definition:} Computation is $\beta$-reduction.
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$(\lambda x. \ x)(\lambda y. \ y \ (\lambda z. \ z \ w))$$
+	% What does \lambda x. \ x  do here? Identity.
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$((\lambda x. \ \lambda y. \ y \ x) \ f) \ g $$
+	% What does (\lambda x. \ \lambda y. y x)  do here? Prepares first function to be applied to the next. 
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Example}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$(\lambda x. \ x \ x \ x)(\lambda x. \ x \ x \ x)$$
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Multivariable Functions?}
+
+	Multivariable functions are abundant in mathematics. Construction rules for $\lambda$-expressions only allow for the construction of unary functions. What gives? Partial application, known as Currying, means this actually isn't a problem.
+
+	$$f(x,y) = x^{2}y + y^{2}x$$
+
+	\vspace{4cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$(\lambda x. \ x \ (\lambda y. \ x \ y)) \ z$$
+
+	\vspace{6cm}	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Use $\alpha$-reduction to relabel this $\lambda$-expression so that there are no clashes between bound and free variables. 
+
+	$$(\lambda x. \ x \ (\lambda y. \ x \ y)) \ y$$
+
+	\vspace{2cm}
+
+	Now reduce the expression using $\beta$-reduction.
+
+	\vspace{2cm}
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reduction Strategies}
+
+	One $\lambda$-expression can consist of multiple $\beta$-redex. If this is the case, then different strategies may give different outcomes. 
+
+	$$(\lambda y. \ \lambda z. \ z) \ ((\lambda x. \ x \ x) \ (\lambda x. \ x \ x))$$
+
+	\vspace{2cm}
+
+	If we are to define an automatic model for computation, then we can't have any ambiguity in the process. One needs to decide ahead of time how to deal with these choices. 
+	
+	Two primary strategies are known as call-by-name and call-by-value.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Call-by-name}
+
+	Once the leftmost $\beta$-redex is identified, this strategy calls the leftmost abstraction leaving the input (potentially) unevaluated.
+
+	$$\lamabsarg{(\lambda y. \ \lambda z. \ z)}{((\lambda x. \ x \ x) \ (\lambda x. \ x \ x))}$$
+
+	\vspace{45mm}
+	
+	Call-by-name is also known as \emph{normal order} or \emph{lazy evaluation}.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Call-by-value}
+
+	Once the leftmost $\beta$-redex is identified, this strategy calls the innermost abstraction. 
+
+	$$(\lambda y. \ \lambda z. \ z) \ (\lamabsarg{(\lambda x. \ x \ x)}{(\lambda x. \ x \ x)})$$
+
+	\vspace{4.5cm}
+	
+	Call-by-value also known as \emph{strict evaluation} or \emph{eager evaluation}.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Normal Form}
+
+	We say a $\lambda$-expression is in normal form if it does not contain any $\beta$-redex. If a $\lambda$-expression is $\beta$-equivalent to a $\lambda$-expression in normal form, then it is unique up-to $\alpha$-reduction. 
+
+	\vspace{0.5cm}
+
+	If a $\lambda$-expression has a normal form, then call-by-name evaluation will result in that normal form. 
+	% In a sense then, it is best to be lazy!
+
+	\vspace{0.5cm}
+
+	{\bf Observation:} As a consequence of the above, if you can show that call-by-name evaluation does not terminate, then you may conclude that the $\lambda$-expression does not have a normal form. 
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Call-by-Value}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$(\lambda y. \ y \ a) \ ((\lambda x. \ x) \ (\lambda z. \ \lamabsarg{(\lambda u. \ u)}{ \ z}))$$
+
+	\vspace{6cm}	
+		
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Call-by-Name}
+
+	Perform $\beta$-reduction on the following $\beta$-redex
+
+	$$\lamabsarg{(\lambda y. \ y \ a)}{ \ ((\lambda x. \ x) \ (\lambda z. \ (\lambda u. \ u) \ z))}$$
+
+	\vspace{6cm}	
+		
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reduction Graphs}
+
+	You may come across graphs of $\lambda$-expressions for which the different paths through the graph represent different evaluation strategies. 
+
+	$$(\lambda x. \ 3\cdot x) \ ((\lambda x. \ x + 1) \ 2) $$
+	% Here I am assuming there are lambda expressions that can represent natural numbers and the arithmetic thereof. We will come to that later. 
+	% However it's nice to point out that we can substitute a lambda expression for a name as we only need to know the lambda expression for IF we ever call it. 
+	\vspace{5cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\eta$ Abstraction}
+
+	Notice that the two $\lambda$-terms 
+
+	$$M \hspace{20mm} \lambda x. \ M \ x$$ 
+
+	Agree, as functions, on any input. We say $\lambda$-terms that agree as functions are ``extensionally equivalent''. Furthermore, two terms related as above are called eta $\eta$ equivalent. 
+
+	$$ M =_{\eta} \lambda x. \ M \ x$$
+
+	\hspace{50mm}
+
+\end{frame}
+
+\section{Church Encodings}
+
+\begin{frame}
+	\frametitle{Syntactic Sugar}
+
+	% Some expressions that are common enough, or illustrative of some point, have been granted names. As we saw in the previous example, when writing $\lambda$-expressions it can be enough to know the name - until we need to evaluate that expression on some input.
+	
+	Before we start writing real programs in this language we introduce the notation device of ``names''. These are short hands, so called syntactic sugar, for longer $\lambda$-terms. These names help in suppressing details until they are required. % This is familiar to anyone who has done programming!
+
+	\begin{itemize}
+		\item[] $I = \lambda x. \ x$
+		\item[] $K = \lambda x. \ \lambda y. \ x$
+		\item[] $S = \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)$
+		\item[] $\omega = \lambda x. \ x \ x$
+		\item[] $\text{Apply} = \lambda f. \ \lambda a. \ (f \ a)$
+	\end{itemize}
+
+	We will now talk about how we can encode ideas from logic and arithmetic into the $\lambda$-calculus. This requires giving $\lambda$-expression encoding for Booleans (TRUE/FALSE), natural numbers, and arithmetic functions and predicates.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Syntactic Sugar}
+
+	Programs then become strings of these names. These can be desugared, as needed, when computing $\beta$-reductions. 
+
+	$S \ K \ K \equiv_{\text{DS}}$
+
+	\vspace{60mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Conditional Execution}
+
+	{\bf Remember: everything (!) is a $\lambda$-expression.}
+
+	If we want to implement logic in the $\lambda$-calculus, then we need $\lambda$-expressions that \emph{behave like} TRUE and FALSE, propositional connectives, quantifiers etc.
+
+	\vspace{5mm}
+
+	How do TRUE and FALSE \emph{behave}? One use is conditional branching.
+
+	$$\COND :\equiv \lambda c. \ \lambda f. \ \lambda g. \ ((c \ f) \ g) $$
+
+	\vspace{20mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{TRUE}
+
+	COND is an expression with three arguments: $c,f,g$ which should be equivalent to the first argument $f$ if $c = \TRUE$ and the second argument $g$ if $c = \FALSE$. It must meet the following specification: 
+
+	\begin{align*}
+		\COND \ \TRUE \ f \ g \ &\beq \ f \\
+		\COND \ \FALSE \ f \ g \ &\beq \ g 
+	\end{align*}
+
+	Our $\lambda$-expression for TRUE needs to ignore the second input $g$ 
+
+	$$\TRUE = \lambda x. \ \lambda y. \ x$$
+
+	\vspace{20mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{TRUE}
+
+	Perform $\beta$-reduction on the following $\lambda$-expression until the $\lambda$-expression is in normal form. 
+
+	$$ \COND \ \TRUE \ a \ b = (\lambda c. \ \lambda f. \ \lambda g. \  ((c \ f) \ g) ) \ \TRUE \ a \ b \ $$
+
+	\vspace{5cm}
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{FALSE}
+	
+	If the $\lambda$-expression for TRUE ignores the second function, then $\lambda$-expression for FALSE needs to ignore the first argument.
+
+	$$ \FALSE =\hspace{3cm} $$
+
+	\vspace{5cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{FALSE}
+
+	Perform $\beta$-reduction on the following $\lambda$-expression until the $\lambda$-expression is in normal form. 
+
+	$$ \COND \ \FALSE \ a \ b =_{\beta} \FALSE \ a \ b$$
+
+	\vspace{5cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propositional Connectives}
+
+	TRUE and FALSE should behave appropriately with some implementation in $\lambda$-expressions of the propositional connectives: NOT, AND, OR, IMPLIES, NAND, NOR etc.
+
+	Since TRUE and FALSE are defined as selectors, the trick is to think about these in terms of selecting the first or second argument. 
+	
+	\vspace{0.3cm}
+
+	{\bf Example:} If the first input to AND is TRUE, then which input should the AND expression return? 
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{NOT}
+
+	\begin{center}
+		$\begin{array}{ l | c }			
+			A &  \text{NOT} A\\
+			\cline{1 - 2}
+			T &  F \\ 
+			F &  T
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{5cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{EXAMPLE}
+
+	Perform $\beta$-reduction on the following $\lambda$-expression until the $\lambda$-expression is in normal form.
+	
+	\vspace{0.5cm}
+
+	$\text{NOT} \ \FALSE$
+
+	\vspace{5cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Examples}
+
+	When computing $\beta$-reduction on Booleans these redex will arise regularly. So lets simplify them now.
+
+	\begin{itemize}
+		\item[] TRUE TRUE \vspace{1cm}
+		\item[] TRUE FALSE \vspace{1cm}
+		\item[] FALSE TRUE \vspace{1cm}
+		\item[] FALSE FALSE \vspace{1cm} 
+	\end{itemize}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propositional Connectives}
+
+	Define the following propositional connectives remembering that TRUE and FALSE are encoded as selectors.
+
+	\vspace{0.3cm}
+
+	\begin{itemize}
+		%\item[] NOT 
+		\item[] AND 
+		\item[] OR 
+		\item[] IMPLIES
+		\item[] NAND 
+		\item[] NOR
+	\end{itemize}
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{AND}
+
+	AND is a binary function that returns a Boolean
+
+	\begin{center}
+		$\begin{array}{ c c | c }			
+			P & Q & P \land Q\\
+			\cline{1 - 3}
+			T & T & T \\ 
+			T & F & F \\ 
+			F & T & F \\ 
+			F & F & F
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{0.5cm}
+
+	$\AND = \lambda p. \ \lambda q. \  $
+
+	\vspace{2cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	$\beta$-reduce the following $\lambda$-expression to normal form.
+
+	\vspace{0.5cm}
+
+	$\AND \ \TRUE \ \FALSE$
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{OR}
+
+	OR is a binary function that returns a Boolean
+
+	\begin{center}
+		$\begin{array}{ c c | c }			
+			P & Q & P \lor Q\\
+			\cline{1 - 3}
+			T & T & T \\ 
+			T & F & T \\ 
+			F & T & T \\ 
+			F & F & F
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{0.5cm}
+
+	$\OR = \lambda p. \ \lambda q. \  $
+
+	\vspace{2cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	$\beta$-reduce the following $\lambda$-expression to normal form.
+
+	\vspace{0.5cm}
+
+	$\OR \ \FALSE \ \TRUE$
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{IMPLIES}
+
+	Implication is a binary function that returns a Boolean
+
+	\begin{center}
+		$\begin{array}{ c c | c }			
+			P & Q & P \to Q\\
+			\cline{1 - 3}
+			T & T & T \\ 
+			T & F & F \\ 
+			F & T & T \\ 
+			F & F & T
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{0.5cm}
+
+	$\IMP = \lambda p. \ \lambda q. \  $
+
+	\vspace{2cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	$\beta$-reduce the following $\lambda$-expression to normal form.
+
+	\vspace{0.5cm}
+
+	$\IMP \ \TRUE \ \FALSE$
+
+	\vspace{6cm}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{NAND}
+
+	NAND is a binary function that returns a Boolean
+
+	\begin{center}
+		$\begin{array}{ c c | c }			
+			P & Q & \NAND \ P \ Q\\
+			\cline{1 - 3}
+			T & T & F \\ 
+			T & F & T \\ 
+			F & T & T \\ 
+			F & F & T
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{0.5cm}
+
+	$\NAND = \lambda p. \ \lambda q. \  $
+
+	\vspace{2cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{NOR}
+
+	NOR is a binary function that returns a Boolean
+
+	\begin{center}
+		$\begin{array}{ c c | c }			
+			P & Q & \NOR \ P \ Q\\
+			\cline{1 - 3}
+			T & T & F \\ 
+			T & F & F \\ 
+			F & T & F \\ 
+			F & F & T
+		\end{array}$
+	\end{center}
+
+	$\TRUE = \lambda x. \ \lambda y. \ x$ \hspace{4cm} $\FALSE = \lambda x. \ \lambda y. \ y$
+
+	\vspace{0.5cm}
+
+	$\NOR = \lambda p. \ \lambda q. \  $
+
+	\vspace{2cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propositional Logic Summary}
+
+	This is a list of encodings for propositional logic into $\lambda$-expressions. Note that there are many ways to encode these expressions.
+
+	\vspace{0.5cm}
+
+	\begin{itemize}
+		\item[] $\COND :\equiv \lambda c. \ \lambda f. \ \lambda g. \ c \ f \ g$
+		\item[] $\TRUE :\equiv \lambda x. \ \lambda y. \ x$
+		\item[] $\FALSE :\equiv \lambda x. \ \lambda y. \ y$
+		\item[] $\NOT :\equiv \lambda p. \ \FALSE \ \TRUE$
+		\item[] $\AND :\equiv \lambda p. \ \lambda q. \ p \ q \ p$
+		\item[] $\OR :\equiv \lambda p. \ \lambda q. \ p \ p \ q$
+		\item[] $\IMP :\equiv \lambda p. \ \lambda q. \ \OR \ (\text{NOT} \ p) \ q$
+		\item[] $\NAND :\equiv $
+		\item[] $\NOR :\equiv $
+
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Church Numerals}
+
+    All that is available to us is application and abstraction. However, that is enough to encode the natural numbers in the $\lambda$-calculus. 
+    
+    \begin{align*}
+        \text{ZERO} &:\equiv \lambda s. \ \lambda x. \ x \\
+        \text{ONE} &:\equiv \lambda s. \ \lambda x. \ s \ x \\
+        \text{TWO} &:\equiv \lambda s. \ \lambda x. \ s(s \ x) \\
+        \text{THREE} &:\equiv \lambda s. \ \lambda x. \ s(s(s \ x)) \\
+        &\vdots \\
+        n &:\equiv \lambda s. \ \lambda x. \ s(s \dots (s \ x) \dots ) \\
+        &\vdots
+    \end{align*}
+        
+    The Church numeral representing the natural number $M$ is a binary $\lambda$-expression that applies the first argument to the second $M$ times.    
+
+\end{frame}
+
+\begin{frame}{Pattern}
+
+    If $n$ is a Church numeral and $f,a$ are arbitrary function symbols, then we have the following patterns that occur often in computations with Church numerals. 
+    
+    \vspace{0.3cm}
+    
+    The $\lambda$-expression $nf$ is a function which applies $f$ $n$ times to its input. That is, $f$ composed with itself $n$ times. 
+    
+    \vspace{0.3cm}
+    
+    So we can read the $\lambda$-term:
+	
+	$$n \ f \ a$$ 
+	
+	as \emph{$``f"$ applied to $``a"$ successively $``n"$ times}.
+    
+\end{frame}
+
+\begin{frame}{Programming in $\lambda$-Calculus}
+
+  We will now write $\lambda$-expressions (programs!) to do arithmetic on Church encoded natural numbers. It is important to remember that when programming and running computations in this language we do not update named spaces in memory. 
+  
+  \vspace{0.5cm}
+  
+  We can't think about updating a number stored in a named variable. There is no syntax for this updating in the $\lambda$-calculus.
+  
+  \vspace{0.5cm}
+  
+  Each time we calculate a new $\lambda$-expression (e.g. Church numeral) we must construct it, from scratch, using the input numerals. 
+  
+\end{frame}
+
+\begin{frame}{Encoding Arithmetic Functions}
+
+  We will now write $\lambda$-expressions for fundamental arithmetic functions and predicates on Church numerals.
+  
+  {\bf Arithmetic Functions: } SUCC, SUM, MULT, EXP, PRED, SUB.
+
+  \vspace{1cm}  
+  
+  {\bf Arithmetic Predicates:} ZERO?, GREATER?, EQUAL? etc.
+
+  \vspace{2cm}
+
+  We will adopt the convention of writing names of predicates with a ``?'' at the end. This helps readability of programs. 
+  
+\end{frame}
+
+\begin{frame}{Encoding Arithmetic Functions}
+
+  % This is not a state based model of computation. 
+  
+  % \vspace{0.2cm}
+  
+  % There are no numbers in memory that we update with a program. 
+  
+  % \vspace{0.2cm}
+  
+  Programs in the $\lambda$-calculus need to {\bf construct} the output.
+  
+  \vspace{0.3cm}
+  
+  Unary functions on Church numerals will always start 
+  
+  $$\lambda n. \ \lambda u. \ \lambda v. \ \langle \text{BODY} \rangle$$
+  
+  Binary functions on Church numerals will always start 
+  
+  $$\lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ \langle \text{BODY} \rangle $$
+  
+  \vspace{0.3cm}
+  
+  The first abstractions are for the inputs to the function. 
+  
+  \vspace{0.3cm}
+  
+  Second abstractions ($u$,$v$) are to construct the output numeral. 
+
+\end{frame}
+
+
+\begin{frame}{Successor}
+
+  The successor is a unary function that returns a numeral with one more function application of the first argument to the second.
+  
+  \vspace{0.3cm}
+  
+  $\text{SUCC} = \lambda n. \ \lambda u. \ \lambda v. \ $
+  
+  \vspace{6cm}
+      
+\end{frame}
+
+\begin{frame}{Example}
+  SUCC ZERO
+  
+  \vspace{7cm}  
+\end{frame}
+
+\begin{frame}{SUM}
+
+  The sum of two Church numerals $m,n$ is a binary function that returns a numeral with $m+n$ applications of the first argument to the second. This is similar to string concatenation of successors.
+  
+  \vspace{0.3cm}
+  
+  $\text{SUM} = \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ $
+  
+  \vspace{5cm}
+
+\end{frame}
+
+\begin{frame}{Example}
+  SUM ONE ONE
+  
+  \vspace{7cm} 
+\end{frame}
+
+\begin{frame}{MULT}
+  If $m,n$ are Church numerals, then the output of multiplication requires $n$ applications $m$ times of the first argument to the second. 
+  
+  \vspace{0.3cm}
+  
+  $\text{MULT} = \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ $
+  
+  \vspace{6cm}      
+\end{frame}
+
+\begin{frame}{Example}
+
+  MULT TWO TWO
+  
+  \vspace{7cm}   
+  
+\end{frame}
+
+\begin{frame}{Observation}
+    % Explain the beta reduction pattern of one church numeral applied to another.
+	\begin{align*}
+        \text{TWO} \ \text{ONE} &= (\lambda u. \ \lambda v. \ u(u(v))) (\lambda s. \ \lambda x. \ s(x)) \\
+        &= \lambda v. \ (\lambda s. \ \lambda x. \ s(x))((\lambda s. \ \lambda x. \ s(x))(v)) \\
+        &= \lambda v. \ (\lambda s. \ \lambda x. \ s(x))(\lambda x. \ v(x)) \\
+        &= \lambda v. \ (\lambda s. \ \lambda x. \ s(x))(\lambda w. \ v(w)) \\
+        &= \lambda v. \ (\lambda x. \ (\lambda w. \ v(w))(x)) \\
+        &= \lambda v. \ \lambda x. \ v(x) \\
+        &= \text{ONE}
+    \end{align*}
+    
+    \begin{align*}
+        \text{ONE} \ \text{TWO} &= (\lambda s. \ \lambda x. \ s(x))(\lambda u. \ \lambda v. \ u(u(v))) \\
+        &= (\lambda x. \ (\lambda u. \ \lambda v. \ u(u(v)))(x)) \\
+        &= (\lambda x. \ \lambda v. \ x(x(v))) \\
+        &= \text{TWO}
+    \end{align*}
+\end{frame}
+
+\begin{frame}{Example: Exponential}
+    We abstract over this idea to define a $\lambda$-expression to compute exponentiation of Church encoded numerals.
+    
+    $$\text{EXP} = \lambda e. \ \lambda b. \ e \ b $$
+    
+    {\bf Example} 
+    
+    $\beta$-reduce the following expression to normal form
+    
+    \vspace{0.3cm}
+    
+    $\text{EXP} \ \text{THREE} \ \text{TWO}$
+    \vspace{3cm}
+\end{frame}
+
+\begin{frame}{ZERO?}
+  % 0 = FALSE with this encoding. 
+  
+  Given Church numeral $m$ how do we test if it is ZERO?
+  
+  \vspace{0.3cm}
+
+  This predicate should satisfy the following specification:
+  
+  	\begin{align*}
+		\ISITZERO \ \ZERO &\beq \ \TRUE \\
+		\ISITZERO \ \ONE &\beq \ \FALSE \\
+		&\vdots
+	\end{align*}
+  
+  $\text{ZERO?} = \lambda m.  \ $
+  % Take the constant function that returns FALSE.
+  % Apply that m times to TRUE. 
+  % If m = 0, then it will return TRUE. 
+  % If m !=0, then it will return FALSE.
+  
+  \vspace{2cm}  
+  
+\end{frame}
+
+\begin{frame}
+	\frametitle{Parity}
+
+	Write a $\lambda$-term that reduces to TRUE if the input is even, and FALSE if the input is odd. 
+
+	$\text{EVEN?} :\equiv \ \lambda n. \ $
+
+	\vspace{50mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Parity}
+
+	Write a $\lambda$-term that reduces to TRUE if the input is odd, and FALSE if the input is even. 
+
+	$\text{ODD?} :\equiv \ \lambda n. \ $
+
+	\vspace{50mm}
+	% Same thing works. 
+	% But you could also use NOT and EVEN? 
+
+\end{frame}
+
+\begin{frame}{Predecessor}
+
+  % Apparently Church once thought this could not be done in the lambda calculus 
+  % (0,0) -> (1,0) -> (2,1) -> (3,2) -> ...
+  % This can all be encoded in the lambda calculus
+  
+  To one way of thinking, we need to *remove* one application of the function in the Church numeral. 
+  
+  \vspace{15mm}
+  
+  However that way of thinking is ``state based'' - as if we have an object somewhere in some memory and we update its properties. 
+  
+  \vspace{5mm}
+  
+  This is not the way programming is done in the $\lambda$-calculus. 
+  
+  \vspace{5mm}
+  
+  Instead we need to think, given an input Church numeral $n$ how do we construct the Church numeral representing $n-1$?
+  
+  \vspace{1cm}
+  
+\end{frame}
+
+\begin{frame}{PAIR}
+
+  We have been treating applications of the form $ab$ as if they were pairs. Let us formalise this idea with a function to CONStruct a pair from two inputs.
+  
+  $$ \text{PAIR} = \lambda x. \lambda y. \lambda f. \ f \ x \ y$$
+  
+  Once a pair is constructed, we may use the following methods to retrieve either the first or second element respectively. 
+  
+  $$\text{FST} = \lambda u. \ \lambda v. \ u \hspace{1cm} \text{SND} = \lambda u. \ \lambda v. \ v $$
+  
+  {\bf Example}
+  
+  PAIR ONE TWO FST  $=_{\beta}$ ONE
+  
+  PAIR ONE TWO SND  $=_{\beta}$ TWO
+  
+  PAIR ONE (PAIR TWO THREE) SND $=_{\beta}$ PAIR TWO THREE
+  
+\end{frame}
+
+\begin{frame}{PRED}
+    
+  We now have the data structure required to implement the algorithm for calculating the predecessor of a Church numeral. 
+  
+  \vspace{0.5cm}
+  
+  First we write a function which takes in a pair $p = (a,b)$ of Church numerals and outputs the pair consisting of the successor of the first (SUCC $a$) in the pair, together with the first $a$ in the pair.
+  
+  $$ \Psi = \lambda p. \ \text{PAIR} \ (\text{SUCC} \ (p \ \text{FST})) \ (p \ \text{FST}) $$
+  
+  Now we need to iterate this $n$ times on the input pair ZERO ZERO and retrieve the second element.
+  
+  $$\text{PRED} = \lambda n. \ (n \ \Psi \ (\text{PAIR ZERO ZERO})) \ \text{SND}$$
+  
+  
+\end{frame}
+
+\begin{frame}{Example}
+  
+  PRED ONE
+  \vspace{6cm}
+   
+\end{frame}
+
+\begin{frame}{SUB}
+
+  Given Church numerals $m,n$ how do we construct the Church numeral representing $m-n$?
+  
+  \vspace{0.3cm}
+  
+  $\text{SUB} = \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ $
+  
+  \vspace{6cm}
+  
+\end{frame}
+
+\begin{frame}{Example}
+  
+  SUB TWO ONE
+  \vspace{6cm}
+       
+\end{frame}
+
+\begin{frame}{GREATER?}
+
+  Given Church numerals $m,n$ how do we test if one is larger than the other?
+  
+  \vspace{0.3cm}
+  
+  $\text{GREATER?} = \lambda m. \ \lambda n. \ $
+  
+  \vspace{6cm}  
+
+\end{frame}
+
+\begin{frame}{Example}
+
+  GREATER? ONE ONE
+  \vspace{6cm}
+  
+\end{frame}
+
+\begin{frame}{EQUAL?}
+
+  Given Church numerals $m,n$ how do we test if they are equal?
+  
+  \vspace{0.3cm}
+
+  $\text{EQUAL?} = \lambda m. \ \lambda n. \ $
+
+\vspace{6cm}      
+\end{frame}
+
+\begin{frame}{Example}
+
+  EQUAL? ONE ZERO
+  \vspace{6cm}
+  
+\end{frame}
+
+\begin{frame}{Summary}
+  
+  {\bf Arithmetic Functions}
+  \begin{align*}
+      \text{SUCC} &:\equiv \lambda n. \ \lambda u. \ \lambda v. \ u(n \ u \ v) \\
+      \text{SUM} &:\equiv \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ m \ u\ (n \ u \ v)\\
+      \text{MULT} &:\equiv \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ m \ (n \ u) \ v \\
+      \text{EXP} &:\equiv \lambda e. \ \lambda b. eb \ \\
+      \text{PRED} &:\equiv \lambda n.  \ (n \ \Psi \ (\text{PAIR ZERO ZERO})) \ \text{SND}  \\
+      \text{SUB} &:\equiv \lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ (n \ \text{PRED} \ m) \ u \ v
+  \end{align*}
+  
+  {\bf Arithmetic Predicates}
+  \begin{align*}
+      \text{ZERO?} &:\equiv \lambda m. \ m \ (\lambda x. \ \FALSE) \ \TRUE \ \\
+      \text{GREATER?} &:\equiv \ \lambda m. \ \lambda n. \ \text{ZERO?} \ (\text{SUB} \ n \ m) \\
+      \text{LESS?} &:\equiv \ \lambda m. \ \lambda n. \ \text{ZERO?} \ (\text{SUB} \ m \ n) \\
+      \text{EQUAL?} &:\equiv \lambda m. \ \lambda n. \ \AND \ (\text{GREATER?} \ n \ m) \ (\text{LESS?} \ n \ m) 
+  \end{align*}      
+\end{frame}
+
+\section{Recursion in Lambda Calculus}
+
+\begin{frame}
+  \frametitle{Recursion?}
+
+  We have implemented programs in the lambda calculus to carry out arithmetic like SUM, MULT, and PRED. These make use of concatenating strings of ``successor'' function applications. 
+  
+  \vspace{2mm}
+
+  However we know from Peano Arithmetic that these functions all have \emph{recursive} definitions. Can we implement these arithmetic functions recursively in the lambda calculus?
+
+  \vspace{2mm}
+
+  Recursion will allows us to write programs that search for solutions to certain predicates. As well as define bounded quantification predicates: for all x less than n, and there exists an x less than n. Programs that we might be more used to writing with while-loops in modern, imperative, programming languages like C and Python.
+  % Could show a recursive search program, written in Python without while-loops.
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Recursive SUM}
+
+	Recall that axioms PA3 and PA4 define ($+$) SUM as: 
+
+  $$\SUM \ a \ b = 
+  \begin{cases}
+    a & b = 0 \\
+    \SUCC \ (\SUM \ a \ (\PRED \ B)) & \text{Otherwise}
+  \end{cases} $$
+
+  This requires conditional branching, checking whether a number is zero, calculating the successor and the predecessor. We have seen the lambda encodings of these processes.
+
+  \vspace{2mm}
+
+  However, the lambda abstraction syntax does not allow for a function to refer to itself by name. This is because functions do not have names in this syntax. 
+
+  \vspace{2mm}
+
+  We give $\lambda$-terms names, but only once they're defined. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards Recursive SUM}
+
+	Self-reference is not part of the $\lambda$-calculus syntax. However, abstracting over SUM and the numeral inputs gives us the following valid $\lambda$ expression: 
+
+	$$\GO := \lambda s. \ \lambda a. \ \lambda b. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (s \ a \ (\PRED \ b))) $$
+
+	We can manually pass this function to itself to mimic recursion. 
+	
+	$\GO \ \GO $
+	$$=_{\beta} \lambda a. \ \lambda b. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (\GO \ a \ (\PRED \ b))) $$
+
+	This gives us a function to which we can pass numerals. 
+	
+	Does it return the sum?
+
+	% Why "GO"? For horizontal space reasons two characters is nice. 
+	% Why these two characters? There seems to be some tradition of using GO for similar use cases in the Haskell community. So, I used it here. 	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards Recursive SUM}
+
+	$\GO \ \GO $
+	$$=_{\beta} \lambda a. \ \lambda b. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (\GO \ a \ (\PRED \ b))) $$
+
+	If $b =$ ZERO, then this $\beta$-reduces to $a$.
+	In this case GO GO returns the correct sum. 
+
+	\vspace{2mm}
+	
+	However, if $b \neq $ ZERO, then the second condition gets executed. 
+
+	$$\GO \ \GO \ \ONE \ \ONE =_{\beta} \SUCC \ (\GO \ \ONE \ (\PRED \ \ONE))$$
+
+	At some point ONE is passed to the $\lambda s. \ $ abstraction in GO. This will lead to nonsense. In this case we see that GO GO will not return the correct sum of TWO.
+
+	\vspace{5mm}
+
+	{\bf Our recursion is not deep enough.}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards Recursive SUM}
+
+	Pass the previous iteration back through GO. 
+
+	$ \GO \ (\GO \ \GO)$
+	$$=_{\beta} \lambda a. \ \lambda b. \ \COND (\ISITZERO \ b) \ a \ (\SUCC \ ((\GO \ \GO) \ a \ (\PRED \ b))) $$
+
+	As before this is correct for $b = $ ZERO. 
+	
+	What happens now for $b = $ ONE?
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards Recursive SUM}
+
+	If the second input is ONE we can do the following reduction:
+
+	\begin{align*}
+		&\GO \ (\GO \ \GO) \ \ONE \ \ONE \\
+		&=_{\beta} \SUCC (\GO \ \GO \ \ONE \ (\PRED \ \ONE)) \\
+		&=_{\beta} \SUCC (\GO \ \GO \ \ONE \ \ZERO) \\
+		% We no GO GO acts as sum when b = ZERO
+		&=_{\beta} \SUCC \ (\ONE) \\
+		&=_{\beta} \TWO
+	\end{align*}
+
+	However, if the second input were greater than ONE, then the reduction would reduce to nonsense for the same reason as before.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards Recursive SUM}
+
+	This suggests that if we want to add numbers using recursion, then we look at the second input and choose how many times we pass GO to itself before passing the numeral inputs. 
+
+	\begin{itemize}
+		\item[] GO GO
+		\item[] GO (GO GO)
+		\item[] GO (GO (GO GO))
+		\item[] GO (GO (GO (GO GO)))
+		\item[] $\vdots$
+	\end{itemize}
+
+	{\bf REALLY!?}
+
+	{\bf Is there not a way to do this automatically?}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Y-Combinator}
+
+	Consider this magic passed down from Haskell B. Curry
+
+	$$\YCOMB:= \ \lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))$$
+
+	Applying this to a function gives exactly what we need:
+
+	\vspace{4cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Y-Combinator}
+
+	Consider this magic passed down from Haskell B. Curry
+
+	$$\YCOMB:= \ \lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))$$
+
+	Applying this to a function gives exactly what we need:
+
+	\begin{align*}
+		\YCOMB \ g &= (\lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))) \ g \\
+		&\beq (\lambda x. \ g \ (x \ x)) \ (\lambda x. \ g \ (x \ x)) \\
+		&\beq g \ ((\lambda x. \ g \ (x \ x)) \ (\lambda x. \ g \ (x \ x))) \\
+		&\beq g \ (\YCOMB \ g)\\
+		&\beq g \ (g \ (\YCOMB \ g))\\
+		&\beq g \ (g \ (g \ (\YCOMB \ g)))\\
+		&\ \ \vdots
+	\end{align*}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Recursive SUM}
+
+	This suggests the following definition:
+
+	$$\SUM :\equiv \YCOMB \ \GO$$
+
+	Following a few steps of $\beta$ reduction yields:
+	\begin{align*}
+		\SUM &:\equiv \YCOMB \ \GO \\
+		&\beq \GO \ (\YCOMB \ \GO) \\
+		&\beq \lambda a. \ \lambda b. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (\YCOMB \ \GO \ a \ (\PRED \ b))) \\
+		&\equiv \lambda a. \ \lambda b. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (\SUM \ a \ (\PRED \ b)))
+	\end{align*}
+	This is a function to which one can pass Church numerals and it will compute the sum of the two inputs by recursively calling itself!
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$\SUM \ \ONE \ \TWO$
+
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Y Combinator Recursion}
+	% If you fake the funk, your nose will grow - Parliament Funkadelic.
+
+	This approach will yield recursive implementations of other functions we already know to have recursive definitions \cite{pierce}.
+	
+	Given a function, FUNK, known to be recursive follow the steps above to determine an implementation of FUNK in the $\lambda$-calculus:
+
+	\begin{itemize}
+		\item Give the ``named'' recursive definition
+		\item Write GO by abstracting over the name and inputs
+		\item Define FUNK = Y GO
+	\end{itemize}
+
+	\vspace{0.2cm}
+
+	{\bf GO get the FUNK.}
+
+	% SUM, PROD, EXP, FACTORIAL, FIB, FOR-Loops, WHILE-Loops, Bounded Search, Un Bounded Search....
+	% All of this is available in \lambda calculus via the Y-Combinator.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Higher Order Procedures}
+
+	We have seen that there is very little distinction between data and procedure. In the recursive definition of SUM we passed the ``data'' of GO to the procedure $Y$. We passed procedures, to other procedures to generate yet more procedures. We call these procedures that take other procedures as input ``higher order procedures''.
+
+	To further illustrate the power of the $\lambda$-calculus - to give further evidence to Church's Thesis - we will no spend some time developing more higher order procedures in the untyped lambda calculus:
+
+	\begin{itemize}
+		\item[] Search $\mu$ and bounded search $\overline{\mu}$
+		\item[] DIVIDES? COMPOSITE? PRIME?
+		\item[] ACCumulate and FILteredACCumulate.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Unbounded Search}
+
+	Suppose $P?(x)$ is a unary predicate that can be implemented with a $\lambda$-expression. We can define a recursive algorithm to search for the smallest natural number that satisfies $P?(x)$. 
+
+	\vspace{60mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\mu = \lambda$}
+
+	Suppose $P?(x)$ is a unary predicate that can be implemented with a $\lambda$-expression. We can define a recursive algorithm to search for the smallest natural number that satisfies $P?(x)$. 
+
+	First define the following helper-function:
+
+	$$\GO :\equiv \lambda s. \ \lambda x. \ \COND \ P?(x) \ x \ (s \ (\SUCC \ x))$$
+
+	We may define the recursive search by: 
+
+	$$\mu :\equiv \ \YCOMB \ \GO$$ 
+
+	To compute the smallest natural number that satisfies $P?(x)$ we run the program: 
+
+	$$\mu \ \ZERO$$
+
+\end{frame}
+
+% Note the above is improved by abstracting over the predicate 
+% So mu takes predicate as an input. 
+
+% $\GO :\equiv \lambda s. \lambda p. \ \lambda x. \ \COND \ P?(x) \ x \ (s \ p \ (\SUCC \ x))$
+
+\begin{frame}
+	\frametitle{Bounded Search $\overline{\mu}$}
+
+	If $P?(x)$ is a unary predicate, then we can search for a solution in a bounded interval using the following procedure:
+
+	\vspace{65mm}
+
+	% Write the while-loop on one side 
+	% Write the GO on the other. 
+	% G0 = lambda s p l u COND (>? u l)
+	%							FALSE
+	%							(COND (p l)
+	%								  TRUE
+	%								  (s p (l + 1) u))
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Arithmetic Predicates}
+
+	DIVIDES? = $\lambda n. \ \lambda d. \ \overline{\mu} \ (\lambda k. \ =? \ n \ (\text{MUL} \ k \ d)) \ 1 \ n$
+
+	\vspace{20mm}
+
+	COMPOSITE? = $\lambda x. \ \overline{\mu} \ (\text{DIVIDES? } x) \ 2 \ (\text{PRED } x)$
+
+	\vspace{20mm}
+	
+	PRIME? = $\lambda x. \ \text{NOT}( \text{COMPOSITE?} \ x)$
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Same, But Different}
+
+	No assignment with mutable state. No specific syntax for writing for- or while-loops. ``Just'' recursion. How do we do all the things we're used to when writing programs in languages like C or Python? 
+
+	\vspace{5cm}
+	% Talk about the standard approach to summing a list of integers. 
+	% Talk about the functional programming approach; passing everything to a funk.
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Loops with Recursion}
+
+	Suppose we want to sum up the integers in the list 
+	$$1, 2, 3, 4, ..., 10$$
+	We follow the named-description on the previous slide and abstract over the inputs and function name to get the following helper: 
+	\begin{align*}
+		\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
+		& a \\ 
+		&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
+	\end{align*}
+	Combining this with the $\YCOMB$ combinator gives a procedure to ACCumulate the integers from $l$ up to $u$: 
+	$$\ACC :\equiv \YCOMB \ \GO$$
+	In order to compute the sum you pass the starting value of the sum (ZERO) and the lower and upper bound of the interval.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	Suppose we want to calculate the sum of the integers $[1,10]$. 
+	
+	We write the following procedure with ACCumulate: 
+
+	\begin{align*}
+		&\ACC \ \ZERO \ \ONE \ \text{TEN} \\
+		&\beq \ \COND \ (>? \ \ONE \ \text{TEN}) \ \ZERO \\ 
+		&\hspace{1cm} (\ACC \ (\SUM \ \ZERO \ \ONE) \ (\SUCC \ \ONE) \ \text{TEN}) \\
+		&\beq \ \ACC \ (\SUM \ \ZERO \ \ONE) \ (\SUCC \ \ONE) \ \text{TEN} \\
+		&\beq \ACC \ \ONE \ \TWO \ \text{TEN}
+		&\vdots
+	\end{align*}
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Filtered Accumulate}
+
+	Question: How would you change the ACC program to only sum those elements which satisfy $P?(x)$ a unary predicate?
+
+	\vspace{70mm}
+
+\end{frame}
+
+\section{Combinator Calculus}
+
+\begin{frame}
+	\frametitle{Combinator Calculus}
+
+	As often happens two people independently formulated the Combinator Calculus (CL): Moses Sh\"{o}nfinkel and Haskell Curry. Sh\"{o}nfinkel was motivated to remove quantifiers and bound variables from predicate logic - as we have seen substitution and the issue of free/bound variables is subtle. We also see a similar problem in the $\lambda$-calculus with variables bound by abstractions. 
+
+	If this could be avoided, then reduction would be made simpler!
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Grammar of Combinator Calculus}
+
+	SKI combinator calculus is made up of the constants $S,K,I$ and the single application constructor. 
+
+	%BNF Description here 
+
+	\vspace{30mm}
+
+	Combinators are subject to the following reduction rules:
+	\begin{align*}
+		S \ t \ u \ v \ &=_{\beta} t \ v \ (u \ v) \\
+		K \ t \ u \ &=_\beta t \\
+		I \ x &=_\beta x
+	\end{align*}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Show $SKK = I$ extensionally. 
+
+	\vspace{70mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Embedding CL into $\lambda$}
+
+	We can embed CL into $\lambda$-calculus as follows: 
+	\begin{align*}
+		I &= \lambda x. \ x \\
+		K &= \lambda x. \ \lambda y. \ x \\
+		S &= \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)
+	\end{align*}
+
+	Note that these definitions are extensional equivalences. Each CL term and the corresponding $\lambda$-term are equal as functions; that is, they compute the same output for the same input.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Emedding $\lambda$ into CL}
+
+	In fact one can embed $\lambda$-calculus into CL. In this case the embedding is an extensional equivalence. We define the translation procedure $T$ from $\lambda$ to $CL$ recursively as follows: 
+
+
+	This translation preserves extensional equality. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Complete Bases}
+
+	We say $\{S,K,I\}$ is a complete base because these combinators generate all $\lambda$-terms extensionally. 
+
+	\begin{itemize}
+		\item[] S K I 
+		\item[] S K
+		\item[] B C K W
+		\item[] I J K
+		\item[] X %$= \lambda x. \ (x \ S) \ K$
+	\end{itemize}
+
+	% X (X (X X)) =_{\beta} K 
+	% X K =_{\beta} S
+
+\end{frame}
+
+\section{Functional Programming Languages}
+
+\begin{frame}
+	\frametitle{Descendants of $\lambda$-Calculi}
+
+	If you enjoy programming in this fashion, then you might enjoy working in one of the modern descendants of this approach to computing. Some examples are: 
+
+	\begin{itemize}
+		\item Racket (LISP dialect) % SICP
+		\item Haskell % Graham Hutton: Book + YouTube
+		\item O'Caml % Chenyi COSC course
+	\end{itemize}
+
+	Racket is easy to get started with. Download the IDE \href{https://racket-lang.org/download/}{Dr Racket}. There are a number of good places to learn LISP languages. My favourite is the textbook \emph{Structure and Interpretation of Computer Programs} and the \href{https://www.youtube.com/playlist?list=PLE18841CABEA24090}{associated lectures} available on YouTube. 
+
+	Haskell uses a typed version of the $\lambda$-calculus. Adding types to the lambda calculus is the next topic of the course. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Reading}
+	
+    These lecture slides were prepared with the aid of the following references. They can be consulted for further detail on the topics. 
+
+    \begin{itemize}
+		\item Stanford Encyclopedia of Philosophy.
+		\item Type Theory and Functional Programming, \emph{Simon Thompson}.
+		\item Types and Programming Languages, \emph{Benjamin Pierce.}
+	\end{itemize}
+
+	
+	
+\end{frame}
+\end{document}

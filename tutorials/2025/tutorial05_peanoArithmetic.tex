@@ -1,0 +1,206 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+\newcommand{\prop}{\text{Prop}}
+
+% Rule of inference shortcuts
+\newcommand{\IND}{\text{IND}}
+\newcommand{\THM}{\text{THM}}
+\newcommand{\MP}{\text{MP}}
+\newcommand{\PA}{\text{PA}}
+\newcommand{\IH}{\text{IH}}
+\newcommand{\RAA}{\text{RAA}}
+\newcommand{\DNE}{\text{DNE}}
+\newcommand{\DM}{\text{DM}}
+\newcommand{\XF}{\text{XF}}
+\newcommand{\MT}{\text{MT}}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Five}
+\end{center}
+\begin{center}
+	{\bf Peano Arithmetic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Natural deduction practice, 
+				\item Proofs using the identity rules of inference,
+				\item Prove first-order sentences in theories of arithmetic,
+				\item Use the induction schema of Peano arithmetic, and 
+				\item Become exasperated enough to appreciate the help of proof assistants. 
+			\end{itemize}
+
+		Relevant Topic: Peano Arithmetic\\
+		Relevant reading: \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game}
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1c, 2a, 2b, 2c, and 5b\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+	Proofs that make use of the axiom (schema) PA 7 
+
+	$$[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$$
+
+	will prove statements of the form $\forall y \ P(y)$ with the use of modus ponens. This requires proving the antecedent conjunction: 
+
+	$$[P(0) \land \forall x \ (P(x) \to P(s(x)))]$$
+
+	This in turn requires proving each conjunct i.e. two proofs witnessing: 
+
+	$$\PA \vdash P(0) \hspace{2cm} \PA \ \vdash \ \forall x \ (P(x) \to P(s(x)))$$
+
+	If we piece these together, then we see that all proofs by induction have the form: 
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\IND]{\forall y \ P(y)}
+					{\infer[\land I]{[P(0) \land \forall x \ (P(x) \to P(s(x)))]}
+						{\infer[]{P(0)}{\begin{array}{c} \vdots \\ \mathcal{D}_{BC}\end{array}}
+						&
+						\infer[\forall I]{\forall x \ (P(x) \to P(s(x)))}
+							{\begin{array}{c} \vdots \\ \mathcal{D}_{IS}\end{array}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+
+	\begin{enumerate}
+		\item Identify the following steps involved in a proof by induction of the following sentence of Peano arithmetic: 
+		
+		$$\PA \ \vdash \ \forall x \ (0+x=x) $$
+
+			\begin{enumerate}
+				\item Identify the wff $P(x)$ to do induction on. 
+				\item $\mathcal{D}_{BC}$: Write down the sequent $\PA \ \vdash \ P(0)$.
+				\item $\mathcal{D}_{IS}$: Write down the sequent $\PA, P(n) \ \vdash \ P(s(n))$.	
+			\end{enumerate}
+	\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item Give natural deductions of the following theorems of identity.
+	
+	\begin{enumerate}
+		\item $\vdash \ \exists x \ (t = x)$
+		\item $\vdash \ \forall x  \forall y \ x = y \to y = x$
+		\item $\vdash \ \forall x \forall y \forall z \ (x = y \land y = z) \to x = z$ 
+		\item $\vdash \ \forall x \forall y \forall z \ x \neq y \to (x \neq z \lor y \neq z)$ \hspace{5cm} (RAA)
+
+	\end{enumerate}
+
+	Parts (b) and (c) together with proofs from lectures show that identity is reflexive, symmetric, and transitive. Thus behaving like an equivalence relation - as one would hope of the definition of equals!
+	
+	\item In this question $\text{PA}$ denotes the first-order theory of Peano arithmetic which has signature PA$: \{0,s,+,\times\}$ and axioms:
+	
+	\begin{enumerate}
+		\item[PA1] $\forall x \lnot(s(x) = 0)$
+		\item[PA2] $\forall x \ \forall y ((s(x) = s(y)) \to (x = y))$
+		\item[PA3] $\forall x \ (x + 0 = x)$
+		\item[PA4] $\forall x \ \forall y \ (x + s(y) = s(x + y))$
+		\item[PA5] $\forall x \ (x \times 0 = 0)$
+		\item[PA6] $\forall x \ \forall y \ (x \times s(y) = (x \times y) + x)$
+		\item[PA7] $[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$
+	\end{enumerate}	
+	
+	Provide deductions to prove the following sequents. 
+	
+	\begin{enumerate}
+		\item $\text{PA} \vdash 1 + 1 = 2$
+		\item $\text{PA} \vdash 3 \neq 1$
+		\item $\text{PA} \vdash \forall x \ (x + 1 = s(x))$
+		\item $\text{PA} \vdash \forall x \ (x \times 1 = x)$ 		
+	\end{enumerate}
+
+		\item The first-order language of Peano Arithmetic is often presented with an extra binary relation symbol $<$ where $x < y$ is given the usual interpretation: $x$ is \emph{strictly} less than $y$. In fact it is not necessary to add anything extra, for this relation can be defined using a sentence in $\PA$ as stated. 
+	
+	Write down a wff in $\PA$ which defines the binary relation $<$ of being ``strictly less than''. Use this to write down formulae that represent: less than or equal to, strictly greater than, and greater than or equal to. 
+
+	%$$ x < y :\equiv \exists z \ (x + s(z) = y) $$
+
+	\item Write down well-formed formulae in the first-order language of $\PA$ corresponding to the following statements. 
+	
+	\begin{enumerate}
+		\item Each natural number is either equal to $0$ or greater than $0$. 			
+		\item If $x$ is not less than $y$, then $x$ equals $y$ or $y$ is less than $x$.
+		\item If $x$ is less than or equal to $y$ and $y$ is less than or equal to $x$, then $x=y$. 
+	\end{enumerate} 
+
+	\newpage
+	\item The followings sequents all require the use of the induction axiom schema. Recall that all proofs using the induction schema have the following form: 
+	
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[IND]{\forall y \ P(y)}
+						{\infer[\land I]{[P(0) \land \forall x \ (P(x) \to P(s(x)))]}
+							{\infer[]{P(0)}{\begin{array}{c} \vdots \\ \mathcal{D}_{BC}\end{array}}
+							&
+							\infer[]{\forall x \ (P(x) \to P(s(x)))}
+								{\begin{array}{c} \vdots \\ \mathcal{D}_{IS}\end{array}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+	For this reason, once the wff $P(x)$ is identified, it suffices to provide the base case deduction $\mathcal{D}_{BC}$ and induction step $\mathcal{D}_{IS}$. The sequents are stated in such a way as to mean induction on the variable $x$ will be the easiest approach. Always do induction on the variable $x$.  
+	
+	\begin{enumerate}
+		\item $\text{PA} \vdash \forall x \ (0 + x = x)$
+		\item $\text{PA} \vdash \forall x \ (0 \times x = 0)$
+		\item $\text{PA} \vdash \forall x \ (1 \times x = x)$
+		\item $\text{PA} \vdash \forall x \ (x = 0 \lor \exists y (x = s(y)))$ \hfill (Challenge!)
+		\item $\text{PA} \vdash \forall x \ \forall y \ [s(y) + x = s(y+x)]$ \hfill (Challenge!)
+		\item $\text{PA} \vdash \forall x \ \forall y \ \forall z \ [(y + z) + x = y + (z + x)]$ \hfill (Challenge!)
+		\item $\text{PA} \vdash \forall x \ \forall y \ [y + x = x + y]$ \hfill (Challenge!)
+	\end{enumerate}
+
+	\item Visit the \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game} to write computer checked proofs of these theorems of Peano arithmetic as well as theorems of propositional logic from previous tutorials. 
+	 
+	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	
+		\begin{enumerate}
+			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
+			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
+			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
+			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hfill \text{(Challenge!)}$
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hfill \text{(Challenge!)}$
+		\end{enumerate}
+	 
+\end{enumerate}	
+\end{document}

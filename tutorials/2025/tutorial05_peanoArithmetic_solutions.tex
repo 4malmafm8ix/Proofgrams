@@ -1,0 +1,749 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Experimenting to get long proofs to fit on a page.
+\usepackage{pdflscape}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{lscape}
+\usepackage{rotating}
+\usepackage{epstopdf}
+
+
+\newcommand{\temp}[2]{{\overline{#2}}^{#1}}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Five [Solutions]}
+\end{center}
+\begin{center}
+	{\bf Peano Arithmetic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Natural deduction practice, 
+				\item Proofs using the identity rules of inference,
+				\item Prove first-order sentences in theories of arithmetic,
+				\item Use the induction schema of Peano arithmetic, and 
+				\item Become exasperated enough to appreciate the help of proof assistants. 
+			\end{itemize}
+
+		Relevant Topic: Peano Arithmetic\\
+		Relevant reading: \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game}
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1c, 2a, 2b, 2c, and 5b\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+	Proofs that make use of the axiom (schema) PA 7 
+
+	$$[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$$
+
+	will prove statements of the form $\forall y \ P(y)$ with the use of modus ponens. This requires proving the antecedent conjunction: 
+
+	$$[P(0) \land \forall x \ (P(x) \to P(s(x)))]$$
+
+	This in turn requires proving each conjunct i.e. two proofs witnessing: 
+
+	$$\PA \vdash P(0) \hspace{2cm} \PA \ \vdash \ \forall x \ (P(x) \to P(s(x)))$$
+
+	If we piece these together, then we see that all proofs by induction have the form: 
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\IND]{\forall y \ P(y)}
+					{\infer[\land I]{[P(0) \land \forall x \ (P(x) \to P(s(x)))]}
+						{\infer[]{P(0)}{\begin{array}{c} \vdots \\ \mathcal{D}_{BC}\end{array}}
+						&
+						\infer[\forall I]{\forall x \ (P(x) \to P(s(x)))}
+							{\begin{array}{c} \vdots \\ \mathcal{D}_{IS}\end{array}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+
+	\begin{enumerate}
+		\item Identify the following steps involved in a proof by induction of the following sentence of Peano arithmetic: 
+		
+		$$\PA \ \vdash \ \forall x \ (0+x=x) $$
+
+			\begin{enumerate}
+				\item Identify the wff $P(x)$ to do induction on. 
+				\item $\mathcal{D}_{BC}$: Write down the sequent $\PA \ \vdash \ P(0)$.
+				\item $\mathcal{D}_{IS}$: Write down the sequent $\PA, P(n) \ \vdash \ P(s(n))$.	
+			\end{enumerate}
+	\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item Give natural deductions of the following theorems of identity.
+	
+	\begin{enumerate}
+		\item $\vdash \ \forall x  \forall y \ x = y \to y = x$
+		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\forall I]{\forall x \ \forall y \ (x = y \to y = x)}
+					{\infer[\to I,1]{a=b \to b=a}
+						{\infer[=E]{b=a}
+							{\temp{=I}{a=a}
+							&
+							\temp{1}{a=b}}}}
+			\end{array}$
+		\end{center}
+
+
+		\item $\vdash \ \forall x \forall y \forall z \ (x = y \land y = z) \to x = z$
+		
+		{\bf Solution:}	To introduce the $\forall$ we argue from a general case. Furthermore, we are to prove an implication, so we add a temporary hypothesis to discharge later. So the crux of the proof comes down to showing: 
+
+		$$(a=b)\land(b=c) \ \vdash \ a=c$$
+
+			\begin{center}
+				$\infer[\forall I]{\forall x \ \forall y \ \forall z \ (x=y \land y=z) \to x = z}
+					{\infer[\to I,1]{(a=b \land b=c) \to a=c}
+						{\infer[=E]{a = c}
+							{\infer[\land E_{r}]{b = c}
+							{\infer[1]{\cancel{a=b \land b=c}}
+								{}}
+							&
+							\infer[\land E_{l}]{a = b}
+								{\infer[1]{\cancel{a=b \land b=c}}
+									{}}}}}$
+			\end{center} 
+	\end{enumerate}
+
+	Parts (a) and (b) together with proofs from lectures show that identity is reflexive, symmetric, and transitive. Thus behaving like an equivalence relation - as one would hope of the definition of equals!
+	
+	\newpage
+	\item In this question $\text{PA}$ denotes the first-order theory of Peano arithmetic which has signature PA$: \{0,s,+,\times\}$ and axioms:
+	
+	\begin{enumerate}
+		\item[PA1] $\forall x \lnot(s(x) = 0)$
+		\item[PA2] $\forall x \ \forall y ((s(x) = s(y)) \to (x = y))$
+		\item[PA3] $\forall x \ (x + 0 = x)$
+		\item[PA4] $\forall x \ \forall y \ (x + s(y) = s(x + y))$
+		\item[PA5] $\forall x \ (x \times 0 = 0)$
+		\item[PA6] $\forall x \ \forall y \ (x \times s(y) = (x \times y) + x)$
+		\item[PA7] $[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$
+	\end{enumerate}	
+	
+	Provide deductions to prove the following sequents.
+
+	{\bf Comments:} Axioms PA1 - PA6 are each of the form $\forall ...$ which means that $\forall E$ must be used to start these proofs. A lot of these proofs turn on the right choice of term to substitute in for $x,y,z$ in the $\forall E$ step. Look at the statement you're trying to prove and find the correct substitution into an axiom to make it come out. 
+
+	Theorems involving the binary function $+$ will necessarily make use of PA3 and/or PA4 as those are the axioms defining the properties of addition. 
+
+	Theorems involving the binary function $\times$ will necessarily make use of PA5 and/or PA6 as those are the axioms defining the properties of multiplication. 
+
+	PA 1 is the only statement of the form ``this is not equal to that''. This means that showing any two things are not equal must ultimately boil down to showing that if they were equal, then (something like) 0=1 would follow.
+	
+	\begin{enumerate}
+		\item $\text{PA} \vdash 1 + 1 = 2$
+		
+		{\bf Solution:} First the sequent should be desugared as 1,2 are not terms in PA. So the sequent in PA is the following: 
+
+		$$ \PA \ \vdash \ s(0) + s(0) = s(s(0))$$
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[=E]{s(0) + s(0) = s(s(0))}
+						{\infer[]{s(0) + 0 = s(0)}
+							{\PA 3}
+						&
+						\infer[\forall E]{s(0) + s(0) = s(s(0) + 0)}
+							{\PA 4}}
+				\end{array}$
+			\end{center}
+
+		\item $\text{PA} \vdash 3 \neq 1$
+		
+		{\bf Solution:} Desugaring into PA yields the following sequent:
+
+		$$ \PA \ \vdash \ \lnot[s(s(s(0))) = s(0)]$$
+
+		Recall that introducing a negation ultimately comes down to showing 
+
+		$$ \PA, \ s(s(s(0))) = s(0) \ \vdash \ \bot$$
+
+		and then using $\to I$ to tidy up at the end. 
+
+			\begin{center}
+				\footnotesize{$\begin{array}{c}
+					\infer[\to I,1]{\lnot[s(s(s(0))) = s(0)]}
+						{\infer[\MP]{\bot}
+							{\infer[\MP]{s(s(0))=0}
+							{\infer[1]{\cancel{s(s(s(0))) = s(0)}}{}
+							&
+							\infer[\forall E]{[s(s(s(0)))=s(0)] \to [s(s(0)) = 0]}
+								{\PA 2}}
+						&
+						\infer[\forall E]{\lnot[s(s(0))=0]}
+							{\PA 1}}}
+				\end{array}$}
+			\end{center}
+		
+		\item $\text{PA} \vdash \forall x \ (x + 1 = s(x))$
+		
+		{\bf Solution:} Desugaring into PA yields the following sequent:
+
+		$$\PA \vdash \forall x \ [x + s(0) = s(x)]$$
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\forall I]{\forall x \ [x + s(0) = s(x)]}
+					{\infer[=E]{a + s(0) = s(a)}
+						{\infer[\forall E]{a + 0 = a}{\PA 3}
+						&
+						\infer[\forall E]{a + s(0) = s(a+0)}{\PA 4}}}
+			\end{array}$
+		\end{center}
+
+		\item $\text{PA} \vdash \forall x \ (x \times 1 = x)$ 
+		
+		{\bf Solution:} Desugaring into PA yields the following sequent: 
+
+		$$\PA \ \vdash \ \forall x \ [x \times s(0) = x] $$
+
+		This proof will make use of Exercise 3a of this tutorial. 
+
+			\begin{center}
+				\footnotesize{$\begin{array}{c}
+					\infer[\forall I]{\forall x \ [x \times s(0) = x]}
+						{\infer[=E]{s(a) \times s(0) = s(a)}
+							{\infer[]{s(a) \times s(0) = 0 + s(a)}
+								{\infer[\forall E]{s(a) \times s(0) = (s(a) \times 0) + s(a)}{\PA 6}
+								&
+								\infer[\forall E]{s(a) \times 0 = 0}{\PA 5}}
+							&
+							\infer[\THM]{0 + s(a) = s(a)}{\PA}}}
+				\end{array}$}
+			\end{center}
+
+	\end{enumerate}
+
+	\newpage
+	\item The first-order language of Peano Arithmetic is often presented with an extra binary relation symbol $<$ where $x < y$ is given the usual interpretation: $x$ is \emph{strictly} less than $y$. In fact it is not necessary to add anything extra, for this relation can be defined using a sentence in $\PA$ as stated. 
+	
+	Write down a wff in $\PA$ which defines the binary relation $<$ of being ``strictly less than''. Use this to write down formulae that represent: less than or equal to, strictly greater than, and greater than or equal to. 
+
+	%$$ x < y :\equiv \exists z \ (x + s(z) = y) $$
+
+	\item Write down well-formed formulae in the first-order language of $\PA$ corresponding to the following statements. 
+	
+	\begin{enumerate}
+		\item Each natural number is either equal to $0$ or greater than $0$. 			
+		\item If $x$ is not less than $y$, then $x$ equals $y$ or $y$ is less than $x$.
+		\item If $x$ is less than or equal to $y$ and $y$ is less than or equal to $x$, then $x=y$. 
+	\end{enumerate} 
+
+	\newpage
+	\item The followings sequents all require the use of the induction axiom schema. Recall that all proofs using the induction schema have the following form: 
+	
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\IND]{\forall y \ P(y)}
+						{\infer[\land I]{[P(0) \land \forall x \ (P(x) \to P(s(x)))]}
+							{\infer[]{P(0)}{\begin{array}{c} \vdots \\ \mathcal{D}_{BC}\end{array}}
+							&
+							\infer[]{\forall x \ (P(x) \to P(s(x)))}
+								{\begin{array}{c} \vdots \\ \mathcal{D}_{IS}\end{array}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+	For this reason, once the wff $P(x)$ is identified, it suffices to provide the base case deduction $\mathcal{D}_{BC}$ and induction step $\mathcal{D}_{IS}$. The sequents are stated in such a way as to mean induction on the variable $x$ will be the easiest approach. Always do induction on the variable $x$.  
+	
+	\begin{enumerate}
+		\item $\text{PA} \vdash \forall x \ (0 + x = x)$
+		
+		{\bf Solution:} 
+
+		We prove this using induction on the wff 
+
+		$$ P(x) : \ (0 + x = x)$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash (0 + 0 = 0)$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall E]{0 + 0 = 0}
+						{\PA 3}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ (0 + n = n) \ \vdash \ (0 + s(n) = s(n)) $$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I, \IH]{(0 + n = n) \to (0 + s(n) = s(n))}
+						{\infer[=E]{0 + s(n) = s(n)}
+							{\infer[\forall E]{0 + s(n) = s(0+n)}{\PA 4}
+							&
+							\infer[\IH]{\cancel{0+n=n}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ (0 \times x = 0)$
+
+
+		{\bf Solution:} 
+
+		This proof is by induction on the wff 
+
+		$$ P(x) : \ (0 \times x = 0)$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash 0 \times 0 = 0$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall E]{0 \times 0 = 0}
+						{\PA 5}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ 0 \times n = 0 \ \vdash \ 0 \times s(n) = 0$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I, \IH]{(0 \times n = 0) \to (0 \times s(n) = 0)}
+						{\infer[=E]{0 \times s(n) = 0}
+							{\infer[=E]{0 \times s(n) = 0 \times n}
+								{\infer[\forall E]{0 \times s(n) = 0 \times n + 0}{\PA 6}
+								&
+								\infer[\forall E]{0 \times n + 0 = 0\times n}{\PA 3}}
+							&
+							\infer[\IH]{\cancel{0 \times n = 0}}{}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ (1 \times x = x)$
+
+		{\bf Solution:} 
+
+		This proof is by induction on the wff 
+
+		$$ P(x) : \ s(0) \times x = x$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash s(0) \times 0 = 0$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall E]{s(0)\times 0 = 0}
+						{\PA 5}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ s(0)\times n = n \ \vdash \ s(0)\times s(n) = s(n)$$
+
+		The deduction below makes use of an exercise above. 
+
+		\begin{mdframed}
+			\begin{center}
+				\footnotesize{$\begin{array}{c}
+					\infer[\to I, \IH]{(s(0)\times n = n) \to (s(0)\times s(n) = s(n))}
+						{\infer[=E]{s(0)\times s(n) = s(n)}
+							{\infer[=E]{s(0)\times s(n) = n + s(0)}
+								{\infer[\forall E]{s(0)\times s(n)= (s(0)\times n) + s(0)}{\PA 6}
+								&
+								\infer[\IH]{\cancel{s(0)\times n = n}}{}}
+							&
+							\infer[\THM]{n + s(0) = s(n)}{\PA}}}
+				\end{array}$}
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ (x = 0 \lor \exists y (x = s(y)))$ \hfill (Challenge!)
+
+		{\bf Solution:} 
+
+		This proof is by induction on the wff 
+
+		$$ P(x) : \ [x = 0 \lor \exists y (x = s(y))]$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash [0 = 0 \lor \exists y (0 = s(y))]$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor I]{0=0 \lor \exists y \ (0 = s(y))}
+						{\infer[=I]{0=0}	
+							{}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ [n = 0 \lor \exists y (n = s(y))] \ \vdash \ [s(n) = 0 \lor \exists y (s(n) = s(y))]$$
+
+		Since the induction hypothesis is a disjunction, the proof will finish with a disjunction elimination step. This requires proving the following sequents along the way: 
+
+		$$ \PA \ \vdash \ (n=0) \to [s(n) = 0 \lor \exists y (s(n) = s(y))]$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(n=0) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+								{\infer[\lor I]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+									{\infer[\exists I]{\exists y \ (s(n)=s(y))}
+										{\infer[\MP]{s(n)=s(0)}
+											{\infer[\THM]{n=0 \to s(n)=s(0)}{}
+											&
+											\infer[1]{\cancel{n=0}}{}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+$$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y))]$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,2]{\exists y \ (n=s(y)) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+								{\infer[\exists E]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+									{\infer[2]{\cancel{\exists y \ (n=s(y))}}{}
+									&
+									\infer[\to I,3]{n=s(w) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+										{\infer[\lor I]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+											{\infer[\exists I]{\exists y \ (s(n)=s(y))}
+												{\infer[\MP]{s(n)=s(s(w))}
+													{\infer[3]{\cancel{n=s(w)}}{}
+													&
+													\infer[\THM]{(n=s(w)) \to (s(n)=s(s(w)))}
+														{}
+													}}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		See over the page for these steps combined with the disjunction elimination to complete the proof of the induction step. 
+		
+		\begin{sidewaysfigure}
+
+			$$ \PA, \ [n = 0 \lor \exists y (n = s(y))] \ \vdash \ [s(n) = 0 \lor \exists y (s(n) = s(y))]$$
+
+			\begin{mdframed}
+				\begin{center}
+					\small{$\begin{array}{c}
+						\infer[\lor E]{[(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+							{\infer[\IH]{n=0 \lor \exists y \ (n = s(y))}{}
+							&
+							\infer[\to I,1]{(n=0) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+								{\infer[\lor I]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+									{\infer[\exists I]{\exists y \ (s(n)=s(y))}
+										{\infer[\MP]{s(n)=s(0)}
+											{\infer[\THM]{n=0 \to s(n)=s(0)}{}
+											&
+											\infer[1]{\cancel{n=0}}{}}}}}
+							&
+							\infer[\to I,2]{\exists y \ (n=s(y)) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+								{\infer[\exists E]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+									{\infer[2]{\cancel{\exists y \ (n=s(y))}}{}
+									&
+									\infer[\to I,3]{n=s(w) \to [(s(n)=0) \lor \exists y \ (s(n)=s(y))]}
+										{\infer[\lor I]{(s(n)=0) \lor \exists y \ (s(n)=s(y))}
+											{\infer[\exists I]{\exists y \ (s(n)=s(y))}
+												{\infer[\MP]{s(n)=s(s(w))}
+													{\infer[3]{\cancel{n=s(w)}}{}
+													&
+													\infer[\THM]{(n=s(w)) \to (s(n)=s(s(w)))}
+														{}
+													}}}}}}}
+					\end{array}$}
+				\end{center}
+			\end{mdframed}
+		\end{sidewaysfigure}		
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ \forall y \ [s(y) + x = s(y+x)]$ \hfill (Challenge!)
+
+		{\bf Solution:} 
+
+		This proof is by induction on the wff 
+
+		$$ P(x) : \ \forall y \ [s(y) + x = s(y+x)]$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash \forall y \ [s(y) + 0 = s(y+0)]$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[=E]{s(a) + 0 = s(a + 0)}
+						{\infer[=E]{s(a) + 0 = s(a)}
+							{\infer[=I]{s(a)=s(a)}{}
+							&
+							\infer[\forall E]{s(a)+0=s(a)}{\PA 3}}
+						&
+						\infer[\forall E]{a = a + 0}{\PA 3}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ \forall y \ [s(y) + n = s(y+n)] \ \vdash \ \forall y \ [s(y) + s(n) = s(y+s(n))]$$
+
+		\begin{mdframed}
+			\begin{center}
+				\footnotesize{$\begin{array}{c}
+					\infer[=E]{s(a)+s(n) = s(a + s(n))}
+						{\infer[]{s(a)+s(n)=s(s(a+n))}
+							{\infer[\forall E]{s(a)+s(n)=s(s(a)+n)}{\PA 4}
+							&
+							\infer[\IH]{s(a) + n = s(a+n)}{}}
+						&
+						\infer[\forall E]{a + s(n) = s(a + n)}{\PA 4}}
+				\end{array}$}
+			\end{center}
+		\end{mdframed}
+		
+		These two proofs can be pieced together with the induction rule of inference to prove the original goal. 
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ \forall y \ \forall z \ [(y + z) + x = y + (z + x)]$ \hfill (Challenge!)
+		
+		This proof is by induction on the formula 
+		
+		$$P(x)  \ : \ \forall y \ \forall z \ [(y + z) + x = y + (z + x)] $$
+		
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+		
+		$$\PA \ \vdash \  \forall y \ \forall z \ [(y + z) + 0 = y + (z + 0)] $$
+		
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall y \ \forall z \ [(y + z) + 0 = y + (z + 0)]}
+						{\infer[=E]{(b + c) + 0 = b + (c + 0)}
+							{\infer[\forall E]{(b+c)+0 = b+c}
+								{\PA 3}
+							&
+							\infer[\forall E]{c + 0 = c}
+								{\PA 3}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		See the next page for induction step. 
+
+		\begin{sidewaysfigure}
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ \forall y \ \forall z \ [(y + z) + n = y + (z + n)] \ \vdash \ \forall y \ \forall z \ [(y + z) + s(n) = y + (z + s(n))] $$
+		
+		%\newpage
+		
+			\begin{mdframed}
+				\begin{center}		
+					$\begin{array}{c}
+						\infer[=E]{(b + c) + s(n) = b + (c + s(n))}
+							{\infer[=E]{(b + c) + s(n) = b + s(c + n)}
+								{\infer[=E]{(b+c)+s(n)=s(b+(c+n))}
+									{\infer[\forall E]{(b + c) + s(n) = s((b+c)+n)}
+										{\PA 4}
+									&
+									\infer[\IH]{(b+c)+n = b + (c+n)}{}}
+								&
+								\infer[\forall E]{b + s(c + n) = s(b + (c +n))}
+									{\PA 4}}
+							&
+							\infer[\forall E]{c + s(n) = s (c + n)}{\PA 4}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+		\end{sidewaysfigure}
+		
+		\newpage
+		\item $\text{PA} \vdash \forall x \ \forall y \ [y + x = x + y]$ \hfill (Challenge!)
+		
+		{\bf Solution:} 
+
+		This proof is by induction on the wff 
+
+		$$ P(x) : \ \forall y \ [y + x  = x + y]$$
+
+		$\mathcal{D}_{BC}$: First state and prove the base case 
+
+		$$ \PA \vdash \forall y \ (y + 0 = 0 + y)$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[=E]{a + 0 = 0 + a}
+						{\infer[=E]{a + 0 = a}
+							{\infer[=I]{a=a}{}
+							&
+							\infer[\forall E]{a + 0 = a}{\PA 3}}
+						&
+						\infer[\THM]{0 + a = a}{\PA}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		$\mathcal{D}_{IS}$: Next state and prove the induction step
+
+		$$ \PA, \ \forall y \ (y + n  = n + y) \ \vdash \ \forall y \ (y + s(n)  = s(n) + y)$$
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[=E]{a + s(n) = s(n) + a}
+						{\infer[=E]{a + s(n) = s(n + a)}
+							{\infer[\forall E]{a + s(n) = s(a+n)}
+								{\PA 4}
+							&
+							\infer[\IH]{a + n = n + a}
+								{}}
+						&
+						\infer[\THM]{s(n) + a = s(n+a)}{\PA}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		See the Logic section on the course webpage for a complete proof of the commutativity of addition, if you dare.
+		
+		\newpage
+	\end{enumerate}
+
+	\newpage
+	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	
+		\begin{enumerate}
+			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
+			
+			Recall that $0 < a$ and $0 < s(a)$ are ($\exists$) existential claims:
+			
+			$$0 < a := \ \exists x \ a = 0 + s(x)$$
+			$$0 < s(a) := \ \exists x \ s(a) = 0 + s(x)$$
+			
+			As such, we must use an instance of $\exists$ elimination to make use of such an hypothesis.
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\exists E]{0 < s(a)}
+						{0 < a
+						&
+						\infer[\to I,1]{a = 0 + s(a) \to 0 < s(a)}{
+							\infer[\exists I]{0 < s(a)}
+								{\infer[=E]{s(a) = 0 + s(s(t))}
+									{\infer[\forall E]{s(s(t)) = 0 + s(s(t))}
+										{\infer[\THM]{\forall x \ x = 0 + x}{}}
+									&
+									\infer[=E]{s(a) = s(s(t))}
+										{\infer[\text{CONG}]{s(a) = s(0 + s(t))}
+											{\temp{1}{a = 0 + s(a)}}
+										&
+										\infer[\forall E]{s(t) = 0 + s(t)}
+											{\infer[\THM]{\forall x \ x = 0 + x}{}}}}}}}
+				\end{array}$			
+			\end{center}
+			
+			
+			%\newpage
+			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
+			
+			$$a < b := \exists x \ b = a + s(x)$$
+			$$s(a) < s(b) := \exists x \ s(b) = s(a) + s(x)$$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\exists E]{s(a) < s(b)}
+						{a < b
+						&
+						\infer[\to I,1]{b = a + s(t) \to s(a) < s(b)}
+						{\infer[\exists I]{s(a) < s(b)}
+							{\infer[=E]{s(b) = s(a) + s(t)}
+								{\infer[\text{CONG}]{s(b) = s(a + s(t))}
+									{\temp{1}{b = a + s(t)}}
+								&
+								\infer[\forall E]{s(a) + s(t) = s(a + s(t))}
+									{\infer[\THM]{\forall x \ \forall y \ s(x) + y = s(x + y)}
+										{}}}}}}				
+				\end{array}$
+			\end{center}
+			
+			\newpage
+			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
+			
+			\newpage
+			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hfill \text{(Challenge!)}$
+			
+			\newpage
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
+			
+			\newpage
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hfill \text{(Challenge!)}$
+		\end{enumerate}
+	 
+\end{enumerate}	
+\end{document}

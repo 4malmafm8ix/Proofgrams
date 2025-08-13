@@ -1,0 +1,30 @@
+#####################################
+#   Tutorial 09 :: Question 07      #
+#####################################
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,*,R,qtoEnd;
+q0,1,$,R,qtoEnd;
+qtoEnd,0,0,R,qtoEnd;
+qtoEnd,1,1,R,qtoEnd;
+qtoEnd,b,b,L,qBitLeft;
+qBitLeft,b,b,L,qBitLeft;
+qBitLeft,0,b,R,qMoveZero;
+qBitLeft,1,b,R,qMoveOne;
+qBitLeft,*,0,R,qBitRight;
+qBitLeft,$,1,R,qBitRight;
+qMoveZero,b,0,L,qBitLeft;
+qMoveOne,b,1,L,qBitLeft;
+# Now look for next bit to fix:
+# The extra check is to detect whether the job is done.
+# Two blanks in a row implies shifting completed.
+qBitRight,b,b,R,qBitRightCheck;
+qBitRightCheck,b,b,N,qGoHome;
+qBitRightCheck,0,*,R,qtoEnd;
+qBitRightCheck,1,$,R,qtoEnd;
+# All done now go home: 
+qGoHome,b,b,L,qGoHome;
+qGoHome,0,0,L,qGoHome;
+qGoHome,1,1,L,qGoHome;
+qGoHome,@,@,N,HALT;
+# End of instructions.

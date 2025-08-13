@@ -1,0 +1,1583 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+\usepackage{hyperref}
+
+% Bibliography
+\usepackage[style=numeric]{biblatex}
+\addbibresource{../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+\title{Propositional Logic}
+\author{MATH230}
+\institute{Te Kura P\=angarau \\ Te Whare W\=ananga o Waitaha}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Course Introduction}
+
+
+\begin{frame}
+	\frametitle{Introduction}
+
+	\begin{tabular}{r l}
+		Lecturer & Robert Culling \\
+		Email & robert.culling@canterbury.ac.nz \\
+		Office & Jack Erskine 422 \\
+		Office Hours & Wednesday 12 - 2pm
+	\end{tabular}
+
+	Email me to organise a time to meet and discuss the course outside office hours. 
+	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Course Overview}
+
+	Following 2000+ years of work developing all of the rich ideas that comprise modern mathematics, some began to wonder about the \emph{consistency} of the methods used. Indeed, there was debate about what ``\underline{the} methods of mathematics'' were and camps were formed around these different philosophies. 
+
+	\vspace{5mm}
+
+	In order to analyse the methods of proof and have a hope of showing them consistent, mathematicians sought to give very precise (so called, formal) treatments of mathematics. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Natural Deduction}
+
+	Every man and his dog developed a formal logical system to model the methods of the practicing mathematician. Gottlob Frege, David Hilbert, and many others all advanced precise systems of formal proof. 
+
+	\vspace{5mm}
+
+	For the purposes of this course we are going to study the method written by Gerhard Gentzen. He published this method in 1935 in the paper \emph{Investigations into Logical Deductions}. This paper (at least a translation into English) is available in the library as part of the \emph{The Collected Works of Gerhard Gentzen}.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Computation}
+
+	At the same time mathematicians wondered if the process of proof, once suitably formalised, could be ``computable''. That is to ask, is there an \emph{algorithm} that takes in hypotheses and a conclusion and returns a proof of the conclusion relying on the hypotheses. 
+	
+	\vspace{5mm}
+	
+	In a similar way to following an algorithm to compute a division, one might be able to blindly follow an algorithm to produce a proof!
+\end{frame}
+
+\begin{frame}
+	\frametitle{Computation}
+
+	These questions were asked before anything like our modern computers were developed --- Indeed the work of these mathematicians on the problems at the foundations of mathematics informed much of the development of modern computers and the languages we use to talk to them!
+
+	\vspace{5mm}
+
+	Again, every man and his dog developed a formal description of what they meant by computation, to try and determine whether the process of proof could be considered computable. Alan Turing, Stephen Kleene, and Kurt G\"{o}del were among the first. 
+
+	\vspace{5mm}
+
+	In this course we will focus on the language ($\lambda$-calculus) developed by Alonzo Church first published in 1936 as part of the paper \emph{An Unsolvable Problem of Elementary Number Theory}.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Model of Computation}
+
+	When defining what is meant by computation there are two, related, issues to think about: 
+
+	\begin{itemize}
+		\item[] Developing a language to express computations, and
+		\item[] Defining what it means to execute, step-by-step, such a computation.
+	\end{itemize}
+
+	Alonzo Church's $\lambda$-calculus achieves both of these goals in an elegant way.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proofs and Programs}
+
+	As mathematicians have followed these strands of thinking first laid by Gentzen and Church, they have come to realise that proof and computation are linked! Now we understand that: 
+
+	\vspace{5mm}
+
+	\begin{center}
+		\textbf{Proof = Program}
+	\end{center}
+
+	\vfill
+
+	It is the goal of this course to formally define both sides of this equation and say why they are really equal!
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Modern Proof Assistants}
+
+	This work, started by mathematicians in the early 1900s, has been followed for over a century by others. It has informed the development of programming language theory and other aspects of computer science. 
+
+	\vspace{5mm}
+
+	In the present day we now have a number of programming languages (and other software tooling) that allow for the expression and verification of proofs, because they have these ideas baked into them. Not just theorems about mathematics, but also formal verifications (proofs!) that pieces of software do what they claim. 
+
+	\vspace{5mm}
+
+	In the final topic of the course we will use Lean to formalise some aspects of mathematics and computer science to see what it is like to prove theorems using these modern tools. \textbf{You will need to write code, but this will be covered in class.}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Getting Started with Lean}
+
+	Although this is the final topic of the course, you can get started with Lean by visiting the following resources. You can try some gamified introductions here: 
+
+	\begin{itemize}
+		\item[] \href{https://adam.math.hhu.de/\#/g/trequetrum/lean4game-logic}{Lean Intro to Logic}
+		\item[] \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game}
+		\item[] \href{https://adam.math.hhu.de/\#/g/djvelleman/stg4}{Set Theory Game}
+	\end{itemize}
+
+	You can get Lean running on your own computer following these \href{https://docs.lean-lang.org/lean4/doc/quickstart.html}{instructions}. Once Lean is installed you might like to try: 
+
+	\begin{itemize}
+		\item[] \href{https://hrmacbeth.github.io/math2001/00_Introduction.html\#contents-and-prerequisites}{Mechanics of Proof}
+		\item[] \href{https://lean-lang.org/theorem_proving_in_lean4/dependent_type_theory.html}{Theorem Proving in Lean 4}
+		\item[] \href{https://leanprover-community.github.io/mathematics_in_lean/}{Mathematics in Lean}
+	\end{itemize}
+
+	\textbf{We will cover Lean in class sufficiently for the assignment.}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Assessment}
+
+	\begin{tabular}{r c r}
+		Labs & 10\% & 8 Handin Problem Sets \\
+		Test & 20\% & Focus on natural deduction \\
+		Assignment & 20\% & Writing proofs in Lean\\
+		Exam & 50\% & Whole course, except Lean.
+	\end{tabular}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Reading}
+
+	Dirk van Dalen, Logic and Structure. 
+
+	\vspace{10mm}
+
+	Simon Thompson, \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Type Theory and Functional Programming}. 
+	
+	Chapters 1 - 4. 
+
+	\vspace{10mm}
+
+	Jeremy Avigad et al  \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}\footnote{Note: this uses an outdated version of Lean, but is still a good resource for the theory of this course.}. 
+	
+	Chapters 1 - 5, 7 - 9, and 17 - 18.
+\end{frame}
+
+\begin{frame}
+
+	% \begin{quote}
+
+	% ``For if praise is given to the men who have determined the number of regular solids - which is of no use, except insofar as it is pleasant to contemplate - and if it is thought to be an exercise worthy of a mathematical genius to have brought to light the more elegant properties of a conchoid or cissoid, or some other figure which rarely has any use, how much better will it be to bring under mathematical laws human reasoning, which is the most excellent and useful thing we have.''
+	% \begin{flushright}
+	% 	--- Gottfried Wilhelm Leibniz.\footnote{Quote obtained from Martin Davis' \emph{Universal Computer.}}
+	% \end{flushright}
+
+	% \end{quote}
+
+
+\begin{quote}
+    ``I think it may be accepted as a starting point that the central problem in the foundation of mathematics is the construction of a symbolic system within which the body of extant mathematics may be derived in accordance with sharply stated and immediately applicable formal rules, and that other questions must be regarded as secondary on the ground that they cannot be given a definite meaning, in fact do not have a definite subject, until such a construction is accomplished. [...] In practice the search is for a formalized basis which is simple and brief beside the entire body of concretely existing mathematics but capable, under its rules of inference, of yielding this entire body and (infinite) further material [...].''
+    \begin{flushright}
+        --- Alonzo Church (1939\footnote{``The Present Situation in the Foundation of Mathematics.'' Alonzo Church, 1939.})
+    \end{flushright}
+\end{quote}
+
+\end{frame}
+
+
+\section{Arguments}
+
+\begin{frame}
+	\frametitle{Theorems}
+
+	% The business of mathematicians is proving theorems.
+	% What is a theorem? What does it mean to prove one? 
+
+	Mathematicians make statements (claims of facts) about numbers and other abstract structures. Those statements that come with a proof are called \emph{theorems}. It is the job of the mathematician to prove theorems. 
+
+	\vspace{5mm}
+
+	\textbf{Examples}
+
+		\begin{itemize}
+			\item[] $\forall n \geq 3, x^{n} + y^{n} = z^{n}$ has no non-trivial solutions.
+			\item[] $4$ is a prime number.
+			\item[] $1 + 1 = 2$
+			\item[] If a sequence of real numbers is bounded, then it converges.
+			\item[] If an increasing sequence of real numbers is bounded, then it converges.
+		\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Arguments and Proofs}
+
+	Analysis of the correctness of a statement relies as much on the connective words (grammar) as it does the technical context specific definitions. 
+
+\vspace{0.5cm}
+
+{\bf Example: }
+ 
+If $p$ divides $ab$, then $p$ divides $a$ or $p$ divides $b$.
+  
+\vspace{4cm}
+% Content terms: 
+% Connective terms: 
+
+% Emphasis on the hypothetical claim. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Arguments and Proofs}
+  
+	Analysis of the correctness of a theorem relies as much on the connective words as it does the technical definitions. 
+  
+  {\bf Example}
+  
+  If $a$ divides $b$ and $b$ divides $a$, then $a = b$ or $a = -b$. 
+
+  \vspace{5cm}
+  
+  \end{frame}
+
+  \begin{frame}
+	\frametitle{Arguments and Proofs}
+  
+	Analysis of the correctness of a theorem relies as much on the connective words as it does the technical definitions. 
+   
+	{\bf Example}
+	
+	If $f(x)$ is continuous on $[a,b]$ and differentiable on $(a,b)$, then there exists a $c \in (a,b)$ such that $$f'(c) = \frac{f(b)-f(a)}{b-a}$$
+  
+  \end{frame}
+
+\begin{frame}
+	\frametitle{Connective Tissue}
+
+	It is the connective words, as much as the mathematical content words, that we have to analyse when deciding whether these statements are correct; whether these are theorems.
+
+	\vspace{5mm}
+
+	{\bf Propositional logic formalises the structure of these connective words.} We will return to the context specific terms in later topics. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Natural Language}
+	
+	\begin{itemize}
+		\item If Watson moves in with Holmes, then Holmes will be forever annoyed. Watson moved in with Holmes. Therefore, Holmes will be forever annoyed.
+		\vspace{1cm}
+		\item If Watson can trap Moriarty, then Holmes can. Holmes can't trap Moriarty. Therefore, Watson can't.
+		\vspace{1cm}
+		\item Either Holmes catches Moriarty or the world will fall into chaos. The world has fallen into chaos. Therefore, Holmes did not catch Moriarty.
+		
+	\end{itemize}	
+\end{frame}
+
+% Each of these examples are built up of declarative statements (propositions), one of which is singled out (by the therefore)  as a conclusion. The rest we call premises. 
+
+\begin{frame}
+	\frametitle{Argument}
+	
+
+	\begin{center}
+		An argument is a finite collection of declarative sentences (propositions), one of which is singled out as the conclusion, while the others are considered premises. 
+	\end{center}
+		 
+	\vspace{0.5cm}
+	
+	Premises are the evidence claiming to support the conclusion.	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Natural Language}
+	
+	\begin{itemize}
+		\item If Watson moves in with Holmes, then Holmes will be forever annoyed. Watson moved in with Holmes. Therefore, Holmes will be forever annoyed.
+
+		\vspace{0.5cm}
+
+		Let's break this up into premises and conclusion: 
+		
+		\vspace{5cm}
+		
+		% P1: If Watson moves in with Holmes, then Holmes will be forever annoyed. 
+		% P2: Watson moved in with Holmes. 
+		%  C: Holmes will be forever annoyed.
+		
+		% Ask questions about the structure of P1 and P2.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propositional Structures}
+	
+	\begin{center} 
+		
+		An atomic proposition has no propositional substructure.
+		
+	\end{center}
+
+
+	
+	We saw above that some propositions do have extra structure: ``If... , then....'' and ``Either .... or ... '' and ``can't'' are important to the nature of the argument. 
+	
+	\vspace{0.5cm}
+	
+	Such connectives are used to join atomic propositions into compound propositions.	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Natural Language}
+	
+	\begin{itemize}
+		\item Either Holmes catches Moriarty or the world will fall into chaos. The world has fallen into chaos. Therefore, Holmes did not catch Moriarty.
+		
+		\vspace{0.5cm}
+		
+		Let's break this up into premises and conclusion and determine the atomic propositions.
+		
+		\vspace{5cm}
+		
+		% P1: If Watson moves in with Holmes, then Holmes will be forever annoyed. 
+		% P2: Watson moved in with Holmes. 
+		%  C: Holmes will be forever annoyed.
+		
+		% Ask questions about the structure of P1 and P2.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Moving Away from Natural Language}
+	
+	% Recall the example about numbers.
+	% Recall the first lecture about the need to choose axioms. 
+	
+	It was hoped that mathematics could be written in such a precise manner that it could be routinely checked. Furthermore, it was thought that once mathematics was so formalised, that it could be shown consistent and complete; that is, not able to prove non-sense and able to prove (or refute) every statement. 
+
+	\vspace{1cm}
+
+	Toward this end mathematicians (Frege and those that followed him) chose to write mathematics in the language of logic: 
+
+	\begin{itemize}
+		\item Propositional Logic.
+		\item First Order Predicate Logic.
+	\end{itemize}
+	
+	
+\end{frame}
+
+\section{Propositional Logic}
+
+\begin{frame}
+	\frametitle{Propositional Connectives}
+	
+	To express the same syntactic structure of an argument without the ambiguities of a natural language we use capital (English) letters to denote atomic propositions, called \emph{propositional variables}. We use the following symbols to construct compound propositions: 
+	
+	\vspace{0.5cm}
+	
+	\begin{itemize}
+		\item $\lnot$ : ``It is not the case that... '' or ``Not... ''
+		\item $\land$ : ``Both... and ... '' 
+		\item $\lor$ : ``Either... or ... ''
+		\item $\rightarrow$ : ``If... , then ... ''
+		\item $\leftrightarrow$ : `` ... if and only if ... ''
+	\end{itemize}
+
+	These symbols, the propositional connectives, play the role of the connective tissue in the statements given on previous slides. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: NL to PL}
+	\begin{itemize}
+		\item If Watson can trap Moriarty, then Holmes can. Holmes Can't trap Moriarty. Therefore Watson can't.
+	\end{itemize}
+	
+	\vspace{5cm}
+	
+	
+\end{frame}	
+
+\begin{frame}
+	\frametitle{Grammar}
+	
+	Our language is further made up of \emph{well-formed formulae} which we define inductively as follows:	
+	
+	\vspace{0.5cm}
+	\begin{center}[Well-Formed Formulae]
+	\begin{itemize}
+		\item {\bf Atomic Formulae:} If $\alpha$ is a single propositional variable, then $\alpha$ is a wff.
+		\item {\bf Negation:} If $\alpha$ is a wff, then $\lnot\alpha$ is a wff. 
+		\item {\bf Binary Connective:} If $\alpha$ and $\beta$ are wff and $*$ is a binary connective, then $(\alpha * \beta)$ is a wff. 		
+	\end{itemize}
+	\end{center}
+	
+	{\bf Notation:} We will refer to the totality of well-formed propositions as ``Prop'' and we will write ``$\alpha : \prop$'' to denote the fact that $\alpha$ is a well-formed proposition. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Inductive Definition of Prop}
+
+	This inductive definition can be stated in Backus-Naur form.
+
+	\vspace{70mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Examples}
+	Which of the following are wff in propositional logic?
+	
+	\begin{itemize}
+		\item[1.] $A$
+		\item[2.] $AB$
+		\item[3.] $(A \rightarrow B)$
+		\item[4.] $A \rightarrow B \rightarrow C$
+		\item[5.] $((A \rightarrow B) \rightarrow C)$
+		\item[6.] $\lnot Q$
+		\item[7.] $A \lor Q$
+		\item[8.] $A \rightarrow \lnot B \lor C$		
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Binding Conventions}
+			
+	{\bf Binding Conventions:} %If in doubt, then stick to using parentheses!
+	\begin{itemize}
+		\item $\lnot$ binds most tightly, 
+		\item $\lor$ and $\land$ bind more tightly than $\rightarrow$,
+		\item $\rightarrow$ binds more tightly than $\leftrightarrow$. 			
+	\end{itemize}
+
+	\vspace{0.2cm}
+
+	{\bf Example:} Parse the wff $A \to \lnot B \lor C$.
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Binding Conventions}
+			
+	{\bf Binding Conventions:} %If in doubt, then stick to using parentheses!
+	\begin{itemize}
+		\item $\lnot$ binds most tightly, 
+		\item $\lor$ and $\land$ bind more tightly than $\rightarrow$,
+		\item $\rightarrow$ binds more tightly than $\leftrightarrow$. 			
+	\end{itemize}
+
+	To disambiguate $\land$ and $\lor$ we group terms from the left. In this way, we say that $\land$ and $\lor$ associate to the left. 
+
+	{\bf Example:} Parse the wff $A \land B \land C$.
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Syntax Trees}
+
+	Using the binding convention above allows for each well-formed formula to be parsed into a syntax tree. 
+
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{c c c}
+			$A \land (B \lor C)$ \hspace{1.5cm} & $A \land \lnot B \land C$ \hspace{1cm} & $A \to B \lor C \land D$ \\
+			\hline
+		\end{tabular}
+	\end{table}
+	\vspace{4cm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Hiding the Goods}
+
+	By packing the statements: 
+	
+	\begin{center}
+		``p divides ab'' or ``$f$ is continuous on $[a,b]$''
+	\end{center}
+
+	into a propositional variable $A$, we have lost a lot of information from the statement that we're trying to analyse. It's no longer about primes or continuous functions.
+
+	\vspace{0.5cm}
+
+	For now, we will focus on the connectives alone. Studying the structure of the argument, rather than the mathematics.
+
+	\vspace{0.5cm}
+
+	Later we will introduce more structure to our logic which will allow us to bring back the mathematical content. 
+
+\end{frame}
+	
+\begin{frame}
+  \frametitle{Example}
+	
+	``Thin is guilty,'' observed Watson, ``because either Holmes is right and the vile Moriarty is guilty, or he (Holmes) is wrong and Thin did the job; but those scoundrels are either both guilty or both innocent; and, as usual, Holmes is correct''.
+	
+	\vspace{5.5cm}
+
+
+	\footnotesize{Example from Richard Jeffrey, \emph{Formal Logic: Its Scope and Limits}}
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Argument Structure}
+	\begin{center}
+		$\begin{array}{ l c r }			
+			& \textnormal{Proposition 1} & \\
+			& \textnormal{Proposition 2} & \\
+			& \vdots & \\
+			& \textnormal{Proposition n} & \\
+			\cline{1 - 3} 
+			& \textnormal{Conclusion} & 	
+		\end{array}$
+	\end{center}
+
+	\vspace{1cm}
+
+{\bf Question:} What makes for a ``good argument''? What might we mean by a ``good argument''? What dos it mean for the conclusion to follow from the hypotheses? 
+\end{frame}
+
+\section{Natural Deductions}
+
+\begin{frame}
+	\frametitle{Truth and Proof}
+
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{c  p{0.7\textwidth}}
+		Semantic & If the conclusion is ``true'' whenever all hypotheses are ``true'', then the conclusion is said to be a semantic consequence of the hypotheses. \\
+
+		\vspace{0.2cm} & \\
+
+		Syntactic & If there is a ``proof'' that the hypotheses ``unfold'' and ``combine'' towards the conclusion, then the conclusion is said to be a syntactic consequence of the hypotheses. 
+		\end{tabular}
+	\end{table}
+
+	\vspace{0.5cm}
+
+	{\bf Theorem:} $\gamma$ is a semantic consequence of $\Sigma$ if and only if $\gamma$ is a syntactic consequence of $\Sigma$ \cite{vDalen}. 	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	Provide a proof to show $$P \land (Q \land R), \ R \to T  \ \vdash \ P \land T$$
+
+	\vspace{3cm}
+
+	\begin{itemize}
+		\item How are we to ``unfold'' or make use of hypotheses? 
+		\item How are we to obtain the conclusion? 
+		\item What should such a proof look like? 
+		\item It should ``reflect actual reasoning''.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{BHK Intepretation}
+  % This is a philosophical ideal. But vague.
+  % What should such algorithms look like?
+  Brouwer, Heyting, and Kolmogorov proposed the following (inductive) interpretation of what it should mean to prove statements involving propositional connectives:
+
+  \vspace{0.5cm}
+
+  \begin{center}
+    \begin{tabular}{p{1.5cm}p{8cm}}
+      $P \land Q$ & to prove a conjunction we must provide both a proof of P and a proof of Q. \\      
+      $P \to Q$ & to prove an implication we must provide an algorithm for turning a proof of P into a proof of $Q$.\\
+      $P \lor Q$ & to prove a disjunction we must provide either a proof of P or a proof of Q. \\
+      $\lnot P$ &  to prove a negation we must provide an algorithm that turns a proof of P into a proof of $\bot$.
+    \end{tabular}
+  \end{center}
+
+  \vspace{0.5cm}
+  % The negation interpretation is not clear at the moment. But we will clarify that in time. 
+
+  This presentation is taken from the Standford Encyclopedia of Philosophy article by Bridges, Palmgren, and Ishihara \cite{sep-mathematics-constructive}.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Natural Deduction Calculus}
+
+  We are going to develop a proof method that is inline with the BHK interpretation of the logical connectives. This proof method was first presented by Gerhard Gentzen. As such it is often referred to as the Gentzen Calculus. We will call it ``Natural Deduction''.
+
+  \vspace{0.5cm}
+
+  This method will develop proofs by unfolding their hypotheses in a manner consistent with the BHK.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	Provide a proof to show $$P \land (Q \land R), \ R \to T  \ \vdash \ P \land T$$
+
+	% Following the BHK this will consist of two proofs (i) one of P and (ii) one of T.
+
+	\vspace{6cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Natural Deduction Calculus}
+
+	{\bf Example:} What would it require to deduce $A \land B$ in the course of a proof? Use the BHK!
+
+	\vspace{70mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Natural Deduction Calculus}
+
+	{\bf Example:} What would it require to deduce $A \land B$ in the course of a proof? Use the BHK!
+
+	\begin{center}
+		$\begin{array}{ c  c  c }			
+			\infer[\land I]{A \land B}
+				{\begin{array}{ c  c  c }			
+					\Sigma_{1} & & \Sigma_{2} \\
+					\mathcal{D}_{1} & & \mathcal{D}_{2} \\
+					A & & B 
+				\end{array}}
+		\end{array}$
+	\end{center}
+
+	If we have a deduction for $A$ from hypotheses $\Sigma_{1}$ and a deduction for $B$ from hypotheses $\Sigma_{2}$, then \emph{together} we should consider those deductions a proof for $A \land B$ from hypotheses $\Sigma_{1} \cup \Sigma_{2}$.
+  % Deductions are thus built inductively from hypotheses. 
+	\vspace{30mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\land$ Elimination}
+	
+	{\bf Example:} Suppose $A\land B$ were a premise in a proof. What can we conclude from such a premise?
+
+	\vspace{60mm}
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{$\land$ Elimination}
+	
+	{\bf Example:} Suppose $A\land B$ were a premise in a proof. What can we conclude from such a premise?
+
+	\begin{center}
+		$\begin{array} { c c c }
+		\infer[\land E_{L}]{A}
+			{\begin{array}{c} \Sigma \\ \mathcal{D} \\ A \land B \end{array}}
+		& \hspace{3cm} &
+		\infer[\land E_{R}]{B}
+			{\begin{array}{c} \Sigma \\ \mathcal{D} \\ A \land B \end{array}}
+		\end{array}$
+	\end{center}
+
+	A proof of $A \land B$ can be extended to either a proof of $A$ or a proof of $B$, relying on the same set $\Sigma$ of hypotheses.
+	
+	\vspace{30mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Idempotence of $\land$}
+	
+	Provide a proof to show $$A \land A \vdash A$$
+	
+	\vspace{60mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Commutativity of $\land$}
+	
+	Provide a proof to show $$A \land B \vdash B \land A$$
+		
+	\vspace{60mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Deductions}
+	
+	\begin{center} We define deductions (or derivations, or proofs) inductively according to the following rules: 
+	
+	\begin{itemize}
+		\item For each formula $\alpha$,
+		$$ \alpha $$
+		is a deduction with conclusion $\alpha$ and premises $\{\alpha\}$.
+		
+		\item From given deductions, an application of a \textit{rule of inference} yields a new deduction.
+		
+		\item Anything that is not a deduction by virtue of the above is \emph{not} a deduction. 
+	\end{itemize}
+
+	\end{center}
+	
+	\vspace{0.3cm}
+
+	If there exists a deduction $^\Sigma_{\alpha}\mathcal{D}$ of $\alpha$ from $\Sigma$, then we say $\alpha$ is a \textit{syntactic consequence of }(\textit{derivable from}, or \textit{provable from}) $\Sigma$ and denote this $\Sigma \vdash \alpha$. 
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Propositional Calculus}
+	
+	If we follow this idea for all of the logical connectives in propositional logic, then we can develop a method for writing proofs based on the \textit{syntactic} structre of the logical connectives alone. We call this method of proof \emph{Natural Deduction} and we are following Gerhard Gentzen's notation \cite{vDalen,thompson}.
+	
+	\vspace{0.3cm}
+	
+	We need to know how to (i) deduce and (ii) conclude from, each logical connective. In other words, for each logical connective we need to develop rules for introducing the logical connective and eliminating the logical connective.
+	
+	\vspace{0.3cm}
+	
+	So we will spend some time writing down the {\bf Rules of Inference} for our logical connectives. 
+	
+	% Note that the LEAN notes follows the same notation. However the Logic Matters notes do not: still worth reading! 
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Hypothetical Reasoning}
+	
+	In mathematics we often prove statements of the following hypothetical form: ``If ..., then ...'' 
+	
+	\vspace{0.3cm}
+	
+	{\bf Example:} If $f$ is differentiable at $x_{0}$, then it is continuous at $x_{0}$.
+	
+	\vspace{0.3cm}
+
+  	{\bf Proof:} ``Let $f$ be a differentiable function...''
+
+  	\vspace{0.3cm}
+	
+	The proof of this implication will assume the hypothesis of differentiability and show that it implies continuity. In order to prove an implication $P \to Q$ the proof starts by assuming we know $P$ and then using that to tell us about $Q$. 
+	
+	\vspace{0.3cm} 
+	
+	The conclusion is the entire implication, not just continuity. 
+	
+	\vspace{1cm}
+	
+\end{frame}
+
+\begin{frame}
+\frametitle{Example: Hypothetical Reasoning}
+
+	If $p | a$ and $p | (a + b)$, then $p | b$.
+	%Use this example to highlight the nature of a hypothetical argument. 
+
+\vspace{6cm}	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Hypothetical Reasoning}
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\land E_{L}]{B}
+				{\infer[\land E_{L}]{B \land C}
+					{\infer[1]{A \land (B \land C)}
+						{}}}
+		\end{array}$
+	\end{center}
+
+	\vspace{4cm}
+
+	{\bf Question:} What does the deduction prove?
+	% It does not prove B outright. 
+	% It shows that B follows from the assumption A \land (B \land C)
+	% This proof is not happening in a vacuum. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{$\rightarrow$ Introduction}
+
+	If $^{\Sigma}_{\beta}\mathcal{D}$ is a deduction of $\beta$ from $\Sigma$, then
+
+	\begin{center}		
+		$\begin{array}{c}		
+			\infer[\rightarrow I]{\alpha \rightarrow \beta}
+				{\begin{array}{c} \Sigma \cup \{\cancel{\alpha}\} \\ \mathcal{D} \\ \beta \end{array}}
+		\end{array}$
+	\end{center}
+
+	is a deduction of $\alpha \rightarrow \beta$ from hypotheses $\Sigma \backslash \{\alpha\}$.
+	
+	\vspace{1.5cm} 
+	
+	{\bf Note: }As the assumption $\alpha$ is struck out after this deduction, we are free to use $\alpha$ \emph{even if it is not in} $\Sigma$ when using implication introduction. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\rightarrow$ Elimination (MP)}
+	
+	If $^{\Sigma_{1}}_{\alpha \rightarrow \beta}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\alpha}\mathcal{D}_{2}$ are deductions, then
+	
+	\vspace{0.5cm}
+	
+	\begin{center}
+		$\begin{array}{c}		
+			\infer[\rightarrow E]{\beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\ \alpha \end{array}}	
+		\end{array}$
+	\end{center}
+	
+	is a deduction of $\beta$ from $\Sigma_{1} \cup \Sigma_{2}$.
+	% Note that you can label the  step in the proof as MP instead. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	Show $P \rightarrow Q, \ Q \rightarrow R \ \vdash \ P \rightarrow R$
+	
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Deduction Theorem}	
+	
+	{\bf Theorem:} $\Sigma \vdash \alpha \rightarrow \beta$ if and only if $\Sigma \cup \{\alpha\} \vdash \beta$
+	
+	\vspace{0.5cm}
+	
+	{\bf Proof} 
+	
+	\vspace{5cm}
+	
+	% Note: this is a metalogical statement about possible deductions, rather than any specific deduction.
+	
+	% This is not so interesting in the deduction method that we've built up. In other systems this is a real theorem. With the rules of inference as we have, this should not be surprising. For us it is just implication introduction and elimination. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Deduction Theorem}
+
+	What the deduction theorem has formalised is the idea that in order to prove an implication 
+
+	$$\Sigma \ \vdash \alpha \to \beta$$
+
+	It is equivalent to assume $\alpha$ the antecedent and prove $\beta$ the consequent. 
+
+	$$\Sigma, \bar{\alpha} \ \vdash \ \beta$$
+
+	When coming to write a proof, one should first check the structure of the conclusion to be proved as this can help determine a first move in the proof --- like the temporary assumption of an antecedent. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	Show that $P \rightarrow (\lnot S\rightarrow L), \hspace{1em} P\rightarrow \lnot S, \hspace{1em} P \vdash L$
+
+	\vspace{7cm}
+	
+	% \pause	
+	% % Write this out by hand in the lecture!
+	% \begin{center}
+	% 	$\begin{array}{c}
+	% 		\infer[MP]{L}{\infer[MP\hspace{1cm}]{\lnot S \rightarrow L}{ P \rightarrow (\lnot S\rightarrow L) & P } 
+	% 						&
+	% 					  \infer[MP]{\lnot S}{ P \rightarrow \lnot S & P }
+	% 				  	 	}
+	% 	\end{array}$		
+	% \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Currying}
+
+  Show $(A \land B) \to C \vdash A \to (B \to C)$
+  
+  \vspace{6cm}
+
+\end{frame}
+
+
+\begin{frame}
+	\frametitle{Example}
+
+	Show $A \to B, A \to C, A \ \vdash B \land C$
+	
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\lor$ Introduction}
+	
+	If $^{\Sigma}_{\alpha}\mathcal{D}$ is a derivation of $\alpha$ from $\Sigma$, then 
+	
+	\begin{center}
+		
+	$\begin{array}{ c c c }	
+		\begin{array}{ c c }		
+			\begin{array}{c}		
+				\infer[\lor I_{R}]{\alpha \lor \beta}
+				{\begin{array}{c} \Sigma \\ \mathcal{D} \\ \alpha \end{array}}
+			\end{array}
+		\end{array}
+		
+		&
+		
+		&
+		
+		\begin{array}{ c c }		
+			\begin{array}{c}		
+				\infer[\lor I_{R}]{\beta \lor \alpha}
+				{\begin{array}{c} \Sigma \\ \mathcal{D} \\ \alpha \end{array}}
+			\end{array}
+		\end{array}		
+		
+		
+	\end{array}$
+	\end{center}
+	
+	are derivations of $\alpha \lor \beta$ and $\beta \lor \alpha$ from $\Sigma$. 
+	
+	\vspace{1cm}
+	
+	{\bf Note:} We are free to choose $\beta$ as, if we know $\alpha$ to be the case, then $\alpha \lor \beta$  is necessarily the case \emph{for any }$\beta$. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{$\lor$ Elimination}
+	
+	If $^{\Sigma_{1}}_{\alpha\lor\beta}\mathcal{D}_{1}$, $^{\Sigma_{2}}_{\alpha\rightarrow\gamma}\mathcal{D}_{2}$, and $^{\Sigma_{2}}_{\beta\rightarrow\gamma}\mathcal{D}_{3}$ are derivations, then
+	
+	\begin{center}
+	$\begin{array}{ c }
+	
+		\infer[\lor_{E}]{\gamma}
+			{
+			\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \alpha\lor\beta \end{array}
+			 & 
+			\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \alpha\rightarrow\gamma \end{array}				
+			 & 
+			\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \beta\rightarrow\gamma \end{array}				 
+			}	
+	
+	\end{array}$
+	\end{center}
+	
+	is a derivation of $\gamma$ from $\Sigma_{1}\cup\Sigma_{2}\cup\Sigma_{3}$.
+	
+	\vspace{0.5cm}
+	
+	{\bf Note:} You can't remove one of the arguments from a disjunction. Knowledge of $\alpha \lor \beta$ is not sufficient to conclude either $\alpha$ or $\beta$ alone. Following the BHK, a proof of $\alpha \lor \beta$ is either a proof of $\alpha$ or a proof of $\beta$, but without a record of which case we are in we can't assume either way. This means we need to account for both possibilities. 
+	
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{Example}
+
+	Show $A \lor B, \ (A \lor C)\rightarrow D, \ B \rightarrow D  \ \vdash D$
+	
+	\vspace{7cm}
+
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example}
+
+	Show $A \lor (B \land C) \ \vdash (A \lor B) \land (A \lor C)$
+	
+	\vspace{7cm}
+
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Common Mistake (!)}
+
+	% Incorrect or elimination. 
+	% Can use this to show A \vdash B... Prove anything!
+	% Elimination rule can't be the same as and... it's a different connective!
+
+	% \begin{center}
+	% 	$\begin{array}{c}
+	% 		\infer[\lor E (!)]{B}
+	% 			{\infer[\lor I]{A \lor B}
+	% 				{B}}
+	% 	\end{array}$
+	% \end{center}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Positive Minimal Logic}
+
+    The calculus developed so far with the introduction and elimination rules of the three connectives $\land, \lor,$ and $\to$ is called positive minimal logic. 
+
+    \vspace{0.5cm}
+
+    Many theorems can be (stated and) proved with these rules of inference alone. 
+
+    \vspace{0.5cm}
+
+    There are many statements that one might expect to prove which require other modes of reasoning i.e. further rules of inference.  
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Falsum}
+	
+	We introduce the logical constant $\bot$ (falsum or absurdity) to define the syntactic form of the $\lnot$ connective. We make the following definition: 
+	
+	$$\lnot \alpha:= \alpha \rightarrow \bot$$
+	
+	\vspace{0.5cm}
+	
+	\begin{center}
+		$\begin{array} { c c c }
+		
+		\infer[\MP]{\bot}{\alpha \quad & \alpha \rightarrow \bot}
+		
+		& \hspace{3cm} &
+		
+		\infer[\rightarrow I]{\alpha \rightarrow \bot}{\begin{array}{c} 
+			\hline \cancel{\alpha} \\
+			\mathcal{D} \\ 
+			\bot			
+		\end{array}}		
+		
+		\end{array}$
+	\end{center}
+	
+	\vspace{1cm}
+	
+	Falsum $\bot$ is an atomic proposition which is to be thought of as denoting ``absurdity'' or ``contradiction''. 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Modus Tollens}	
+	
+	Show $A \rightarrow B, \ \lnot B \ \vdash \lnot A$
+	
+	\vspace{70mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Proving a Negative Statement}
+
+	This means that in order to prove $\lnot \alpha$ we must show that $\bot$ follows from the assumption of $\alpha$. In other words, proving $\lnot \alpha$ is equivalent to showing $\alpha$ leads to a contradiction. This process is often referred to as \emph{proof by refutation}, or simply refutation.
+
+	\vspace{50mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Contradiction Implies Absurdity}
+	
+	Show $A \land \lnot A \ \vdash \ \bot$
+	
+	\vspace{70mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Minimal Logic}
+	
+	Together the rules of inference that we've given so far define \emph{minimal} logic. They include much, but not all, of the logical inferences that practising mathematicians might use in a proof. 
+	
+	\vspace{5mm}
+	
+	However, it is not universally agreed as to how minimal logic should be extended. There are philosophical differences among mathematicians and logicians about what other rules of inference should be included. 
+	
+	\begin{itemize}
+		\item Intuitionistic logic
+		\item Classical logic 
+		\item Modal logic		
+	\end{itemize}	
+\end{frame}
+
+\begin{frame}
+  \frametitle{What's Missing?}
+
+	What should be done if the hypotheses yield a contradiction? 
+
+	\begin{center}
+		$\begin{array}{c}
+		\infer[?]{?}{\begin{array}{c} \Sigma \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+
+	Should we be able to prove the following? 
+	\begin{itemize}
+		\item[] $\vdash \ P \lor \lnot P$
+		\item[] $\lnot \lnot P \ \vdash \ P$
+		\item[] $\vdash \ (P \to Q) \lor (Q \to P)$
+	\end{itemize}
+
+	Affirmative answers to these questions require further rules of inference. 
+
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Ex Falso Sequitur Quadlibet}
+	
+	So far, we have not made much mention of how to deal with the derivation of $\bot$ absurdity. Indeed, it has no introduction rule. 
+	
+	\vspace{0.5cm}
+		
+	If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+	
+	\begin{center}		
+		$\begin{array}{c}		
+		\infer[\text{XF}]{\alpha}
+		{\begin{array}{c} \Sigma \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+
+	is a derivation of $\alpha$ from the assumptions $\Sigma$.
+	
+	\vspace{0.5cm}
+	
+	\emph{Anything you want follows from a falsehood.} % Recall this is semantically valid. 
+	 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Disjunctive Syllogism}
+	
+	Show $A \lor B, \lnot B \ \vdash A$
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{XF as Null Disjunction}
+
+	% Idea from Pfenning, again. 
+	Disjunction has two introduction rules; both of which need to be taken into account when eliminating a disjunction. 
+
+	Following this one can argue that since $\bot$ has no introduction rules, there is nothing to take account of when eliminating $\bot$ and hence XF allows one to conclude anything. All possible cases (i.e. all zero of them) lead to $P$, therefore we may conclude $P$ follows from Falsum. 
+
+	\vspace{30mm}
+	% Draw the rules for disjunction. Do the analogy with the rules for falsum. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Intuitionistic Logic}
+
+	Ex Falso Quodlibet extends the class of theorems provable in the natural deduction calculus. It is the logic of intuitionists and constructivists; mathematicians who believe proofs should have computational content.
+	
+	\begin{center}
+  		Minimal Logic + Ex Falso = Intitionistic Logic
+	\end{center}
+
+	However, there are classically valid sequents, such as the LEM, which are not derivable in the intuitionistic calculus. 
+
+	\vspace{4cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Double Negation Elimination}
+	
+	Show $\lnot\lnot A \vdash A$ 
+	\vspace{5cm}
+	
+	\pause
+	% LaTeX the derivation here. 
+	
+	{\bf Ex falso does not give us a proof.} In fact we have shown the following: $\{\lnot\lnot A, \lnot A\} \vdash A$.
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Summary}
+
+	We have built the propositional calculus up in steps: 
+
+	\begin{itemize}
+		\item Positive minimal logic, 
+		\item Minimal logic, 
+		\item Intuitionistic logic.
+	\end{itemize}
+
+	\vspace{0.5cm}
+
+	One can show, using non-classical semantics, that these logics are unable to prove some theorems that are fundamental to much of mathematics. 
+
+	\vspace{0.3cm}
+
+	We will consider one more mode of reasoning. % Ask class for suggestions. What is missing from 120? 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	There exist irrational numbers $x,y$ such that $x^{y}$ is rational.
+
+	\vspace{70mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Reductio Ad Absurdum}
+	
+	If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+	
+	\begin{center}		
+		$\begin{array}{c}		
+		\infer[\RAA]{\alpha}
+		{\begin{array}{c} \Sigma \cup \{\cancel{\lnot\alpha}\} \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
+	
+	\vspace{0.5cm}
+	
+	If absurdity follows from $\lnot\alpha$, then we may conclude $\alpha$ {\bf and discharge $\lnot \alpha$ from our assumptions.}
+	 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Double Negation}	
+	
+	Show $\lnot\lnot A \vdash A$
+	\vspace{7cm}	
+	
+	% Notice the difference if Ex Falso is used - then we prove something very different!
+\end{frame}
+
+\begin{frame}
+	\frametitle{Law of Excluded Middle}
+	
+	Show $\vdash A \lor \lnot A$
+	\vspace{7cm}
+	
+	% Notice the difference if Ex Falso is used - then we prove something very different!	
+\end{frame}
+
+\begin{frame}
+  \frametitle{Classical Logic}
+
+	The class of theorems one can prove increases with the addition of RAA. In fact, the class of theorems provable in classical logic includes all theorems of intuitionistic logic. 
+
+	\begin{center}
+  		Minimal Logic + RAA = Classical Logic 	
+	\end{center}
+
+	One can derive the Ex Falso rule of inference using RAA. 
+
+	\vspace{4cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Common Misconception}
+
+	Many proofs that claim to use reductio ad absurdum are really \emph{refutations by contradiction.}
+
+	\begin{itemize}
+		\item Irrationality of $\sqrt{2}$
+		\item Infinitude of primes
+		\item No smallest positive rational number
+	\end{itemize}
+
+	\vspace{30mm}
+
+	These proofs just use implication introduction to prove a negation. 
+	% Splitting hairs; but that is what we are doing! 
+	% Probably lost on most students at this point. 
+	% When we are considering the methods so carefully we 
+	% should expect to identify and untangle ideas that 
+	% we had conflated. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	Show $A \rightarrow B, \hspace{0.2cm} A \rightarrow \lnot B \ \vdash \lnot A$
+	\vspace{7cm}
+	
+	
+	% The last step can be achieved by RAA... but it can also be seen as implication introduction. It's minimal!
+  	% Don't roll in the big guns if you don't have to... it's not in good taste. 
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle{Derived Rules of Inference}
+	
+	Proofs can be simplified by using results already proved. You may, in the course of a proof, use any result that has been proven in class or previously in a tutorial. However, when substituting previous proofs, you must bring all of the premises with the conclusion. 
+	
+	\vspace{0.5cm}
+	
+	We have already seen this with the use of \emph{modus tollens} (MT) in some examples.
+	
+	\vspace{0.5cm} 
+	
+	Making use of (an instance of) LEM instead of RAA can make proofs more straight forward. 
+
+	\vspace{0.5cm}
+
+	This can help keep proofs manageable and neat. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Substituting LEM}
+	
+	%Earlier we showed $\vdash \alpha \lor \lnot\alpha$ so we can call on this theorem when ever it may help us.
+	Show $A \rightarrow B \vdash \lnot A \lor B$
+	
+	\vspace{7cm}
+		
+	
+\end{frame}
+
+\begin{frame}
+  \frametitle{Intuitionistic to Classical}
+
+  	\begin{center}
+	Classical = IL + RAA = IL + LEM = IL + DNE
+	\end{center}
+
+	\vspace{0.3cm}
+
+    We described the passage from intuitionistic logic to classical by the addition of the RAA rule of inference. We can get a logic of equivalent power in a number of ways. 
+
+    \vspace{0.3cm}
+
+    One could declare for each $P$,  $P \lor \lnot P$ as a theorem. 
+
+    \vspace{0.3cm}
+
+    One could add a double negation elimination rule of inference. 
+
+    \vspace{0.3cm}
+
+    Adding any of these to minimal logic gives you the same set of theorems as classical logic as we defined it above. 
+
+	{\bf See tutorial to prove this.}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Departure from BHK}
+
+    Notice that the addition of RAA has forced us to lose the BHK interpretation of our proofs. For each proposition $P$ LEM is a theorem: 
+
+    $$ \vdash P \lor \lnot P$$
+
+    The BHK asserts a proof of $A \lor B$ must consist either of a proof of $A$ or a proof of $B$. But the classical proof of $\vdash P \lor \lnot P$ does not contain that information; it does not tell us which of $P$ or $\lnot P$ is provable. 
+
+	\vspace{0.5cm}
+
+	The inclusion of RAA allows for proofs of some apparently harmless theorems like DNE and RAA. However this power is not without its consequences...
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	Provide a proof to show $$ \vdash (A \to B) \lor (B \to A)$$
+	\vspace{6cm}
+	
+	% We get more theorems... but be careful what you wish for...
+	% RAA allows for some strange theorems...
+	% This is probably not implication in the sense you have in mind... 
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Dealer's Choice}
+
+	Choice of logic (i.e. rules of inference) is left to the mathematician. Therefore, we should be more specific when we assert one Prop is a syntactic consequence of a set $\Sigma$. This is a \emph{relative} notion and so one should quote the logic used in the derivation. 
+
+	\vspace{4cm}
+
+	% Give examples. Highlighting the requirement for more RoI
+	% We don't study the tools - semantics - required to show that proofs don't exist in certain logics. 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Logical Equivalence}
+
+	\begin{center}
+		
+		We say well-formed formulae are \textit{syntactically equivalent} if both 
+		$$ \alpha \vdash \beta \quad \textnormal{and} \quad \beta \vdash \alpha$$
+
+	\end{center}
+	
+	\vspace{0.5cm}
+	
+	{\bf Examples} 
+	\begin{itemize}
+		\item $A \lor B \dashv \vdash B  \lor  A$
+		\item $A \rightarrow B \ \dashv \vdash \ \lnot A \lor B$
+	\end{itemize}
+
+	Logical equivalences should be stated \emph{with respect to a logic}. Typically the weakest logic for which it can be proved.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Theorems}
+	\begin{center} We say a well-formed formula $\alpha$ is a theorem if there exists a natural deduction $\mathcal{D}$ from no assumptions i.e. $\Sigma = \emptyset$ and we denote this as $\vdash \alpha$. \end{center}
+	
+	\vspace{0.5cm}
+	
+	{\bf Example:} Law of the Excluded Middle
+	
+	\vspace{0.5cm}
+	
+	{\bf Example:} $\vdash A \rightarrow (B \rightarrow A)$
+	
+	\vspace{1cm}
+	
+	{\bf Note:} This should be stated \emph{with respect to a logic.} Typically the weakest logic for which it can be proved.
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Different Logics}
+
+	When we say one logic is weaker relative to another, what we are saying is that the set of theorems is a subset of the other. 
+
+	\vspace{0.5cm}
+
+	Reference to ``classical logic'' as a whole might be referring to the collection of the rules of inference, or it might be referring to the collection of all theorems of classical logic. 
+
+	\vspace{0.5cm}
+
+	\begin{center}
+	Positive Minimal $\subset$ Minimal $\subset$ Intuitionistic $\subset$ Classical
+	\end{center}
+
+\end{frame}
+
+
+%%%% Not sure what to say here; if anything. 
+% \begin{frame}
+% 	\frametitle{Classical Going too Far?}
+
+% 	% Some comments about why classical logic may not be as clear an improvement on intuitionistic logic as it seems with DNE and LEM etc. 
+
+% 	% Fails to distinguish propositions. Conflates propositions.
+
+% 	% Is a coarser view on propositions. 
+
+% 	% ... Doesn't have as clear a computational interpretation. 
+
+% \end{frame}
+
+\begin{frame}
+	\frametitle{Example of Equivalence}	
+	
+	If $\alpha$ and $\beta$ are syntactically equivalent, then $\vdash \alpha \leftrightarrow \beta$. 
+	
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Equivalence of Theorems}
+	
+	If $\vdash \alpha$ and $\vdash \beta$, then $\vdash \alpha \leftrightarrow \beta$
+	
+	\vspace{7cm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Reading}
+
+	Dirk van Dalen, \href{https://libcat.canterbury.ac.nz/Record/112862}{Logic and Structure}. 
+
+	\vspace{10mm}
+
+	Simon Thompson, \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Type Theory and Functional Programming}. 
+	
+	Chapters 1 - 4. 
+
+	\vspace{10mm}
+
+	Jeremy Avigad et al, \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}\footnote{Note: this uses an outdated version of Lean, but is still a good resource for the theory of this course.}. 
+	
+	Chapters 1 - 5, 7 - 9, and 17 - 18.
+\end{frame}
+
+\end{document}

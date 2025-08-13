@@ -1,0 +1,21 @@
+#####################################
+#   Tutorial 09 :: Question 01      #
+#####################################
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,b,K,R,q1;
+q1,b,i,R,q2;
+q2,b,a,R,q3;
+q3,b,b,R,q4;
+q4,b,o,R,q5;
+q5,b,r,R,q6;
+q6,b,a,R,q7;
+q7,b,b,R,q8;
+q8,b,t,R,q9;
+q9,b,e,R,q10;
+q10,b,b,R,q11;
+q11,b,a,R,q12;
+q12,b,o,R,q13;
+q13,b,b,R,q14;
+q14,b,b,N,HALT;
+# End of instructions.

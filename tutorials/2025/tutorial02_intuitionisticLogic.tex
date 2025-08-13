@@ -1,0 +1,108 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Two}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Natural Deductions with Negation}
+\end{center}
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				
+				\item Write natural deduction proofs involving $\lnot$ negation.
+				\item Write natural deductions using Ex Falso i.e. $\bot$ elimination.
+			\end{itemize}
+
+		Relevant Topic: Propositional Logic\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1c, 1i, 1k\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Show $ A\vdash \lnot \lnot  A$.
+	% This exercise is to focus on what it means to derive the negation of a statement. No absurdity rules needed, just implication introduction. 
+	
+	% \vspace{5cm}
+	
+	% \item Show $ A\rightarrow  B \vdash  A\rightarrow ( A\land  B)$.
+	% % Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+	
+	\vspace{5cm}
+	
+	\item Show $(A \lor B) \land (A \lor C) \ \vdash \ A \lor (B \land C)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separately. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item \textbf{Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of minimal logic; the introduction and elimination rules for $\land$ conjunction, $\lor$ disjunction,$\to$ implication, and the definition of $\lnot$ negation as an implication. 
+	 
+	\begin{enumerate}
+		\item $\lnot A \ \vdash \ (C \to A) \to \lnot C$\hfill [Handin exercise]
+		\item $A \land \lnot B \ \vdash \ \lnot (A \to B)$\hfill [Handin exercise]
+		\item $ A\to  C,\ \  B \to  D,\ \ \neg C \lor \neg  D \vdash  \neg A\lor \neg  B$\hfill [Handin exercise]
+		\item $ A,\ \ \neg  A\vdash  \neg  B$
+		\item $ A\rightarrow B, \  A\rightarrow \lnot B \vdash \lnot  A$
+		\item $A \to \lnot B \ \vdash \ B \to \lnot A$
+		\item $\lnot (A \land B) \ \vdash \ A \to \lnot B$
+		\item $A \ \vdash \ \lnot\lnot A$
+		\item $\lnot \lnot \lnot A \ \vdash \ \lnot A$\hfill [Handin exercise]
+		\item $\lnot A \lor \lnot B \vdash \lnot( A\land  B)$
+		\item $\lnot  A\land \lnot  B \ \vdash \lnot( A \lor  B)$\hfill [Handin exercise]
+		\item $\lnot( A \lor  B) \ \vdash \lnot  A\land \lnot  B$
+		\item $A \to \lnot B \ \vdash \ \lnot (A \land B)$
+		\item $\vdash \ \lnot\lnot (A \lor \lnot A)$ \hfill [Challenge!]
+	\end{enumerate}
+
+	\item \textbf{Intuitionistic derivations.} Provide natural deduction proofs of the following. You do not need to use the \emph{classical} $\bot$ rule for these questions, but may find that the \emph{intuitionistic} $\bot$ rule is necessary.
+	 
+	\begin{enumerate}
+		\item $ A, \neg  A\vdash \ B$
+		\item $\lnot A \ \vdash \ A \to B$ 
+		\item $\neg  A\lor  B \vdash \ A\to B$ 
+		\item $ A\lor  B,\ \ \neg A\vdash \ B$ 
+		\item $ \vdash \ \lnot(B \to A) \to (A \to B)$
+		\item $ A \to B, A \to \lnot B \ \vdash \ A \to C$
+		\item $A \lor B, \lnot A, \lnot B \ \vdash \ C$
+	\end{enumerate}
+
+\end{enumerate}	
+\end{document}

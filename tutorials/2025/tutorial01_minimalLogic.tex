@@ -1,0 +1,117 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial One}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Natural Deductions with Positive Minimal Logic}
+\end{center}
+
+
+% Box with goals and relevant lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}				
+				\item Write natural deduction proofs using $\land, \lor,$ and $\to$ connectives only. 
+				\item Understand the use of temporary hypotheses when proving implications.
+				\item Avoid common stumbling block of $\lor$-elimination!
+			\end{itemize}
+
+		Relevant Topic: Propositional Logic\\
+		Relevant Reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1} 
+		
+	\vspace{2mm}
+
+	Hand in exercises: 2a, 2c, 2d, 2e, 3a\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{5mm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Show $A \rightarrow B \vdash A\rightarrow (A \land B)$.
+	% Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+	
+	\vspace{50mm}
+	
+	\item Show $( A\land  B) \lor  C \ \vdash \ ( A\lor  C) \land ( B \lor  C)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separately. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item \textbf{Proving an Implication.} This exercise illustrates how we are to prove an implication by the use of \emph{temporary} hypotheses. We use the following example to illustrate this.
+	
+	$$\vdash \ (A \to B) \to ((A \to (B \to C)) \to (A \to C))$$
+
+	This proof technique can be broken down into the following steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent. 
+
+		\item Prove the following sequent 
+		
+		$$ A \to B, A \to (B \to C), A \ \vdash \ C$$
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+
+	\end{enumerate}
+	
+	\item \textbf{Positive Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of positive minimal logic; the introduction and elimination rules for $\land$ conjunction, $\lor$ disjunction, and $\to$ implication. 
+	 
+	\begin{enumerate}
+		\item $A \to (B \to C) \ \vdash \ B \to (A \to C)$ \hfill [Handin exercise]
+		\item $A \land B \ \vdash \ B \land A$
+		\item $A \lor B \ \vdash \ B \lor A$ \hfill [Handin exercise]
+		\item $( A\land  B) \rightarrow  C \vdash  A\rightarrow ( B \rightarrow  C) $ \hfill [Handin exercise]
+		\item $A \rightarrow ( B \rightarrow  C) \vdash ( A\land  B) \rightarrow C$	 \hfill [Handin exercise]
+		\item $A \to B \ \vdash A \to (B \lor C)$
+		\item $ A\rightarrow  B, \  B \rightarrow  C \vdash  A\rightarrow  C $
+		\item $ A\lor  B,\ \  A\to  C,\ \  B \to  D \vdash   C \lor  D$		
+		\item $A \to B \ \vdash \ (C \to A) \to (C \to B)$	
+		\item $(A \to B) \land (A \to C) \ \vdash \ A \to (B \land C)$
+	\end{enumerate}	
+
+	\item \textbf{Distributivity of Disjunction and Conjunction.} Each of these sequents can be proved with positive minimal logic alone. However, their proofs are longer than those written above. Some planning and working out of subproofs will help keep these proofs neat and manageable. 
+
+	\begin{enumerate}
+		\item $A \land (B \lor C) \ \vdash \ (A \land B) \lor (A \land C)$ \hfill [Handin exercise]
+		\item $(A \land B) \lor (A \land C) \ \vdash \ A \land (B \lor C)$
+		\item $A \lor (B \land C) \ \vdash \ (A \lor B) \land (A \lor C)$
+		\item $(A \lor B) \land (A \lor C) \ \vdash \ A \lor (B \land C)$
+	\end{enumerate}
+
+
+
+\end{enumerate}	
+\end{document}

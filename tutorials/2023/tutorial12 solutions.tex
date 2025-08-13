@@ -1,0 +1,489 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Twelve}
+\end{center}
+\begin{center}
+	{\bf Solutions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write recursive processes in $\lambda$-calculus,
+				\item Write programs in simple type theory,
+				\item Interpret programs as proofs of propositions, 
+				\item Prove that certain types are uninhabited.
+			\end{itemize}
+
+		Relevant lectures: Lambda Calculus and Typed Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b, 1d, 4a, 4b, 4c, 6\\ 
+	{\bf Due before the exam to the lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+	\item Write a program of the specified type in the given context: 
+	
+	$$p : A \times (B \times C) \ \vdash \ ~ ? : (A \times B) \times C$$
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\times]{((\FST \ p, \ \FST \ (\SND \ p)), \ \SND \ (\SND \ p)) \ : \ (A \times B) \times C}
+				{\infer[\times]{(\FST \ p, \ \FST \ (\SND \ p)) \ : \ A \times B}
+					{\infer[\FST]{\FST \ p \ : \ A}
+						{p : A \times (B\times C)}
+					&
+					\infer[\FST]{\FST \ (\SND \ p) \ : \ B}
+						{\infer[\SND]{\SND \ p \ : \ B \times C}
+							{p : A \times (B\times C)}}}
+				&
+				\infer[\SND]{\SND \ (\SND \ p) \ : \ C}
+					{\infer[\SND]{\SND \ p \ : \ B \times C}
+						{p \ : \ A \times (B\times C)}}}						
+		\end{array}$
+	\end{center}
+
+	This typing derivation shows the $\lambda$-term 
+
+	$$((\FST \ p, \ \FST \ (\SND \ p)), \ \SND \ (\SND \ p)) \ : (A\times B)\times C$$
+
+	inhabits the stated type in the given context. Compare this to the natural deduction proof of the sequent 
+
+	$$A \land (B \land C) \ \vdash \ (A \land B) \land C $$
+
+	\newpage
+	\item Determine some steps towards writing a program ($\lambda$-term) representing the unary function, INT-SQRT, that returns the greatest natural number whose square is less than or equal to the input. 
+
+	{\bf Solution:}
+
+	The integer square root of a natural number $n$ is defined as the largest natural number $x$ such that $x^{2} \leq n$. We can search for this by starting at $t = 0$ and checking the condition $t^{2} > n$, incrementing $t$ by one until such a $t$ is found. At which point the procedure should return $t-1$. 
+
+	In order to code such a procedure in the $\lambda$-calculus we should use the Y combinator to recursively call a function. Following the process described in class we define a helper function which the Y combinator will recursively call. 
+
+	The first abstraction $\lambda s.$ is for the procedure to call itself. 
+
+	The second abstraction $\lambda t.$ is the abstraction we pass the test $t=0$ to. Finally, the third abstraction is the number whose integer square root is to be computed. 
+	\begin{align*}
+		\GO:\equiv \  \lambda s. \lambda t. \lambda n. \ \COND &\ (>? \ (\MULT \ t \ t) \ n) \\
+		&(\PRED \ t) \\
+		&(s \ (\SUCC \ t) \ n)
+	\end{align*}
+	Notice that third argument to COND calls the procedure with $t$ incremented and $n$ left unchanged. This is how the procedure moves on to test the next natural number. 
+
+	Together with the Y combinator and starting with $t=0$ we define the procedure: 
+	$$\text{INT-SQRT} :\equiv \YCOMB \ \GO \ \ZERO$$
+	Compute INT-SQRT FOUR to test this procedure. 
+
+
+
+\end{itemize}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Write recursive $\lambda$-expressions that represent the following functions of natural numbers. For each function determine an appropriate helper-function GO to put through the $\YCOMB$ combinator. 
+	
+		\begin{enumerate}
+			\item SUM of two natural numbers
+			
+			{\bf Solution:}
+
+			\item MULTiply two natural numbers
+			
+			{\bf Solution:}
+			$$\GO :\equiv \lambda s. \lambda m. \lambda n. \ \COND \ (\ISITZERO \ b) \ \ZERO \ (\SUM \ a \ (s \ a \ (\PRED \ b))) $$
+
+			$$\MULT :\equiv \YCOMB \ \GO$$
+
+			\item EXPONentiation of a base to an exponent
+			
+			{\bf Solution:}
+			Here we use the abstraction $b$ for the base of the exponentiation and the abstraction over $e$ for the exponent of the exponentiation.
+			$$\GO :\equiv \lambda s. \lambda b. \lambda e. \ \COND \ (\ISITZERO \ e) \ \ONE \ (\MULT \ b \ (s \ b \ (\PRED \ e))) $$
+
+			$$\EXP :\equiv \YCOMB \ \GO$$
+
+			\item FACTorial of a natural number
+			
+			{\bf Solution:}
+			
+			\item INT-SQRT the smallest integer whose square is greater than input
+			
+			{\bf Solution:} See discussion above for the derivation of this lambda encoding. 	
+			\begin{align*}
+				\GO:\equiv \  \lambda s. \lambda t. \lambda n. \ \COND &\ (>? \ (\MULT \ t \ t) \ n) \\
+				&(\PRED \ t) \\
+				&(s \ (\SUCC \ t) \ n)
+			\end{align*}
+			$$\text{INT-SQRT} :\equiv \YCOMB \ \GO \ \ZERO$$
+
+			
+			\item Calculate the nth FIBonacci number (Challenge!)
+			
+			{\bf Solution:}
+
+			
+		\end{enumerate}
+
+	\item Write a $\lambda$-expression that can be used to compute the smallest natural number that satisfies a given unary-predicate $P?(x)$ that is represented by some $\lambda$-expression. 
+	
+	{\bf Solution:}
+
+	$$\GO :\equiv \lambda s. \lambda n. \ \COND \ (P? \ n) \ n \ (s \ (\SUCC \ n))$$
+
+	Combining this with the Y combinator yields a procedure $\mu$ that searches for the smallest natural number satifying the predicate P?
+
+	$$ \mu :\equiv \YCOMB \ \GO \ \ZERO $$
+
+	\item (Challenge!) Represent the following processes in the $\lambda$-calculus to get an expression that can be used to test whether a natural number is prime. For simplicity, assume the input is greater than TWO.
+	
+		\begin{enumerate}
+			\item REMAINDER calculate the remainder of a division.
+			\item DIVIDES? binary predicate does second divide first?
+			\item Implement bounded-search to satisfy a predicate.
+			\item PRIME? Unary-predicate to detect primality.
+		\end{enumerate}
+	
+
+	
+	% \item In lectures we introduced a $\lambda$-term for computing the sum of a sequence of consecutive integers. This used the helper-function: 
+	
+	% \begin{align*}
+	% 	\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
+	% 	& a \\ 
+	% 	&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
+	% \end{align*}
+
+	% We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
+
+	% \begin{enumerate}
+	% 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$
+	% 	\item Compute the sum of each term passed through an arbitrary function, $\sum_{i=l}^u f(i)$
+	% 	\item Compute the sum of those terms in the interval that satisfy some predicate $P?(x)$.
+	% 	\item Combine (b) and (c).
+	% \end{enumerate}
+
+	\newpage
+	\begin{center}
+		{\bf Curry-Howard Correspondence}
+	\end{center}
+
+	\item Each problem below is of the form: 
+	
+	$$ \Sigma \ \vdash \ ? : \text{TYPE}$$
+
+	To answer the question you must provide a $\lambda$-term of the specified TYPE from the context $\Sigma$ stated in the problem. To ensure the term is of the specified type you must use the typing rules for the construction and destruction of types. 
+
+	{\bf Comment:} In order to save space and help readability, the abstractions have been written without explicit typing. These can be inferred from the type of the entire term.
+	
+		\begin{enumerate}
+			\item $f : ( A \times  B) \rightarrow  C \vdash \ ? :  A \rightarrow (B \rightarrow  C)$
+			
+			{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \lambda y. \ f(x,y) \ : \ A\to(B\to C)}
+							{\infer[\lambda,2]{\lambda y. \ f(a,y) \ : \ B\to C}
+								{\infer[\APP]{f(a,b) \ : \ C}
+									{f \ : \ (A\times B) \to C
+									&
+									\infer[\times]{(a,b) : A\times B}
+										{\infer[1]{a:A}{}
+										&
+										\infer[2]{b:B}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$(A \land B) \rightarrow C \ \vdash \ A \rightarrow (B \rightarrow  C) $$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{A\to(B\to C)}
+							{\infer[\to I,2]{B\to C}
+								{\infer[\MP]{C}
+									{(A\land B) \to C
+									&
+									\infer[\land I]{A\land B}
+										{\infer[1]{A}{}
+										&
+										\infer[2]{B}{}}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \lambda y. \ f(x,y) \ : \ A\to(B\to C)$$
+			is the proof-object witnessing the proof of the sequent.
+
+			\newpage
+			\item $f : A \rightarrow (B \rightarrow  C) \ \vdash \ ? : ( A \times  B) \rightarrow  C$
+			
+			{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ (f \ (\FST \ x)) \ (\SND \ x) \ : \ (A\times B)\to C}
+							{\infer[\APP]{(f \ (\FST \ p)) \ (\SND \ p) \ : \ C}
+								{\infer[\APP]{f \ (\FST \ p) \ : \ B\to C}
+									{f : A \to (B \to C)
+									&
+									\infer[\FST]{\FST \ p \ : \ A}
+										{\infer[1]{p : A\times B}
+											{}}}
+								&
+								\infer[\SND]{\SND \ p : \ B}
+									{\infer[1]{p : A\times B}
+										{}}}}
+					\end{array}$
+				\end{center}				
+			\end{mdframed}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \rightarrow (B \rightarrow  C) \ \vdash \ (A \times  B) \rightarrow  C $$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{(A\land B)\to C}
+							{\infer[\MP]{C}
+								{\infer[\MP]{B\to C}
+									{A \to (B \to C)
+									&
+									\infer[\land E_{l}]{A}
+										{\infer[1]{A\land B}
+											{}}}
+								&
+								\infer[\land E_{r}]{B}
+									{\infer[1]{A\land B}
+										{}}}}
+					\end{array}$
+				\end{center}				
+			\end{mdframed}
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ (f \ (\FST \ x)) \ (\SND \ x) \ : \ (A\times B)\to C$$
+			is the proof-object witnessing the proof of the sequent.
+
+			\newpage			
+			\item $f : A \rightarrow  B, \  g : B \rightarrow  C \vdash \ ? : A \rightarrow  C $
+			
+			{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ g(f \ x) \ : \ A \to C}
+							{\infer[\APP]{g(f \ a) \ : \ C}
+								{g \ : \ B \to C
+								&
+								\infer[\APP]{f \ a \ : \ B}
+									{f : A \to B
+									&
+									\infer[1]{a : A}{}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \rightarrow  B, \ B \rightarrow  C \vdash \ A \rightarrow  C $$
+
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{A \to C}
+							{\infer[\MP]{C}
+								{B \to C
+								&
+								\infer[\MP]{B}
+									{A \to B
+									&
+									\infer[1]{A}{}}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ g(f \ x) \ : \ A \to C$$
+			is the proof-object witnessing the proof of the sequent.
+
+			\newpage
+			\item $p : A + B,\ f : A \to  C,\ g : B \to  D \vdash \ ? : C +  D$
+			
+			{\bf Solution:}
+			\begin{mdframed}
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\sumElim]{\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ C + D}
+							{p : A + B
+							&
+							\infer[\lambda,1]{\lambda x. \ \inl \ (f \ x) : A \to C+D}
+								{\infer[\inl]{\inl \ (f \ a) : C + D}
+									{\infer[\APP]{f \ a : C}
+										{f : A \to C
+										&
+										\infer[1]{a : A}
+											{}}}}
+							&
+							\infer[\lambda,2]{\lambda y. \ \inl \ (g \ y) : B \to C+D}
+								{\infer[\inr]{\inr \ (g \ b) : C + D}
+									{\infer[\APP]{g \ b : D}
+										{g : B \to D
+										&
+										\infer[2]{b : B}
+											{}}}}}
+					\end{array}$}
+				\end{center}
+			\end{mdframed}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \lor B,\ A \to  C,\ B \to  D \vdash \ C \lor D$$
+
+			\begin{mdframed}
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\lor E]{C \lor D}
+							{A \lor B
+							&
+							\infer[\to I,1]{A \to C\lor D}
+								{\infer[\lor I]{C \lor D}
+									{\infer[\MP]{C}
+										{A \to C
+										&
+										\infer[1]{A}
+											{}}}}
+							&
+							\infer[\to I,2]{B \to C\lor D}
+								{\infer[\lor I]{C \lor D}
+									{\infer[\MP]{D}
+										{B \to D
+										&
+										\infer[2]{B}
+											{}}}}}
+					\end{array}$}
+				\end{center}
+			\end{mdframed}			
+			The resulting $\lambda$-term (i.e. program) below
+			$$\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ C + D$$
+			is the proof-object witnessing the proof of the sequent.
+		\end{enumerate}
+	
+	\newpage
+		{\bf Extras:} For these extra problems consider $\bot$ to be type with no constructor or destructors. Furthermore, consider $\lnot P$ to be shorthand for the function type: $\lnot P:= P \to \bot$.
+
+		\begin{enumerate}
+			\item $p : \lnot A + \lnot B \vdash \ ? : \lnot( A \times  B)$
+			\item $p : \lnot( A +  B) \vdash \ ? : \lnot  A \times \lnot  B$
+			\item $p : \lnot  A \times \lnot  B \vdash \ ? : \lnot( A + B)$
+			\item $f : A \to  C,\ g : B \to  D, \ p : \neg C + \neg  D \vdash \ ? :  \neg A + \neg  B$
+			\item $ a : A, \ f : \neg  A \vdash \ ? : \neg  B$
+			\item $f : A\rightarrow B, \ g : A \rightarrow \lnot B \vdash \ ? : \lnot  A$
+		\end{enumerate}
+
+		{\bf Solutions:} Use the natural deductions from Tutorial 2 to help write these programs :) 
+
+	\newpage
+	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
+	
+	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
+	
+	\begin{center}
+		$\begin{array}{c}		
+		  \infer[\to, 1]{A \land B \to B}
+		  	{\infer[\land E_{L}]{B}
+				{\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{\infer[1]{A \land B}{}} 
+					\hspace{0.5cm}	&	\hspace{0.5cm}
+					\infer[\land_{L}]{A}{\infer[1]{A \land B}{}}}}}
+		\end{array}$
+	  \end{center}
+
+	  	\begin{enumerate}
+			\item Determine the corresponding proof-object for this proof. 
+			\item Why does the proof-object have a redex in it? 
+			\item Perform the $\beta$-reduction on the proof object from (a).
+			\item What proof does the reduced proof-object correspond to?
+		\end{enumerate}
+
+		{\bf Solution:}
+
+		The natural deduction proof stated in the question corresponds to the following type construction:
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\lambda, 1]{\lambda x : A \times B. \ \FST (\SND x, \FST x) \ : \ A \times B \to B}
+					{\infer[\FST]{B}
+					{\infer[\times]{B \times A}
+						{\infer[\SND]{B}{\infer[1]{p \ : \ A \times B}{}} 
+						\hspace{0.5cm}	&	\hspace{0.5cm}
+						\infer[\FST]{A}{\infer[1]{p \ : \ A \times B}{}}}}}
+			\end{array}$
+		\end{center}
+
+		The corresponding proof-object is $$\lambda x : A \times B. \ \FST (\SND x, \FST x) \ : \ A \times B \to B$$
+
+		Which can be $ B$-reduced to $$\lambda x : A \times B. \ \SND x \ : \ A \times B \to B$$
+
+		This proof-object takes in a pair and returns the second of the pair. 
+		
+		As a natural deduction this corresponds to the following: 
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\to, 1]{A \land B \to B}
+					{\infer[\land E_{R}]{B}
+						{\infer[1]{A \land B}
+							{}}}
+			\end{array}$
+		\end{center}
+
+		This simplified program corresponds to a shorter proof. In this sense $ B$-reduction (i.e. computation!) is related to the simplification of proofs.  
+
+	\newpage
+	\item Prove that the type $(A \to A) \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type.
+	$$ \cancel{\vdash} \ t : (A \to A) \to A$$
+
+	{\bf Solution}
+		
+		We know $ \cancel{\models} \ (A \to A) \to A$ because their is a counterexample. This implies there can be no derivation of this formulae. So, by the Curry-Howard isomorphism, we conclude there can be no term of this type in the simply typed $\lambda$-calculus. 		
+
+	 
+\end{enumerate}
+	
+\end{document}

@@ -1,0 +1,190 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: $\lambda$-Calculus}
+\end{center}
+\begin{center}
+	{\bf Church Encodings}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Practice $\beta$-reduction, 
+				\item Encode logic in $\lambda$-calculus, 
+				\item Encode natural numbers in $\lambda$-calculus.
+			\end{itemize}
+
+		Relevant notes: Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1c, 2, 3a, 5\\ 
+	{\bf Due following Friday @ 5pm.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+
+
+	\item Logical connectives are encoded as functions in the $\lambda$-calculus. They're intended to take in the Boolean $\lambda$-expressions TRUE and FALSE. However, without any extra structure to the $\lambda$-calculus, there is nothing stopping us writing:
+
+	\vspace{0.2cm}
+	\begin{itemize}
+		\item[] NOT NOT NOT 
+	\end{itemize}
+
+	\vspace{0.2cm}
+
+	Perform $\beta$-reduction on the above until the expression is in normal form. The strange answer you get suggests that we should not do this! To avoid this, extra \emph{type} structure is added to the $\lambda$-calculus; this amounts to saying only certain $\lambda$-expressions can be applied to others. If the language were typed sensibly, we would get a type error when trying to evaluate NOT NOT NOT.
+	
+\end{itemize}	
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item By substituting the explicit $\lambda$-expressions (as necessary) and performing $\beta$-reduction, show that the expressions below are $\beta$-equivalent to the Boolean values we should expect from the logical connectives involved.
+	
+		\begin{enumerate}
+			\item NOT FALSE \vspace{0.5cm}
+			\item OR TRUE FALSE \vspace{0.5cm}
+			\item AND FALSE TRUE \vspace{0.5cm}
+			\item IMPLIES FALSE TRUE 
+		\end{enumerate} 
+
+	{\bf Only expand those expressions necessary for each step.}
+		
+	\item Write down $\lambda$-expressions that represent the propositional binary connectives XOR, NAND, and NOR. Recall that these have the following truth tables.
+			
+	\vspace{0.5cm}
+
+	\begin{center}
+		$\begin{array}{c c c}
+
+			\begin{array}{ c c | c }			
+				P & Q & \text{XOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & F
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NAND}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & T
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & F \\ 
+				F & T & F \\ 
+				F & F & T
+			\end{array} 
+		\end{array}$
+	\end{center}
+	\vspace{0.2cm}
+
+	\item By substituting the explicit $\lambda$-expressions (as necessary) and performing $\beta$-reduction, determine the normal forms of the following $\lambda$-expressions. 
+
+	\begin{enumerate}
+		\item SUCC ONE \vspace{0.2cm}
+		\item SUM ONE ZERO \vspace{0.2cm}
+		\item MULT TWO ZERO %\vspace{0.5cm}
+	\end{enumerate}
+
+	{\bf Only expand those expressions necessary for each step.}
+	
+	\newpage
+	\begin{center}
+		{\bf Compound Data with PAIR}
+	\end{center}
+
+	\item We have defined the following $\lambda$-expression to construct pairs of $\lambda$-expressions:
+	
+	$$\text{PAIR} = \lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y$$
+
+	The third input is a built-in place ready to take a selector:
+
+	$$\text{FirST} = \lambda x. \ \lambda y. \ x \hspace{1cm} \text{SecoND} = \lambda x. \ \lambda y. \ y$$
+
+	 Reduce these to normal form 
+
+		\begin{enumerate}
+			\item PAIR a b FST \vspace{0.2cm}
+			\item PAIR a b SND \vspace{0.2cm}
+			\item PAIR (PAIR a b) (PAIR c d) SND
+		\end{enumerate}
+
+	{\bf You may wish to make use of the app linked on learn to write your answers to the following problems.}
+
+	\item Integers are solutions to equations $x + b = a$. We can represent natural number solutions using Church numerals. However, further abstractions are required to represent the negative solutions to such equations. 
+
+	{\bf Example} The equation $x + 1 = 0$ has solution $x = -1$. One way to represent this in the $\lambda$-calculus is to use the pair $(0,1)$ which we interpret as $-1 = (0,1)$. 
+	
+	More generally $k = (a,b) = a - b$ represents the solution to $x + b = a$.
+
+	\hspace{0.5cm} {\bf Such representations are not unique!} e.g. $0 = (0,0) = (1,1) = \dots$
+
+	Write $\lambda$-expressions for arithmetic on integers as pairs of Church numerals.
+		\begin{itemize}
+			\item[] INT-SUM to calculate the sum of two integers.
+			\item[] INT-MULT to calculate the product of two integers.
+			\item[] INT-NEG(ative) to calculate the negative of an integer.
+		\end{itemize}
+
+	\item Rational numbers are solutions to equations of the form $bx = a$. Use PAIR to represent rational numbers in the $\lambda$-calculus and write $\lambda$-expressions to compute rational number arithmetic. 
+		\begin{itemize}
+			\item[] RAT-SUM to calculate the sum of two rational numbers.
+			\item[] RAT-MULT to calculate the product of two rational numbers.
+			\item[] RAT-REC(iprocal) to calculate the reciprocal of an integer.
+		\end{itemize}
+
+	\item Imaginary numbers can be represented as PAIRs of rational numbers.
+	
+	\item Real numbers are a more complicated issue.
+
+\end{enumerate}
+	
+\end{document}

@@ -1,0 +1,155 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nty/global//global/global}
+    \entry{sep-mathematics-constructive}{incollection}{}
+      \name{author}{3}{}{%
+        {{hash=e14087394afd2bbd2f3fb5b506a2349b}{%
+           family={Bridges},
+           familyi={B\bibinitperiod},
+           given={Douglas},
+           giveni={D\bibinitperiod}}}%
+        {{hash=46538b49a01f68b719cc0401fca886bf}{%
+           family={Palmgren},
+           familyi={P\bibinitperiod},
+           given={Erik},
+           giveni={E\bibinitperiod}}}%
+        {{hash=97a0a1bfb7aa10a917027d7992a4ac16}{%
+           family={Ishihara},
+           familyi={I\bibinitperiod},
+           given={Hajime},
+           giveni={H\bibinitperiod}}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=5ff1c29ff1cc8f6336533b0ffd842a79}{%
+           family={Zalta},
+           familyi={Z\bibinitperiod},
+           given={Edward\bibnamedelima N.},
+           giveni={E\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=47603970fcd579d567acd0cb66cdb242}{%
+           family={Nodelman},
+           familyi={N\bibinitperiod},
+           given={Uri},
+           giveni={U\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Metaphysics Research Lab, Stanford University}%
+      }
+      \strng{namehash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{fullhash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{bibnamehash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{authorbibnamehash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{authornamehash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{authorfullhash}{aa49976bd30b16a3c6abca2eca8b075e}
+      \strng{editorbibnamehash}{ab8d8ffb26096a29ec1c38ef9e4911c6}
+      \strng{editornamehash}{ab8d8ffb26096a29ec1c38ef9e4911c6}
+      \strng{editorfullhash}{ab8d8ffb26096a29ec1c38ef9e4911c6}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The {Stanford} Encyclopedia of Philosophy}
+      \field{edition}{{F}all 2022}
+      \field{howpublished}{\url{https://plato.stanford.edu/archives/fall2022/entries/mathematics-constructive/}}
+      \field{title}{{Constructive Mathematics}}
+      \field{year}{2022}
+    \endentry
+    \entry{vDalen}{book}{}
+      \name{author}{1}{}{%
+        {{hash=0ca42307eedec89ea2d3712c70cc4e2e}{%
+           family={Dalen},
+           familyi={D\bibinitperiod},
+           given={Dirk},
+           giveni={D\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer-Verlag}%
+      }
+      \strng{namehash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \strng{fullhash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \strng{bibnamehash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \strng{authorbibnamehash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \strng{authornamehash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \strng{authorfullhash}{0ca42307eedec89ea2d3712c70cc4e2e}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Logic and Structure}
+      \field{year}{1980}
+    \endentry
+    \entry{thompson}{book}{}
+      \name{author}{1}{}{%
+        {{hash=6bc88c88b48cfd8a2c4dc566cd758fde}{%
+           family={Thompson},
+           familyi={T\bibinitperiod},
+           given={Simon},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Addison-Wesley Publishers Ltd.}%
+      }
+      \strng{namehash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \strng{fullhash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \strng{bibnamehash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \strng{authorbibnamehash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \strng{authornamehash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \strng{authorfullhash}{6bc88c88b48cfd8a2c4dc566cd758fde}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Type Theory and Functional Programming}
+      \field{year}{1991}
+      \keyw{type-theory}
+    \endentry
+    \entry{hottbook}{book}{}
+      \name{author}{1}{}{%
+        {{hash=eb3cec164c1f4cb5cd7394d2677e2a1c}{%
+           family={{Univalent Foundations Program}},
+           familyi={U\bibinitperiod},
+           given={The},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Institute for Advanced Study}%
+      }
+      \list{publisher}{1}{%
+        {\url{https://homotopytypetheory.org/book}}%
+      }
+      \strng{namehash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \strng{fullhash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \strng{bibnamehash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \strng{authorbibnamehash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \strng{authornamehash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \strng{authorfullhash}{eb3cec164c1f4cb5cd7394d2677e2a1c}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Homotopy Type Theory: Univalent Foundations of Mathematics}
+      \field{year}{2013}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

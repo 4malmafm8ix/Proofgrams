@@ -1,0 +1,794 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Bibliography
+\usepackage[style=verbose]{biblatex}
+\addbibresource{../../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+% Definition format options. 
+\newtheoremstyle{indentDefn}
+{\topsep} % Space above
+{\topsep} % Space below
+{\it} % Body font
+{2cm} % Indent amount
+{\bf} % Theorem head font
+{:} % Punctuation after theorem head
+{0.5em} % Space after theorem head
+{} % Theorem head spec
+
+\theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
+
+\title{Peano Arithmetic}
+\author{MATH230}
+\institute{Te Kura P\=angarau \\ Te Whare W\=ananga o Waitaha}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Foundations of Mathematics}
+
+\begin{frame}
+	\frametitle{Axioms of Mathematics}
+
+	\begin{quote}
+		``The investigations that follow concern the domain of predicate logic. It comprises the types of inference that are continually used in all parts of mathematics. What remains to be added to these are axioms and forms of inference that may be considered as being proper to the particular branches of mathematics.''
+		\begin{flushright}
+			--- Gerhard Gentzen (1935\footnote{``Investigations into Logical Deduction.''})
+		\end{flushright}
+	\end{quote}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Hilbert's Program}
+	
+	David Hilbert asked for mathematics to be formalised into a language so that proofs could be easily checked. He even hoped there would be a finite procedure that could decide whether a given proof was correct, or a finite procedure that could \textit{generate} a proof of any given statement. 
+	
+	\vspace{0.2cm}
+	
+	Hilbert knew that this would require stating axioms for mathematics, at least for each specific part of mathematics. Previous foundations provided by Euclid (some two millenia prior!) were no longer sufficient.
+	
+	\vspace{0.2cm}
+	
+	\begin{itemize}
+		\item Mathematics is now too rich, and 
+		\item there were known problems with Euclid's axioms and proofs. 
+	\end{itemize}
+
+	\vspace{0.2cm}
+	
+	First-order logic is a language in which these axioms and proofs can be written. 
+	
+\end{frame}
+
+% \begin{frame}
+% 	\frametitle{Calculus and the Continuum}
+	
+% 	One of the major concerns throughout those two millenia were the ideas at the foundation of Gottfried Leibniz' and Isaac Newton's calculus. Infinitesimals and limits were used in the methods of mathematicians (at least) as far back as Archimedes. 
+	
+% 	\vspace{2mm}
+	
+% 	These caused debates based on logical and theological grounds\footnote{Amir Alexander, \emph{Infinitesimal: How a Dangerous Mathematical Theory Shaped the Modern World.}}. All of these debates came to a head in the nineteenth and twentieth centuries. 
+	
+% 	\vspace{2mm} 
+	
+% 	Georg Cantor, Richard Dedekind, and Gottlob Frege seemed to put these problems to an end by providing foundations of the real number system based on (i) natural numbers, and (ii) set theory. 
+	
+% \end{frame}
+
+% \begin{frame}
+% 	\frametitle{Russell's Paradox}
+	
+% 	Unfortunately the set theory of Frege was found to be contradictory!
+	
+% 	$$R = \{S \ | \ S \notin S \}$$
+	
+% 	After reducing the foundations of mathematics (analysis, algebra, geometry) to the use of natural numbers and set theory, it was unsettling to have this paradox arise. 
+
+% 	\vspace{0.2cm}
+
+% 	Hilbert implored the mathematics community to show that the natural numbers and set theory (and hence mathematics!) can be put on firm --- complete, consistent, and decidable --- foundations. 
+
+% \end{frame}
+
+
+
+% \begin{frame}
+% 	\frametitle{Arithmetic and ZFC}
+
+% 	The foundations of set theory is a fascinating story with rich and interesting mathematics as well as very interesting people. This will not be covered in this course. 
+
+% 	\vspace{0.2cm}
+	
+% 	Over the coming lectures we are going to consider the first-order theory of arithmetic that was developed at that time. These so called ``Peano axioms'' provide a concrete and clear definition of the theory of the natural numbers with a precise efficiency of parts. 
+	
+% \end{frame}
+
+\begin{frame}
+  \frametitle{Direction}
+
+	We now have the precise language required to express mathematics!
+	
+	\vspace{5mm}
+	
+	Formalising a particular area of mathematics in first-order logic requires us to:
+	
+	\begin{itemize}
+		\item Pick a first-order language $\mathcal{L}$ i.e. fix a signature,
+		\item Pick axioms that define the structure of the signature. 
+	\end{itemize}
+	
+	Throughout the entire course we have been carrying around a set $\Sigma$ of hypotheses. Now we think of that set as our axioms and the conclusions in our arguments as the theorems we hope to deduce from those axioms. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{First-Order Theories}
+	
+	Mathematics abounds with first-order theories. This idea was adopted for much of mathematics in the early 1900s, following the Hilbert's annoucement of his program. To the point that now you would be unlikely to find an advanced undergraduate course in mathemtaics that does not introduce the objects of interest (e.g. groups, rings, metric spaces) by specifying them as objects which obey some first-order axioms. 
+	
+	\vspace{0.2cm}
+	
+	We are going to focus on a first-order theory of \textit{arithmetic}. By that we will mean the natural (non-negative) numbers under addition and multiplication.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Language of Arithmetic}
+
+	There are a number of different first-order theories of arithmetic, the signatures of which are typically made up of some number of these symbols:
+
+	$$\mathcal{L}_{A} : \{0,1,+,\times,s,=,<\} $$
+
+	In order to define a \emph{first order theory} one must make a choice of signature together with a collection of axioms that pin down the arithmetic structure. 
+
+	$$\mathcal{T}_{A} = (\mathcal{L}_{A}, \Sigma_{A})$$
+
+	The word theory may also be used to refer to the collection of all theorems deducible from the axioms, rather than just the pair consisting of signature and axioms. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Signature of Natural Numbers}
+
+	Peano arithmetic, the first order theory of the natural numbers that we are to study, consists of terms and propositions generated by the signature $\mathcal{L} : \{0,s,+,\times,=\}$.
+
+	\begin{center}
+		\begin{tabular}{l c l}
+			$0$ & : & Constant \\
+			s & : & Unary function \\
+			$+$ & : & Binary function \\
+			$\times$ & : & Binary function \\
+			$=$ & : & Binary predicate
+		\end{tabular}
+	\end{center}
+
+	\vspace{25mm}
+
+	Equality/identity is a predicate relevant to many first order theories. We will start by formalising what we mean by identity. 
+
+\end{frame}
+
+\section{Identity}
+
+\begin{frame}
+	\frametitle{Identity: Introduction}
+
+	Identity is an essential predicate for first-order theories of mathematics. We will now state introduction and elimination rules for the identity binary predicate $=$ 
+
+	\vspace{2mm}
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[= I]{t = t}
+				{}
+		\end{array}$
+	\end{center}
+
+	\vspace{2mm}
+
+	The introduction rule for the identity predicate is simply the claim that identity is reflexive --- all terms are identical to themselves. 
+
+	\vspace{2mm}
+
+	No two terms are equal - in this sense - unless they are equal symbol for symbol. If we want to impose further identities on terms, say in the definition of addition, then we are going to have to do that with axioms i.e. hypotheses. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Identity: Elimination}
+
+	If $^{\Sigma_{1}}_{\alpha}\mathcal{D}_{1}$ is a deduction of $\alpha$ from $\Sigma_{1}$ and $^{\Sigma_{2}}_{s=t}\mathcal{D}_{2}$ is a deduction of $s = t$ from $\Sigma_{2}$, then
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[= E]{\alpha[s/t]}
+				{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ \alpha \end{array}
+				&
+				\begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\ s = t \end{array}}			
+		\end{array}$
+	\end{center}
+
+	is a deduction of $\alpha[s/t]$ from the hypotheses $\Sigma_{1} \cup \Sigma_{2}$. This states that identical terms may be substituted for identical terms. One can be selective about the instances of $s$ which are replaced by $t$. 
+
+	\vspace{30mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Symmetric}
+
+	$$ s = t \dashv \vdash t = s $$
+
+	\vspace{65mm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Substitutivity}
+
+	$$\vdash \ \forall x \ \forall y \ (Px \to (x = y \to Py))$$
+
+	\vspace{65mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Substitutivity}
+
+	$$\vdash \ \forall x \forall y \forall z \ (Rxy \to (x = z \to Rzy))$$
+
+	\vspace{6.5cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Well Defined Functions}
+
+	$$\vdash \ \forall x \forall y \ (x=y \to f(x)=f(y))$$
+
+	\vspace{6.5cm}
+
+\end{frame}
+
+\section{Peano Arithmetic}
+
+\begin{frame}
+	\frametitle{Towards PA: Signature}
+
+	Peano arithmetic consists of terms and wff generated by the signature $\mathcal{L} : \{0,s,+,\times,=\}$.
+
+	\begin{center}
+		\begin{tabular}{l c l}
+			$0$ & : & Constant \\
+			s & : & Unary function \\
+			$+$ & : & Binary function \\
+			$\times$ & : & Binary function \\
+			$=$ & : & Binary predicate.
+		\end{tabular}
+	\end{center}
+
+	\vspace{3cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards PA: Terms}
+
+	Terms are generated by the constant(s) and function symbols. By a slighlt abuse of notation, we denote the collection of such terms as $\mathbb{N}$. These are some examples of such terms. 
+
+	\begin{center}
+		\begin{tabular}{r c c c r c c}
+			$0$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $0 + 0$ & : & $\mathbb{N}$ \\
+			$s \ 0$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $s \ (0 + 0)$ & : & $\mathbb{N}$ \\
+			$s \ (s \ 0)$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $(s \ 0 \times s \ 0)$ & : & $\mathbb{N}$ \\
+			$s \ (s \ (s \ 0))$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $s \ 0 \ + (s \ (s \ (s \ 0)))$ & : & $\mathbb{N}$ \\
+			$s \ (s \ (s \ (s \ 0)))$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $(s \ (0 + 0)) \times (0 + (s \ 0))$ & : & $\mathbb{N}$ \\		
+			$\vdots$ & : & $\mathbb{N}$ & \hspace{0.5cm} & $\vdots$ & : & $\mathbb{N}$			
+		\end{tabular}
+	\end{center}
+
+	Of course terms involving addition and multiplication should always be equal to a (unique) term consisting of some (possibly zero) number of applications of the successor function to the constant 0. However, the signature alone does not enforce this.  
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards PA: Well Formed Formulae}
+
+	Since the only predicate in the signature is the identity, all well-formed formulae of Peano arithmetic consist of possibily quantified assertions of equality. 
+
+	\begin{center}
+		\begin{tabular}{c}
+			$0 = 0$ \\
+			$s \ 0 = (s \ 0) + 0$ \\
+			$\lnot (0 = 0 + 0)$ \\
+			$\forall x : \mathbb{N}, \ x + y = y + x$ \\
+			$\forall x : \mathbb{N} \ \exists y : \mathbb{N}, \ y = x + (s \ 0)$ \\
+			$\exists x : \mathbb{N}, \ x = x$
+		\end{tabular}
+	\end{center}
+
+	In order to \emph{prove} or \emph{refute} any of these we need some grounds on which to do so. There is nothing for it, we must impose axioms to allow for the proof or refutation of such identities. In order to be trustworthy and amenable to meta-analysis, an economy of axioms is necessary. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards PA: Addition}
+	% An attempt to explain the recursive definition of addition. 
+	% We can't use our decimal algorithm... We wouldn't want to anyway...
+	How should one define addition of the natural numbers when represented in this way? 
+
+	$$ x + y =  \ ?$$
+
+	If we focus on the second argument, then there are only two cases to consider. Either $y = 0$, or there exists some other term $z$ such that $y = s \ z$. In the case that $y = 0$ the computation is clear: 
+
+	$$x + 0 = x$$
+
+	What do we do in the other case? 
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards PA: Addition}
+
+	Given that we know how to sum zero, on the right, we might expect to define the (right) sum of a successor by reducing it to the sum of a term with one less successor. 
+
+	$$ x + (s \ z) =  \ ?$$
+
+	This is intended to represent $x + (z + 1)$
+
+	\vspace{25mm}
+
+	This strategy of defining a function by the possible forms of an argument is known as \emph{pattern matching}. It has lead to a \emph{recursive} definition of addition.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Compute $3 + 2$ using this algorithm. 
+
+	\vspace{60mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Towards PA: Multiplication}
+
+	We can use the same pattern matching strategy to define multiplication recursively. Again, the case of right multiplication by zero is clear
+
+	$$x \times 0 = 0$$
+
+	While the recursive step may not be immediately obvious.
+
+	$$x \times (s \ z) = \ ?$$
+
+	It might be helpful to recall this represents $x \times (z + 1)$
+
+	\vspace{2cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	Compute $3 \times 2$ using this algorithm. 
+
+	\vspace{6cm}
+
+	% Likely one would protest "This is too slow!" 
+	% But our goal is not necessarily fast computation. 
+	% Our goal is to reason ABOUT computation. 
+\end{frame} 
+
+\begin{frame}
+	\frametitle{Axioms of PA}
+	
+	Peano Arithmetic has signature PA$: \{0, s, +, \times, =\}$ and axioms
+	
+	\begin{enumerate}
+		\item $\forall x \lnot(s(x) = 0)$
+		\item $\forall x \ \forall y ((s(x) = s(y)) \to (x = y))$		\item $\forall x \ (x + 0 = x)$
+		\item $\forall x \ \forall y \ (x + s(y) = s(x + y))$
+		\item $\forall x \ (x \times 0 = 0)$
+		\item $\forall x \ \forall y \ (x \times s(y) = (x \times y) + x)$
+		\item $[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$
+	\end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Syntactic Sugar}
+	
+	We make the following abuse of notation 
+	\begin{center}
+		\begin{itemize}
+			\item[] $1 = s(0)$
+			\item[] $2 = s(1) = s(s(0))$
+			\item[] $3 = s(2) = s(s(1)) = s(s(s(0)))$
+			\item[] $\vdots$
+		\end{itemize}
+	\end{center}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$$ \PA \vdash 2 + 1 = 3$$
+	
+	\vspace{60mm}
+	% Give both (i) natural deduction 
+	%		   (ii) Calc proof in style of Lean. 
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$$ \PA \vdash 2 \neq 1$$
+
+	\vspace{65mm}
+	% This has to boil down to the fact the zero is not successor of anything. 
+	
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$$ \PA \vdash 0 + 1 = 1$$
+	
+	\vspace{65mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+	
+	$$ \PA \vdash 7 \times 1 = 7$$
+	
+	\vspace{65mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Computation \`{a} la Peano}
+
+	$$ \text{PA} \ \vdash \ 3 + 2 = 5$$
+
+	\begin{tabular}{r c l c l}
+		3 + 2 & = & s s s 0 + s s 0   & & by [DESUGAR] \\
+		      & = & s (s s s 0 + s 0) & & by [PA4] \\
+			  & = & s s (s s s 0 + 0) & & by [PA4] \\
+			  & = & s s (s s s 0)	  & & by [PA3] \\
+			  & = & s s s s s 0		  & & by [REFL] \\
+			  & = & 5				  & & by [SUGAR]
+	\end{tabular}
+
+	% Each line we are looking for a pattern to apply. 
+	% There are only two patterns that could apply. 
+	% Each line merely swaps equals for equals.
+
+	% No bits. No registers. Theory of computation without
+	% any physical computers; apart from us!
+
+	\vspace{30mm}
+
+	This abbreviation is looking ahead to the final topic. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example}
+
+	$$ \PA \vdash \ \forall x \ (s(x) = x + 1)$$
+
+	\vspace{65mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction}
+
+	How could one possibly prove a proposition of the form: 
+
+	$$\forall x : \mathbb{N}, \ \dots$$
+
+	This signature generates infinitely many terms; how can we possibly check a predicate is provable at each of them? 
+
+	\vspace{40mm}
+	% Informal introduction to induction. 
+	% With a nice straight forward example. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction: Informal Example}
+	% Example: Sum of first n integers. 
+	%			1 + 2 + 3 + 4 + ... + n = n(n+1)/2
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction: Informal Example}
+
+	% Example: sqrt{n} constructible from compass, straight edge, unit length.
+	%			Base case: sqrt(1) = 1 = unit 
+	%			Induction step: given sqrt(n), 
+	%							sqrt(n+1) is hypotenuse of sqrt n, 1
+	%							right angle constructible by compass.
+
+	\vspace{75mm}
+	\href{https://www.euclidea.xyz/}{Euclidea: Interactive Geometric Construction Puzzles.}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Axiom Schema}
+
+	For each unary predicate $P$ in the first-order theory PA we have the following axiom: 
+
+	$$[P(0) \land \forall x \ (P(x) \to P(s(x)))] \rightarrow \forall y (P(y))$$
+
+	How do we make use of this in a proof? 
+
+	% Take a few slides to break this down into steps. 
+	\vspace{4cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Proofs}
+
+	% For which propositions do we use induction proofs? 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Proofs: Steps}
+
+	% How we make use of these axioms? 
+	% Modus ponens. 
+	% Conjunction: base case and induction step. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Proofs: Induction Step}
+
+
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Structure of Induction Proofs}
+
+	\begin{scriptsize}
+		%\begin{center}
+			$\begin{array}{c}
+				\infer[\MP]{\forall y \ P(y)}
+					{\infer[\land I]{(P(0) \land \forall x \ (P(x) \to P(s(x))))}
+						{\begin{array}{c} \vdots \\ P(0) \end{array}
+						&
+						\begin{array}{c} \vdots \\ \forall x \ (P(x) \to P(s(x))) \end{array}}
+					&
+					(P(0) \land \forall x \ (P(x) \to P(s(x)))) \rightarrow \forall y (P(y))}
+			\end{array}$
+		%\end{center}
+	\end{scriptsize}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction: Rule of Inference}
+
+	This suggests that we can think of induction as a rule of inference.
+
+	\vspace{2mm}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\IND]{\forall y \ P(y)}
+						{\infer[]{P(0)}{\begin{array}{c} \vdots \\ \mathcal{D}_{BC}\end{array}} \hspace{3mm}
+						&
+						\hspace{3mm}
+						\infer[\forall I]{\forall x \ (P(x) \to P(s(x)))}
+							{\infer[\to I]{P(a) \to P(s(a))}
+								{\infer[]{P(s(a))}
+									{\begin{array}{c} [P(a)] \\ \vdots \\ \mathcal{D}_{IS} \end{array}}}}}
+			\end{array}$
+		\end{center}
+
+	\vspace{2mm}
+
+	This presents the inductive mode of reasoning in the same manner as the modes we have formalised. It will also be helpful to think in these terms when we come to type theory.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Summary}
+
+	In order to prove $\forall n : \mathbb{N}, P(n)$ for a unary predicate $P: \mathbb{N} \to $ Prop it is sufficient to prove the following two sequents: 
+
+	\begin{tabular}{r r c r}
+		Base case: & $\PA$  & $\vdash$ & $P (0)$ \\
+		Induction Step: & $\PA, P(n)$ & $\vdash$ & $P (s(n))$
+	\end{tabular}
+
+	In the induction step, we refer to the hypothesis $P(n)$ as the induction hypothesis. In this step, we assume the predicate is true at some arbitrary $n : \mathbb{N}$ and aim to show it holds at the successor of that natural number. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+	
+	$$ \PA \vdash \forall x \ (0 + x = x)$$
+	
+	\vspace{65mm}
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+
+	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+	$$\text{PA} \vdash \forall x \ \forall y \ s(y) + x = s(y+x)$$
+
+	\vspace{6cm}	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+
+	
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction Example}
+
+	
+
+\end{frame}
+
+\section{Predicates on PA}
+
+\begin{frame}
+	\frametitle{Number Theory}
+
+	Mathematicians use other pieces of notation that aren't explicitly present in the signature of Peano arithmetic. For example we speak of the order <, >, $\leq, \geq$ on the natural numbers. As well as divisibility, primality, and much much more. 
+
+	Although not explicitly present, many terms can be defined as abbreviations for well-formed formulae using this ``restricted'' signature of Peano Arithmetic. For example: 
+
+	$$ a \leq b :\equiv \ (\exists x : \mathbb{N}, \ b = a + x)$$
+
+	$$ a | b :\equiv \ (\exists x : \mathbb{N}, \ (b = a \times x) \land \lnot(a = 0))$$
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Reflexive}
+
+	$$\text{PA} \ \vdash \ x \leq x$$
+
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Transitive}
+
+	$$\text{PA} \ \vdash \ (a \leq b \land b \leq c) \to a \leq c$$
+
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: Transitive}
+
+	$$\text{PA} \ \vdash \ (a \leq b \land b \leq c) \to a \leq c$$
+
+	\vspace{6cm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Better Way}
+
+	Adding further syntax abbreviations (so called, syntactic sugar) and proving theorems about those structures becomes unwieldly. In reaction to this, one can return to the less formal natural language reasoning typical of mathematics. However, there are now software tools that allow for nicer syntax than the trees we have been writing, without any compromise in the rigour that they provide. 
+
+	Over the next two topics we will see where these tools have come from, before learning how to use them in the final topic of the course. We will return to Peano arithmetic at the end of the course to prove further theorems about the natural numbers, their order, and divisibility properties. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Comments on Metatheory}
+
+	Hilbert wanted to know: 
+
+	\begin{tabular}{r c l}
+		Q1: & & PA $\vdash \ \bot$? \\
+		%	& A1: & Kurt G\"{o}del showed we can't know!\\
+		Q2: & & If $\alpha$ wff, can we know whether PA $\vdash \alpha$ or PA $\vdash \ \lnot \alpha$?
+	\end{tabular}		
+
+	Kurt G\"{o}del provided answers to the first two questions. We can't determine the consistency of Peano arithmetic. There are wff which are neither provable nor refutable from the axioms of Peano arithmetic. Any other theory at least as strong as PA \emph{still has these properties} - they are unavoidable.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Comments on Metatheory}
+	Hilbert wanted to know:
+
+	\begin{tabular}{r c l}
+		Q3: & & Is there a ``finite procedure'' to determine theoremhood? \\
+		Q4: & & Is there a ``finite procedure'' for checking a proof? 
+	\end{tabular}
+
+	Brouwer, Heyting, and Kolmogorov defined the notion of proof in terms of the word ``algorithm''.
+	
+	These terms ``finite procedure'' and ``algorithm'' were treated on a \emph{you know one when you see one} basis. However, to possibly answer these questions of Hilbert in the negative precise definitions were needed. 
+
+	{\bf Q: What would it mean for it to be impossible that such an algorthim could exist?}
+	% This is where we will turn next. To say what we mean by algorithm. 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Further Reading}
+
+	Dirk van Dalen, \href{https://libcat.canterbury.ac.nz/Record/112862}{Logic and Structure}. 
+
+	\vspace{10mm}
+
+	Jeremy Avigad et al, \href{https://leanprover.github.io/logic_and_proof_lean3/index.html}{Logic and Proof}\footnote{Note: this uses an outdated version of Lean, but is still a good resource for the theory of this course.} Chapter 17.
+
+	\vspace{10mm}
+
+	The \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game} gives a gamified introduction to using Lean to prove many of the theorems from this topic on Peano Arithmetic. Your assignment will be very similar to the ``levels'' of this ``game''.
+
+\end{frame}
+
+
+
+\end{document}

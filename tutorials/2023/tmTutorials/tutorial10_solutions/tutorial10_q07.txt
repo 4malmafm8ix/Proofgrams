@@ -1,0 +1,27 @@
+#####################################
+#   Tutorial 10 :: Question 07      #
+#####################################
+# Stay in q0 until a 1 is found. 
+# If in q0 on first blank, then False
+# Otherwise a 0 was found and hence True!
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,0,R,q0;
+q0,1,1,R,q1;
+q0,b,b,L,qFalse;
+q1,1,1,R,q1;
+q1,0,0,R,q1;
+q1,b,b,L,qTrue;
+# qFalse goes home to print 0. 
+qFalse,0,b,L,qFalse;
+qFalse,1,b,L,qFalse;
+qFalse,@,@,R,qPrintZero;
+qPrintZero,b,0,L,qPrintZero;
+qPrintZero,@,@,N,HALT;
+# qTrue goes home to print 1
+qTrue,0,b,L,qTrue;
+qTrue,1,b,L,qTrue;
+qTrue,@,@,R,qPrintOne;
+qPrintOne,b,1,L,qPrintOne;
+qPrintOne,@,@,N,HALT;
+# End of instructions.

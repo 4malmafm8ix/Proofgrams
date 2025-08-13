@@ -1,0 +1,205 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eight}
+\end{center}
+\begin{center}
+	{\bf Peano Arithmetic \& Recursive Functions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas and learning outcomes
+		\begin{itemize}
+			\item Further understanding of the expressibility of $\PA$,
+			\item Practice writing natural deductions in $\PA$,
+			%\item Know and apply the formal definition of recursion,
+			\item Recognise when procedures are primitive recursive,
+			\item Informally describe procedures with primitive recursive steps. 
+		\end{itemize}
+
+
+		Relevant notes: Peano and Primitive Recursion Slides\\
+		Relevant reading: \emph{Computability Theory} Enderton, Chapter 2. 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 2b, 3a, 3f, 3g, 7\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item The first-order language of Peano Arithmetic is often presented with an extra binary relation symbol $<$ where $x < y$ is given the usual interpretation: $x$ is strictly less than $y$. In fact it is not necessary to add anything extra, for this relation can be defined using a sentence in $\PA$ as stated. 
+	
+	Write down a wff in $\PA$ which, when interpreted in the standard model, defines the binary relation $<$ of being ``strictly less than''. Use this to write down formulae that represent: less than or equal to, strictly greater than, and greater than or equal to. 
+
+	%$$ x < y :\equiv \exists z \ (x + s(z) = y) $$
+
+	\vspace{2cm}
+
+	\item If $P({\bf x})$ and $Q({\bf x})$ are two primitive recursive $n$-ary predicates, then show that the predicate $P({\bf x})\to Q({\bf x})$ is primitive recursive. 
+	
+	% Discuss what this means, in terms of characteristic functions. 
+	% Recall the valuations and their defining equations. 
+	% Use this to define the equation. 
+	% Rearrange to show it's a composition of primitive recursive functions. 
+
+	\vspace{2cm}
+
+	% \item Write the \emph{formal definition} of the factorial function: $!(n)$ 
+	
+	% % Yes, easy. But the point is to be clear about the notation. 
+
+	\vspace{3cm}
+
+	\item Discuss whether the search for roots to a given polynomial equation is a primitive recursive procedure.
+	
+	% Not primitive recursive, but (generally) recursive. One can make changes/restrictions to get primitive recursive procedures (i) bounded search (ii) roots modulo an integer.
+
+\end{enumerate}	
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{center}
+	{\bf Peano Arithmetic}
+\end{center}
+
+\begin{enumerate}
+
+	\item Write down well-formed formulae in the first-order language of $\PA$ corresponding to the following statements. 
+	
+		\begin{enumerate}
+			\item Each natural number is either equal to $0$ or greater than $0$. 			
+			\item If $x$ is not less than $y$, then $x$ equals $y$ or $y$ is less than $x$.
+			\item If $x$ is less than or equal to $y$ and $y$ is less than or equal to $x$, then $x=y$. 
+		\end{enumerate}
+	 
+	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	
+		\begin{enumerate}
+			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
+			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
+			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
+			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hspace{6cm} \text{(Challenge!)}$
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hspace{3cm} \text{(Challenge!!!)}$
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hspace{3.8cm} \text{(Challenge!!!)}$
+		\end{enumerate}
+
+		\vspace{0.5cm}
+		%\newpage
+		\begin{center}
+			{\bf Primitive Recursive Functions}
+		\end{center}
+
+		For each of the procedures below it is sufficient to provide an informal explanation of how they can be computed from primitive recursive functions using composition and recursion. For an extra challenge, you can also provide the formal definition from the base primitive recursive functions. 
+
+		\item Give an informal description of a primitive recursive procedure that computes the following predicates and functions. You may refer to any primitive recursive procedure from class or earlier in the tutorial. 
+	
+		\begin{enumerate}
+
+			\item Strictly less than relation $<?(x,y) = 1$ if $x<y$ otherwise $<?(x,y) = 0$.
+			
+			\item Less than or equal relation $\leq ?(x,y) = 1$ if $x\leq y$ otherwise $\leq ?(x,y) = 0$.
+			
+			\item Greater than relation $>?(x,y) = 1$ if $x>y$ otherwise $>?(x,y) = 0$.
+			
+			\item Strictly greater than relation $\geq ?(x,y) = 1$ if $x\geq y$ otherwise $\geq ?(x,y) = 0$.
+			
+			\item Identity relation $=?(x,y) = 1$ if $x=y$ otherwise $=?(x,y) = 0$. 
+			
+			\item Absolute difference $|x-y|$
+			
+			\item Min(x,y)
+			
+			\item Max(x,y)
+		
+		\end{enumerate}
+	
+	\item Addition is iterated succession. Multiplication is iterated addition. Exponentiation is iterated multiplication. Use recursion and exponentiation to define a new primitive recursive function $f(a,b+1) = exp(a,f(a,b))$, such that $f(a,0) = 1$. What does this function do? Compute $f(5,3)$.
+	
+	\item Give an informal description of the primitive recursive definitions of the function which returns the maximum (resp. minimum) of three inputs. 
+
+	\item Use bounded minimisation (along with other functions already shown to be primitive recursive) to show that bounded maximisation is primitive recursive.  
+
+	\item Give informal descriptions of how the following functions could be defined using functions and predicates that were shown to be primitive recursive in class. Hence conclude that each of these procedures are primitive recursive. 
+	
+		\begin{enumerate}
+			\item Remainder$(x,y)$: remainder when $x$ divided by $y$. 
+			\item Divides?$(x,y)$: 0 or 1 according to whether $x$ divides $y$.
+			\item Prime?$(x)$: 0 or 1 according to whether $x$ is prime. 
+			\item nextPrime$(x)$: returns the smallest prime greater than\footnote{Hint 1: Prove that there must be a prime, $p$, between $x < p \leq x! + 1$. \\ Hint 2: Chebyshev said it, so I'll say it again, there's always a prime, between $N$ and $2N$.} $x$. 
+			\item $p: \mathbb{N} \rightarrow \mathbb{N}$ such that $p(n) = $ nth prime. 
+		\end{enumerate}
+	
+	\item Propositional logic is primitive recursive. Suppose $P({\bf x})$ and $Q({\bf x})$ are two primitive $n$-ary predicates i.e. the characteristic functions $\chi_{P}$ and $\chi_{Q}$ are primitive recursive. Show that the (characteristic functions of the) following predicates are primitive recursive. 
+		
+		\begin{enumerate}
+			\item $\lnot P({\bf x})$
+			\item $P({\bf x}) \lor Q({\bf x})$ 
+			\item $P({\bf x}) \land Q({\bf x})$ 
+			\item $P({\bf x}) \to Q({\bf x})$ 
+			\item NAND$(P({\bf x}), Q({\bf x}))$
+		\end{enumerate}
+
+
+	%\newpage		
+	% \item {\bf (Extension)} Enderton (\emph{Computability Theory}) describes a way of encoding sequences of natural numbers (i.e. lists) and manipulating them using primitive recursion. The encoding is similar to G\"{o}del's: 
+	
+	% $$[ \ ] = 1 $$
+	% $$[x_{0}] = 2^{x_{0}+1}$$
+	% $$[x_{0},x_{1}] = 2^{x_{0}+1}3^{x_{1}+1}$$
+	% $$\vdots$$
+	% $$[x_{0},x_{1},\dots,x_{k}] = 2^{x_{0}+1}3^{x_{1}+1}\cdots p_{k}^{x_{k}+1}$$
+
+	% Let us say an integer $n$ is a list number if it is the code of some list. 
+
+	% For this encoding to be useful, we need to be able to detect and decode list numbers using primitive recursive procedures. Provide high-level descriptions of primitive recursive procedures for the following list manipulations.
+
+	% 	\begin{enumerate}
+	% 		\item Determine if an integer is a list number. 
+	% 		\item Obtain the $i$th element of the list.
+	% 		\item Determine the length of the list. 
+	% 		\item Slice the list to contain only those integers with index $< y$.
+	% 		\item Given two list numbers, calculate the list number of their concatenation. 
+	% 	\end{enumerate}
+
+	% Implement these procedures in your favourite programming language.
+
+\end{enumerate}
+	
+\end{document}
