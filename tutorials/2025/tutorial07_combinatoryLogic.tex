@@ -1,0 +1,158 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Seven}
+\end{center}
+\begin{center}
+	{\bf Recursion and Combinatory Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write recursive processes in $\lambda$-calculus,
+				\item Write higher order procedures in $\lambda$-calculus, 
+				\item Prove extensional identities in combinatory logic, 
+				\item Translate between $\lambda$-calculus and combinatory logic.
+			\end{itemize}
+
+		Relevant topic: Untyped Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b, 4c, 5c, 6a, 7c\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{5mmm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+	\item Determine some steps towards writing a program ($\lambda$-term) representing the unary function, INT-SQRT, that returns the greatest natural number whose square is less than or equal to the input. 
+
+\end{itemize}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Write recursive $\lambda$-expressions that represent the following functions of natural numbers. For each function determine an appropriate helper-function GO to put through the $\YCOMB$ combinator. 
+	
+		\begin{enumerate}
+			\item SUM of two natural numbers
+			\item MULTiply two natural numbers
+			\item EXPONentiation of a base to an exponent
+			\item FACTorial of a natural number
+			\item INT-SQRT the smallest integer whose square is greater than input
+			\item Calculate the nth FIBonacci number (Challenge!)
+		\end{enumerate}
+
+	\item Write a $\lambda$-expression that can be used to compute the smallest natural number that satisfies a given unary-predicate $P?(x)$ that is represented by some $\lambda$-expression. 		
+
+	\item (Challenge!) Represent the following processes in the $\lambda$-calculus to get an expression that can be used to test whether a natural number is prime. For simplicity, assume the input is greater than TWO.
+	
+		\begin{enumerate}
+			\item REMAINDER calculate the remainder of a division.
+			\item DIVIDES? binary predicate does second divide first?
+			\item Implement bounded-search to satisfy a predicate.
+			\item PRIME? Unary-predicate to detect primality.
+		\end{enumerate}
+	
+
+	
+	 \item In lectures we introduced a $\lambda$-term for computing the sum of a sequence of consecutive integers. This used the helper-function: 
+	
+	 \begin{align*}
+	 	\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
+	 	& a \\ 
+	 	&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
+	 \end{align*}
+	
+	 We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
+	
+	 \begin{enumerate}
+	 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$
+	 	\item Compute the sum of each term passed through an arbitrary function, $\sum_{i=l}^u f(i)$
+	 	\item Compute the sum of those terms in the interval that satisfy some predicate $P?(x)$.
+	 \end{enumerate}
+	 
+	 \vfill
+	 \hfill \textbf{PTO}
+
+
+
+\newpage
+
+% Give the reduction definition of the combinators to be used in this tutorial. 
+Recall the following reduction rules of the CL combinators. 
+\begin{tabular}{l l}
+$\textbf{S}xyz \to_{\beta} xz(yz)$ & $\textbf{K}xy \to_{\beta} x$ \\
+$\textbf{I}x \to_{\beta} x$ & $\textbf{B}fgx \to_{\beta}f(gx)$ \\
+$\textbf{W}fx \to_{\beta}fxx$ & $\textbf{C}fxy \to_{\beta} fyx$
+\end{tabular}
+
+\item Verify each of the following extensional equality claims by evaluating each side at an appropriate number of variables and check the reductions are identical.
+
+	\begin{enumerate}
+		\item \textbf{I} = \textbf{SKK}
+		\item \textbf{SK} = \textbf{KI}
+		\item \textbf{B} = \textbf{S(KS)K}
+		\item \textbf{W} = \textbf{SS(KI)}
+		\item \textbf{C} = \textbf{S(BBS)(KK)}	
+	\end{enumerate}
+
+\item Each of these CL terms are reducible. Compute their normal form.
+
+	\begin{enumerate}
+		\item \textbf{SKI(KIS)}
+		\item \textbf{KS(I(SKSI))}
+		\item \textbf{SKIK}	
+	\end{enumerate}
+
+\item Translate each of the $\lambda$-terms into combinatory logic expressions involving only \textbf{SKI} combinators using the translation defined in the slides.
+
+	\begin{enumerate}
+		\item $\lambda x. \ \lambda y. \ y$
+		\item $\lambda c. \ \lambda f. \ \lambda g.  \ c \ f \ g$
+		\item $\lambda s . \ \lambda x. \ s \ x$
+		\item $\lambda f. \ (\lambda x. \ f \ x \ x) \ (\lambda x. \ f \ x \ x)$ 	
+	\end{enumerate}
+
+	
+
+	 
+\end{enumerate}
+	
+\end{document}

@@ -1,0 +1,182 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Six}
+\end{center}
+\begin{center}
+	{\bf Computation and Church Encodings}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Practice $\beta$-reduction, 
+				\item Encode logic in $\lambda$-calculus, 
+				\item Encode natural numbers in $\lambda$-calculus.
+				\item Encode compound data in $\lambda$-calculus.
+			\end{itemize}
+
+		Relevant topic: Untyped Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b, 2, 3b, 4c, 5b\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+
+
+	\item Compute the normal forms of the following $\lambda$-terms: 
+	
+	\begin{itemize}
+		\item[] $(\lambda x. \ x \ x)(\lambda y. \ \lambda z. \ y \ z \ z)$
+		\vspace{70mm}
+		\item[] AND TRUE TRUE
+	
+	\end{itemize}
+	
+\end{itemize}	
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Compute the normal form for each of the following $\lambda$-terms:
+	
+		\begin{enumerate}
+			\item NOT FALSE
+			\item OR TRUE FALSE
+			\item AND FALSE TRUE 
+			\item IMPLIES FALSE TRUE 
+		\end{enumerate} 
+
+	{\bf Only expand those expressions necessary for each step.}
+		
+	\item Write down $\lambda$-expressions that represent the propositional binary connectives XOR, NAND, and NOR. Recall that these have the following truth tables.
+			
+	\vspace{0.5cm}
+
+	\begin{center}
+		$\begin{array}{c c c}
+
+			\begin{array}{ c c | c }			
+				P & Q & \text{XOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & F
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NAND}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & T
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & F \\ 
+				F & T & F \\ 
+				F & F & T
+			\end{array} 
+		\end{array}$
+	\end{center}
+	\vspace{0.2cm}
+
+	\item By substituting the explicit $\lambda$-expressions (as necessary) and performing $\beta$-reduction, determine the normal forms of the following $\lambda$-expressions. 
+
+	\begin{enumerate}
+		\item SUCC ONE
+		\item SUM ONE ZERO
+		\item MULT TWO ZERO
+	\end{enumerate}
+
+	{\bf Only expand those expressions necessary for each step.}
+
+	\item We have defined the following $\lambda$-expression to construct pairs of $\lambda$-expressions:
+	
+	$$\text{PAIR} = \lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y$$
+
+	The third input is a built-in place ready to take a selector:
+
+	$$\text{FirST} = \lambda x. \ \lambda y. \ x \hspace{1cm} \text{SecoND} = \lambda x. \ \lambda y. \ y$$
+
+	 Reduce these to normal form 
+
+		\begin{enumerate}
+			\item PAIR a b FST \vspace{0.2cm}
+			\item PAIR a b SND \vspace{0.2cm}
+			\item PAIR (PAIR a b) (PAIR c d) SND
+		\end{enumerate}
+
+%	\item Integers are solutions to equations $x + b = a$. We can represent natural number solutions using Church numerals. However, further abstractions are required to represent the negative solutions to such equations. 
+%
+%	{\bf Example} The equation $x + 1 = 0$ has solution $x = -1$. One way to represent this in the $\lambda$-calculus is to use the pair $(0,1)$ which we interpret as $-1 = (0,1)$. 
+%	
+%	More generally $k = (a,b) = a - b$ represents the solution to $x + b = a$.
+%
+%	\hspace{0.5cm} {\bf Such representations are not unique!} e.g. $0 = (0,0) = (1,1) = \dots$
+%
+%	Write $\lambda$-expressions for arithmetic on integers as pairs of Church numerals.
+%		\begin{itemize}
+%			\item[] INT-SUM to calculate the sum of two integers.
+%			\item[] INT-MULT to calculate the product of two integers.
+%			\item[] INT-NEG(ative) to calculate the negative of an integer.
+%		\end{itemize}
+
+	\item Positive rational numbers are solutions to equations of the form $bx = a$, where $a,b : \mathbb{N}$. Use PAIR to represent positive rational numbers in the $\lambda$-calculus and write $\lambda$-expressions to compute rational number arithmetic. 
+		\begin{itemize}
+			\item[(a)] RAT-SUM to calculate the sum of two rational numbers.
+			\item[(b)] RAT-MULT to calculate the product of two rational numbers.
+			\item[(c)] RAT-REC(iprocal) to calculate the reciprocal of an integer.
+		\end{itemize}
+
+%	\item Imaginary numbers can be represented as PAIRs of rational numbers.
+%	
+%	\item Real numbers are a more complicated issue.
+
+\end{enumerate}
+	
+\end{document}

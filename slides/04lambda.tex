@@ -69,9 +69,11 @@
 	% This doesn't seem so strange now with String and Char data types. 
 
 	Since data can be encoded to natural numbers, questions about the computability of proofs come down to questions about the computablility of functions on the natural numbers. 
+	
+	\vspace{50mm}
 
 	% ASCII and Unicode turn symbols to sequences of numbers. 
-	% This was ultimately G\"{o}del's idea!... Sort of. Physicists had been doing it for a long time!
+	% This was ultimately G\"{o}del's idea!... Sort of. Physicists had been doing it for a long time! G\"{o}del's trick is to show that meta logical questions can be studied by the numbers representing the logical expressions. 
 \end{frame}
 
 \begin{frame}
@@ -1672,16 +1674,18 @@
 \begin{frame}
 	\frametitle{Combinator Calculus}
 
-	As often happens two people independently formulated the Combinator Calculus (CL): Moses Sh\"{o}nfinkel and Haskell Curry. Sh\"{o}nfinkel was motivated to remove quantifiers and bound variables from predicate logic - as we have seen substitution and the issue of free/bound variables is subtle. We also see a similar problem in the $\lambda$-calculus with variables bound by abstractions. 
+Moses Sh\"{o}nfinkel was motivated to remove quantifiers and bound variables from predicate logic - as we have seen substitution and the issue of free/bound variables is subtle. We also see a similar problem in the $\lambda$-calculus with variables bound by abstractions. 
 
-	If this could be avoided, then reduction would be made simpler!
+	If this could be avoided, then reduction would be made simpler! In so doing he developed a theory of intensional functions. Haskell Curry took Sh\"{o}nfinkel's ideas and developed them much further. 
+	
+	Although Sh\"{o}nfinkel and Haskell were motivated by logic, we can now realise their theory of combinatory logic as a theory of computation. 
 
 \end{frame}
 
 \begin{frame}
 	\frametitle{Grammar of Combinator Calculus}
 
-	SKI combinator calculus is made up of the constants $S,K,I$ and the single application constructor. 
+	SKI combinator calculus is made up of the constants $\textbf{S},\textbf{K},\textbf{I}$ and the single application constructor. 
 
 	%BNF Description here 
 
@@ -1689,16 +1693,25 @@
 
 	Combinators are subject to the following reduction rules:
 	\begin{align*}
-		S \ t \ u \ v \ &=_{\beta} t \ v \ (u \ v) \\
-		K \ t \ u \ &=_\beta t \\
-		I \ x &=_\beta x
+		\textbf{S} \ t \ u \ v \ &=_{\beta} t \ v \ (u \ v) \\
+		\textbf{K} \ t \ u \ &=_\beta t \\
+		\textbf{I} \ x &=_\beta x
 	\end{align*}
 \end{frame}
 
 \begin{frame}
-	\frametitle{Example}
+	\frametitle{Example: CL Normalisation}
+	
+	Compute the normal form of \textbf{SIIKI}.
+	
+	\vspace{70mm}
+	
+\end{frame}
 
-	Show $SKK = I$ extensionally. 
+\begin{frame}
+	\frametitle{Example: Extensional Equality}
+
+	Show $\textbf{SKK} = \textbf{I}$ extensionally. 
 
 	\vspace{70mm}
 
@@ -1709,9 +1722,9 @@
 
 	We can embed CL into $\lambda$-calculus as follows: 
 	\begin{align*}
-		I &= \lambda x. \ x \\
-		K &= \lambda x. \ \lambda y. \ x \\
-		S &= \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)
+		\textbf{I} &= \lambda x. \ x \\
+		\textbf{K} &= \lambda x. \ \lambda y. \ x \\
+		\textbf{S} &= \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)
 	\end{align*}
 
 	Note that these definitions are extensional equivalences. Each CL term and the corresponding $\lambda$-term are equal as functions; that is, they compute the same output for the same input.
@@ -1720,10 +1733,26 @@
 \begin{frame}
 	\frametitle{Emedding $\lambda$ into CL}
 
-	In fact one can embed $\lambda$-calculus into CL. In this case the embedding is an extensional equivalence. We define the translation procedure $T$ from $\lambda$ to $CL$ recursively as follows: 
+	In fact one can embed $\lambda$-calculus into CL. In this case the embedding is an extensional equivalence. We define the translation procedure $T$ from $\lambda$ to CL recursively as follows: 
 
+	\begin{tabular}{c l l}
+	1. & $T[x] \Rightarrow x$ & Variable \\ 
+	2. & $T[E_{1}E_{2}] \Rightarrow (T[E_{1}])(T[E_{2}])$ & Application	\\
+	3. & $T[\lambda x. \ E] \Rightarrow \textbf{K}(T[E])$ & $x$ not free in $E$\\
+	4. & $T[\lambda x. \ x] \Rightarrow \textbf{I}$ & Identity \\
+	5. & $T[\lambda x. \ \lambda y. \ E] \Rightarrow T[\lambda x. \ T[\lambda y. \ E]]$ & $x$ free in $E$ \\
+	6. & $T[\lambda x. \ (E_{1}E_{2})] \Rightarrow \textbf{S}(T[\lambda x. \ E_{1}])(T[\lambda x. \ E_{2}])$ & $x$ free in $E_{1}$ and $E_{2}$
+	\end{tabular}
 
-	This translation preserves extensional equality. 
+	This translation preserves extensional equality. It is described in S\"{o}ren Stenlund: Combinators, $\lambda$-Terms, and Proof Theory.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Example: $\lambda$ to CL}
+	
+	Translate $(\lambda x. \ \lambda y. \ y \ x)$ into CL using the translation procedure.
+	
+	\vspace{70mm}
 
 \end{frame}
 
@@ -1773,6 +1802,7 @@
 		\item Stanford Encyclopedia of Philosophy.
 		\item Type Theory and Functional Programming, \emph{Simon Thompson}.
 		\item Types and Programming Languages, \emph{Benjamin Pierce.}
+		\item Combinators, $\lambda$-terms, and Proof Theory, \emph{S\"{o}ren Stenlund}
 	\end{itemize}
 
 	
