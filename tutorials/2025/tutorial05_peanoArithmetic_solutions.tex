@@ -676,7 +676,7 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 	\end{enumerate}
 
 	\newpage
-	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	\item Provide natural deductions of the following theorems of Peano Arithmetic. Beware each of these must be true, but some I have not provided natural deductions for. Some may require breaking down into further subgoals (lemma) to help. I recommend writing informal proofs, before formalising them with natural deductions.
 	
 		\begin{enumerate}
 			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
@@ -710,6 +710,7 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 			
 			
 			%\newpage
+			\item $\PA \ \vdash \ a < s(a)$
 			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
 			
 			$$a < b := \exists x \ b = a + s(x)$$
@@ -732,16 +733,96 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 				\end{array}$
 			\end{center}
 			
+			\item $\PA , \ s(a) < s(b) \ \vdash \ a < b$
+			
 			\newpage
 			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
+			{\scriptsize
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\exists E]{a < c}
+						{\infer[\land E_{L}]{a < b}
+							{(a < b) \land (b < c)}
+						&
+						\infer[\to I,1]{a < b \to c < a}
+							{\infer[\exists E]{c < a}
+								{\infer[\land E_{R}]{b < c}{(a < c) \land (b < c)}
+								&
+								\infer[\to I,2]{b < c \to a < c}
+									{\infer[\exists I]{a < c}
+										{\infer[=E]{c = a + s(x + s(x))}
+											{\infer[\text{ASSOC}]{c = a + (s(x) + s(x))}
+												{\infer[=E]{c = (a + s(x)) + s(x)}
+													{\temp{1}{b = a + s(x)}
+													&
+													\temp{2}{c = b + s(x)}}}
+											&
+											\infer[\forall E]{s(x) + s(x) = s(x + s(x))}{\PA 4}}}}}}}
+				
+				\end{array}$			
+			\end{center}}
 			
-			\newpage
+			%\newpage
 			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hfill \text{(Challenge!)}$
 			
-			\newpage
+			This can be proved by splitting into cases according to the following theorem:
+			
+			$$\PA \ \vdash \ x = 0 \lor \exists y \ x = s(y)$$
+			
+			Thus we have the subgoals: 			
+			$$\PA, \ t = 0 \ \vdash \ t = 0 \lor 0 < t$$
+			$$\PA, \ \exists y \ t = s(y) \ \vdash \ 0 < t$$
+			
+			The first of these is the most straightforward. Call this proof $\mathcal{D}_{1}$.
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I, 1]{t = 0 \to (t = 0) \lor (0 < t)}
+						{\infer[\lor I_{R}]{(t = 0) \lor (0 < t)}
+							{\infer[1]{t = 0}
+								{}}}
+				\end{array}$
+			\end{center}
+			
+			The second subgoal requires an exists elimination. Call this proof $\mathcal{D}_{2}$.
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,2]{\exists y \ t = s(y) \to (t = 0 \lor 0 < t)}
+						{\infer[\lor I{L}]{(t = 0 \lor 0 < t)}
+							{\infer[\exists E^{!!!}]{0 < t}
+								{\temp{2}{\exists y \ t = s(y)}
+								&
+								\infer[\to I,1]{t = s(a) \to 0 < t}
+									{\infer[SUGAR]{0 < t}
+										{\infer[=E]{t = 0 + s(a)}
+											{\temp{1}{t = s(a)}
+											&
+											\infer[\THM]{0 + s(a) = s(a)}
+												{}}}}}}}
+				\end{array}$
+			\end{center}
+			
+			$^{!!!}$ Notice that the variable we are doing exists elimination on is $a$. So the fact that $t$ appears free in both antecedent and consquent here does not preclude one from using exists-elimination.
+			
+			Finally the cases can be combined with $\lor$E and the proofs $\mathcal{D}_{1}$ and $\mathcal{D}_{2}$: 
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ x = 0 \lor 0 < x}
+						{\infer[\lor E]{t = 0 \lor 0 < t}
+							{\infer[\THM]{t = 0 \lor \exists y \ t = s(y)}{}
+							&
+							\mathcal{D}_{1}
+							&
+							\mathcal{D}_{2}}}
+				\end{array}$
+			\end{center}
+			
+			
 			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
 			
-			\newpage
+			
 			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hfill \text{(Challenge!)}$
 		\end{enumerate}
 	 

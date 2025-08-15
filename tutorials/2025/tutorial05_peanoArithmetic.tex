@@ -191,11 +191,13 @@
 
 	\item Visit the \href{https://adam.math.hhu.de/\#/g/leanprover-community/nng4}{Natural Number Game} to write computer checked proofs of these theorems of Peano arithmetic as well as theorems of propositional logic from previous tutorials. 
 	 
-	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	\item Provide natural deductions of the following theorems of Peano Arithmetic. Beware each of these must be true, but some I have not provided natural deductions for. Some may require breaking down into further subgoals (lemma) to help. I recommend writing informal proofs, before formalising them with natural deductions.
 	
 		\begin{enumerate}
 			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
+			\item $\PA \ \vdash \ a < s(a)$
 			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
+			\item $\PA , \ s(a) < s(b) \ \vdash \ a < b$
 			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
 			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hfill \text{(Challenge!)}$
 			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
