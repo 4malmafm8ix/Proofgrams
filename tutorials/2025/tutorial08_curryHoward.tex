@@ -16,14 +16,14 @@
 \usepackage{hyperref}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../../proofsPrograms}
+\usepackage{../../proofsPrograms}
 
 
 \begin{document}
 
 % Heading for the tutorial	
 \begin{center}
-	{\bf MATH230: Tutorial Twelve}
+	{\bf MATH230: Tutorial Eight}
 \end{center}
 \begin{center}
 	{\bf Curry-Howard Correspondence}
@@ -36,19 +36,18 @@
 
 		Key ideas
 			\begin{itemize}
-				\item Write recursive processes in $\lambda$-calculus,
-				\item Write programs in simple type theory,
-				\item Interpret programs as proofs of propositions, 
-				\item Prove that certain types are uninhabited.
+				\item Write context dependent typing derivations.
+				\item Understand the connection between natural deductions and typing derivations.
+				\item Write proof-terms witnessing theorems of minimal logic.
 			\end{itemize}
 
-		Relevant lectures: Lambda Calculus and Typed Lambda Calculus Slides\\
+		Relevant lectures: Typed Lambda Calculus Slides\\
 		Relevant reading: Type Theory and Functional Programming, Simon Thompson
 		
 	\vspace{0.2cm}
 
-	Hand in exercises: 1b, 1d, 4a, 4b, 4c, 6\\ 
-	{\bf Due before the exam to the lecturer.}
+	Hand in exercises: 1a, 1d, 1e, 1k, 3\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
 	}
 }
 % Discussion questions for tutor.
@@ -60,11 +59,11 @@
 \begin{itemize}
 	\item Write a program of the specified type in the given context: 
 	
-	$$p : A \times (B \times C) \ \vdash \ ~ ? : (A \times B) \times C$$
+	$$p : A \times (B \times C) \ \vdash \ (A \times B) \times C$$
 	
-	\vspace{5cm}
-
-	\item Determine some steps towards writing a program ($\lambda$-term) representing the unary function, INT-SQRT, that returns the greatest natural number whose square is less than or equal to the input. 
+	\vspace{50mm}
+	
+		\item  For a fixed typed $A$, prove that the type $(A \to A) \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type. 
 
 \end{itemize}
 
@@ -73,80 +72,46 @@
 {\bf Tutorial Exercises}
 
 \begin{enumerate}
-	
-	\item Write recursive $\lambda$-expressions that represent the following functions of natural numbers. For each function determine an appropriate helper-function GO to put through the $\YCOMB$ combinator. 
-	
-		\begin{enumerate}
-			\item SUM of two natural numbers
-			\item MULTiply two natural numbers
-			\item EXPONentiation of a base to an exponent
-			\item FACTorial of a natural number
-			\item INT-SQRT the smallest integer whose square is greater than input
-			\item Calculate the nth FIBonacci number (Challenge!)
-		\end{enumerate}
-
-	\item Write a $\lambda$-expression that can be used to compute the smallest natural number that satisfies a given unary-predicate $P?(x)$ that is represented by some $\lambda$-expression. 		
-
-	\item (Challenge!) Represent the following processes in the $\lambda$-calculus to get an expression that can be used to test whether a natural number is prime. For simplicity, assume the input is greater than TWO.
-	
-		\begin{enumerate}
-			\item REMAINDER calculate the remainder of a division.
-			\item DIVIDES? binary predicate does second divide first?
-			\item Implement bounded-search to satisfy a predicate.
-			\item PRIME? Unary-predicate to detect primality.
-		\end{enumerate}
-	
-
-	
-	% \item In lectures we introduced a $\lambda$-term for computing the sum of a sequence of consecutive integers. This used the helper-function: 
-	
-	% \begin{align*}
-	% 	\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
-	% 	& a \\ 
-	% 	&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
-	% \end{align*}
-
-	% We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
-
-	% \begin{enumerate}
-	% 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$
-	% 	\item Compute the sum of each term passed through an arbitrary function, $\sum_{i=l}^u f(i)$
-	% 	\item Compute the sum of those terms in the interval that satisfy some predicate $P?(x)$.
-	% 	\item Combine (b) and (c).
-	% \end{enumerate}
-
-	\newpage
-	\begin{center}
-		{\bf Curry-Howard Correspondence}
-	\end{center}
-
-	\item Each problem below is of the form: 
-	
-	$$ \Sigma \ \vdash \ ? : \text{TYPE}$$
-
-	To answer the question you must provide a $\lambda$-term of the specified TYPE from the context $\Sigma$ stated in the problem. To ensure the term is of the specified type you must use the typing rules for the construction and destruction of types. 
-	
-		\begin{enumerate}
-			\item $f : ( A \times  B) \rightarrow  C \vdash \ ? :  A \rightarrow (B \rightarrow  C)$
-			\item $f : A \rightarrow (B \rightarrow  C) \ \vdash \ ? : ( A \times  B) \rightarrow  C$			
-			\item $f : A \rightarrow  B, \  g : B \rightarrow  C \vdash \ ? : A \rightarrow  C $
-			\item $p : A + B,\ f : A \to  C,\ g : B \to  D \vdash \ ? : C +  D$
-		\end{enumerate}
-	
-	Compare each of the typing derivations to the minimal logic proofs from Tutorial Two. What do you notice? 
+	\item For each $\Sigma \ \vdash \ \alpha$ provide a term of type $\alpha$ from the given $\Sigma$ context. 
+	\begin{enumerate}
+		\item $f : A \to (B \to C) \ \vdash \ B \to (A \to C)$ \hfill [Handin exercise]
+		\item $t : A \times B \ \vdash \ B \times A$
+		\item $t : A + B \ \vdash \ B + A$ 
+		\item $f : (A\times  B) \rightarrow  C \vdash  A\rightarrow ( B \rightarrow  C) $ \hfill [Handin exercise]
+		\item $f : A \rightarrow ( B \rightarrow  C) \vdash ( A\times  B) \rightarrow C$	 \hfill [Handin exercise]
+		\item $f : A \to B \ \vdash A \to (B + C)$
+		\item $ f : A\rightarrow  B, \  g : B \rightarrow  C \vdash  A\rightarrow  C $
+		\item $t : A +  B, \  f : A\to  C, \  g : B \to  D \vdash   C +  D$		
+		\item $f : A \to B \ \vdash \ (C \to A) \to (C \to B)$	
+		\item $t : (A \to B) \times (A \to C) \ \vdash \ A \to (B \times C)$
+		\item $t : A \times (B + C) \ \vdash \ (A \times B) + (A \times C)$ \hfill [Handin exercise]
+		\item $t : (A \times B) + (A \times C) \ \vdash \ A \times (B + C)$
+		\item $t : A + (B \times C) \ \vdash \ (A + B) \times (A + C)$
+		\item $t : (A + B) \times (A + C) \ \vdash \ A + (B \times C)$
+	\end{enumerate}
 	
 		{\bf Extras:} For these extra problems consider $\bot$ to be type with no constructor or destructors. Furthermore, consider $\lnot P$ to be shorthand for the function type: $\lnot P:= P \to \bot$.
 
 		\begin{enumerate}
-			\item $p : \lnot A + \lnot B \vdash \ ? : \lnot( A \times  B)$
-			\item $p : \lnot( A +  B) \vdash \ ? : \lnot  A \times \lnot  B$
-			\item $p : \lnot  A \times \lnot  B \vdash \ ? : \lnot( A + B)$
-			\item $f : A \to  C,\ g : B \to  D, \ p : \neg C + \neg  D \vdash \ ? :  \neg A + \neg  B$
-			\item $ a : A, \ f : \neg  A \vdash \ ? : \neg  B$
-			\item $f : A\rightarrow B, \ g : A \rightarrow \lnot B \vdash \ ? : \lnot  A$
+			\item $f : \lnot A \ \vdash \ (C \to A) \to \lnot C$
+			\item $t : A \times \lnot B \ \vdash \ \lnot (A \to B)$
+			\item $f : A \to  C, \  g : B \to  D, \ t : \neg C + \neg  D \vdash  \neg A+ \neg  B$
+			\item $ t : A, \ f : \neg  A\vdash  \neg  B$
+			\item $ f : A\rightarrow B, \  g : A\rightarrow \lnot B \vdash \lnot  A$
+			\item $f : A \to \lnot B \ \vdash \ B \to \lnot A$
+			\item $f : \lnot (A \times B) \ \vdash \ A \to \lnot B$
+			\item $t : A \ \vdash \ \lnot\lnot A$
+			\item $f : \lnot \lnot \lnot A \ \vdash \ \lnot A$
+			\item $t : \lnot A + \lnot B \vdash \lnot( A\times  B)$
+			\item $f : \lnot  A\times \lnot  B \ \vdash \lnot( A +  B)$
+			\item $f : \lnot( A +  B) \ \vdash \lnot  A\times \lnot  B$
+			\item $f : A \to \lnot B \ \vdash \ \lnot (A \times B)$
+			\item $\vdash \ \lnot\lnot (A + \lnot A)$
 		\end{enumerate}
 
+	\item Revisit Lab 1 and Lab 2. For each derivation in those labs, provide a proof-object witnessing a natural deduction of the sequent. You don't need to do any more derivations at this point!
 
+	\newpage
 	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
 	
 	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
@@ -169,8 +134,7 @@
 			\item What proof does the reduced proof-object correspond to?
 		\end{enumerate} 
 
-	\item Prove that the type $(A \to A) \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type.
-	$$ \cancel{\vdash} \ t : (A \to A) \to A$$		
+	\item Prove that the type $A + B \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type. Your proof should be an informal reason for why no such program can exist. You might refer to the corresponding minimal logic sequent to help your justification.	
 
 	 
 \end{enumerate}
