@@ -1,3 +1,4 @@
--- This module serves as the root of the `LogicLabs` library.
--- Import modules here that should be built as part of the library.
-import LogicLabs.Basic
+import LogicLabs.lab01
+import LogicLabs.lab02
+import LogicLabs.lab03
+import LogicLabs.lab05
