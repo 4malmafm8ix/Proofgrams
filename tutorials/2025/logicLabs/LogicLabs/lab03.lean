@@ -9,7 +9,7 @@ variable (A B C D : Prop)
 open Classical
 #check em A
 
--- em is actually a theorem in Lean.
+-- em is actually a **theorem** in Lean.
 -- Section 12.6 of Theorem Proving in Lean 4
 -- explains on what grounds one can *prove* LEM.
 -- See the following print statement for the proof-term.

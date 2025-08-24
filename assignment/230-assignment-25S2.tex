@@ -1,6 +1,7 @@
 \documentclass[12pt,letterpaper, onecolumn]{exam}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{hyperref}
 \usepackage[lmargin=71pt, tmargin=1.2in]{geometry}  %For centering solution box
 \lhead{Leaft Header\\}
 \rhead{Right Header\\}
@@ -20,37 +21,27 @@
 \printanswers
 \renewcommand{\solutiontitle}{\noindent\textbf{Ans:}\enspace}   %Replace "Ans:" with starting keyword in solution box
 
+
+
+In this assignment you will be using Lean 4 to formally verify theorems in logic and mathematics, as well as verifying programs about lists. 
+
+Lean 4 is a general purpose programming language whose type system is built on the work of logicians and early computer scientists that we have been studying in MATH230. In fact the type system is so rich that Lean doubles as both a programming language and a proof assistant. In this assignment we will focus on the use of Lean 4 as a proof assistant to formally verify the proofs we have written earlier in the course. 
+
+On Learn you have access to a (.zip) folder \emph{Formal} which is a Lean project. This project has three files formal/Prop.lean, formal/Peano.lean, and formal/List.lean. Each of these files have definitions and theorems about those definitions. It is your job to replace each occurance of ``sorry'' with a correct proof-term for that theorem. You may either write that proof-term explicitly, or make use of tactic mode to help write the proof-term. In all there are 30 theorems to be proved: 10 in Prop, 15 in Peano, and 5 in List. Each proof-term is with one mark, for a total of thirty marks.
+
+\vspace{2mm}
 \textbf{Instructions}
 
-\begin{questions}
+Download and unzip the folder Formal.zip from Learn and open it in VSCode. Enter proof-terms for each of the theorems stated. When you are ready to submit, you must zip the folder up, rename the folder Formal\_surname.zip (e.g. Formal\_Culling.zip) and upload this to the submission box on Learn.
 
-    \question[1 Mark] Q1?\droppoints
-    
-%    \begin{solution}
-%            A1.
-%    \end{solution}
-    
-    \question[2 Marks] Q2?
-    \begin{parts}
-        \part Part. a
-        \part Hint: These can be nested further\droppoints
-    \end{parts}
-    
-%    \begin{solution}
-%            A2.
-%        \begin{parts}
-%            \part Ans. for (a)
-%            \part Solution for (b)
-%        \end{parts}
-%    \end{solution}
+\vspace{2mm}
+\textbf{Getting Started with Lean4}
 
-    \pagebreak %Not necessary
-    
-    \question[Type anything here] Q3?\droppoints
-    
-    \begin{solution}
-            A3.
-    \end{solution}
-    
-\end{questions}
+It is recommended that you interact with Lean 4 through the VSCode interface. Each of the computers in the lab for MATH230 have access to VSCode and the Lean4 extension. If you would like to get Lean4 running on your personal computer, then you should download VSCode and the Lean 4 extension. Instructions for this can be found in lectures, in the labs, and at this \href{https://lean-lang.org/install/}{link}.\footnote{https://lean-lang.org/install/}
+
+\vspace{2mm}
+\textbf{Academic Integrity Statement}
+
+All of the code written in this assignment must be your own. You must not use an AI/LLM to generate answers to this assignment. You may talk with the lecturer, tutor, and peers in your class about the assignment. \href{https://leanprover.github.io/theorem_proving_in_lean4/}{Theorem Proving in Lean 4}\footnote{https://leanprover.github.io/theorem\_proving\_in\_lean4/} is an excellent reference to help with the work in this assignment. By submitting this assignment you are agreeing to this. The lecturer may ask for you to explain proofs provided, in person. 
+
 \end{document}
