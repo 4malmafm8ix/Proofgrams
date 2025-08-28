@@ -38,7 +38,7 @@
 
 \theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
 
-\title{Typed $\lambda$-Calculi}
+\title{Simply Typed $\lambda$-Calculus}
 \subtitle{Curry-Howard Correspondence}
 \author{MATH230}
 \institute{Te Kura P\=angarau \\ Te Whare W\=ananga o Waitaha}
@@ -68,9 +68,9 @@
 \begin{frame}
   \frametitle{Motivation}
 
-  	Type theory was originally formulated by Bertrand Russell and Gottlob Frege as a reaction to set theoretic paradoxes \cite{sep-type-theory}. 
+  	Type theory was originally formulated by Bertrand Russell and Gottlob Frege as a reaction to set theoretic paradoxes see the \href{https://plato.stanford.edu/entries/type-theory/}{Stanford Encyclopaedia article} on Type Theory for more on the historical development of the field. 
     
-    Alonso Church introduced it to the $\lambda$-calculus as a way to avoid meaningless computation, to ensure that computations don't get stuck. 
+    Alonso Church introduced it to the $\lambda$-calculus as a way to avoid unending meaningless computation, to ensure that computations don't get stuck. 
 
     %%%% Make this comment in lecture. Not needed in notes. 
     % We see this today in modern programming languages when we get errors like these thrown at us: 
@@ -97,19 +97,27 @@
 
   \begin{itemize}
     \item Base types e.g. Int, Bool, [Int] etc. 
-    \item Type constructors i.e. how to build new types.
+    \item Type constructors i.e. how to build new types from old.
   \end{itemize}
 
   These are language design choices: different type theories (programming languages) will have different base types and allow different type constructors. 
 
-  In this course we will primarily be interested in type constructors and writing programs, rather than specifying the nature of any particular type. We will follow \cite{thompson}. 
+  In this course we will primarily be interested in type constructors and writing programs, rather than specifying the nature of any particular type. We will follow \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Thompson}. 
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Type Declarations}
 
-  Given a set of base types, $\mathcal{B} = \{A,B,C,\dots\}$, we must associate any variable $a,b,c,\dots$ in a program to a specific type. We use capital English letters for type-varibles and lower-case English letters for term-variables. 
+  Given a set of base types, $\mathcal{B} = \{A,B,C,\dots\}$
+  
+  \begin{center}
+  
+  	A B C $\dots$ : Type
+  
+  \end{center}
+  
+  We must associate any variable $a,b,c,\dots$ in a program to a specific type. We use capital English letters for type-variables and lower-case English letters for term-variables. 
 
   We write type declarations as follows: 
   
@@ -119,22 +127,31 @@
   % Context can be thought of as "global" assignments. 
   % Later Gamma will have more interesting lambda terms in it. 
 
-  \vspace{2cm}
+  \vspace{30mm}
 
 \end{frame}
 
-
-
 \begin{frame}
-	\frametitle{Function Types}
+	\frametitle{Function Type: Formation}
 
   The $\lambda$-calculus is closed under abstraction and application, so we need a way to assign types to these $\lambda$-terms. 
   
   We have been interpreting $\lambda$-terms as functions, so we close our set of types under the following operation: if $A,B$ are types, then $(A\to B)$ is also a type, called a function type. 
+  
+  \vspace{5mm}
+  
+  \begin{center}
+  	$\begin{array}{c}
+  		\infer[]{A \to B  \ : \ \text{Type}}
+  			{A  \ : \ \text{Type}
+  			\hspace{10mm}&\hspace{10mm}
+  			 B  \ : \ \text{Type}}
+  	\end{array}$  
+  \end{center}
 
   {\bf Examples}
 
-  \vspace{4cm}
+  \vspace{30mm}
 
   % The terms of the simply typed $\lambda$-calculus are either variables or one of the following two forms: 
 
@@ -155,6 +172,7 @@
 
   We will now develop a calculus for programming in the simply typed $\lambda$-calculus so that we don't have any type errors. 
 
+	\vspace{50mm}
 
 \end{frame}
 
@@ -166,7 +184,11 @@
   $$\Sigma = \{x : A, \ f : A \to B, \ g : (A \to B) \to C\}$$
   % Type contexts can be thought of like modules you import at the start of a program.
 
-  We are interested in a number of questions in relation to the construction of terms, inhabiting particular types, in particular contexts. 
+	$\Sigma$ might be thought of has global variables, or modules/libraries, that we can use in our programs.
+
+ 	We are interested in a number of questions in relation to the construction of terms, inhabiting particular types, in particular contexts. 
+ 	
+ 	\vspace{30mm}
 
 \end{frame}
 
@@ -177,26 +199,27 @@
 
   $$\Sigma, x : A \ \vdash \ x : A$$
 
-  \vspace{2cm}
+  \vspace{10mm}
 
   \begin{center}
     $\begin{array}{c}
-        \infer[\text{Var}]{x : A}{\Sigma}
+        \infer[\text{Var}]{x : A}{}
     \end{array}$
   \end{center}
 
   % You can always call on terms declared in the type context. 
+  \vspace{40mm}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Typing Derivation: Application}
+  \frametitle{Function Type: Destructor}
 
   If we can write a function type $f: A \to B$ in a type context $\Sigma$ and we have a term of type $x : A$ in the same context $\Sigma$, then we can obtain the term $f \ x : B$ from the same context $\Sigma$. 
 
   If $\Sigma, \ f : A \to B, \ x : A \ \vdash \ f \ x : B$ by function application.
 
-  \vspace{2cm}
+  \vspace{10mm}
 
   \begin{center}
     $\begin{array}{c}
@@ -205,10 +228,12 @@
     \end{array}$
   \end{center}
 
+\vspace{30mm}
+
 \end{frame}
 
 \begin{frame}
-  \frametitle{Typing Derivation: Abstraction}
+  \frametitle{Function Type: Constructor}
 
   If we can derive a term $e : B$, which may contain the free variable $a:A$, from the context $\Sigma$, then we may \emph{abstract over the} $a : A$, to get the term $(\lambda x : A. \ e) : A \to B$ in the context $\Sigma \backslash \{a:A\}$ \emph{without the declaration} $a : A$. 
   
@@ -216,16 +241,18 @@
 
   If $\Sigma, x : A \vdash e : B$, then $\Sigma \vdash (\lambda x : A. \ e) : A \to B$
 
-  \vspace{2cm}
+  \vspace{5mm}
 
-  \begin{center}
-    $\begin{array}{c}
-        \infer[\lambda , 1]{(\lambda x : A. \ e) : A \to B}
-          {\deduce[\vdots]{e : B}{\cancel{[a : A]^{1}}}}
-    \end{array}$
-  \end{center}
+	\begin{center}		
+		$\begin{array}{c}		
+			\infer[\lambda 1]{\lambda x:A. \ e \ : \ A \to B}
+				{\begin{array}{c} \Sigma, \cancel{x \ : \ A} \\ \mathcal{D} \\ e \ : \ B \end{array}}
+		\end{array}$
+	\end{center}
   % If you can write a program that depends on an (arbitary) global variable, 
   % then you can take that global variable as input to a different function. 
+  
+  \vspace{20mm}
 
 \end{frame}
 
@@ -247,29 +274,31 @@
 
   We a say type $T$ is inhabited relative to a context $\Sigma$ if there exists a $\lambda$-term $t : T$ that can be derived from $\Sigma$ according to the typing derivations above. 
 
-  $$\Sigma \ \vdash \ t \ : \ T$$
+  $$\Sigma \ \vdash \ T$$
+  
+  This is the same idea as the previous slide, now with the emphasis on the type rather than the particular term.
 
-  {\bf Example} $$f : A \to B, \ a : A \ \vdash \ (f \ a) \ : \ B$$
+  {\bf Example} $$f : A \to B, \ a : A \ \vdash \ B$$
 
-  \vspace{3cm}
+  \vspace{30mm}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Example}
+  \frametitle{I Combinator}
 
   Show that the following type is inhabited: 
 
   $$ \vdash \ P \to P$$
 
-  \vspace{7cm}
+  \vspace{70mm}
 \end{frame}
 
 
 \begin{frame}
   \frametitle{Guiding Questions}
 
-  We may be tasked with any one of the following questions. If we are given a program, can we show it's well-typed? What context is required to do so? One might instead have a type and want to show that there is a program of that type!
+  We may be tasked with any one of the following questions. If we are given a program, can we show it is well-typed? What context is required to do so? One might instead have a type and want to show that there is a program of that type.
 
   \begin{center}
     $\begin{array}{l l l l l l}
@@ -281,34 +310,72 @@
       ? & \vdash & ? & : & ? & \hspace{1cm} \text{Find a context with a term of some type}
     \end{array}$
 \end{center}
+
+\vspace{50mm}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{K Combinator}
+
+  Show that the following type is inhabited:
+
+  $$  \vdash \ P \to (Q \to P)$$
+
+  \vspace{70mm}
+\end{frame}
+
+\begin{frame}
+	\frametitle{S Combinator}
+	% Show, by ad hoc means, that the $S$ combinator is well typed. 
+	
+	Prove that the \textbf{S} combinator can be well-typed: 	
+	$$\textbf{S}:= \ \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)$$
+	
+	% Both x y are function types that have the same domain, that of term z. 
+	% Set z : A
+	% The codomain of y has to the domain of (x \ z) 
+	% Set this to be B. 
+	% z : A and y : A -> B
+	% This leaves one free type variable C for x : A -> (B -> C)
+	% Overall this means the return type of S is C. 
+	% S : (A -> B -> C) -> (A -> B) -> (A -> C)
+	
+	\vspace{60mm}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{S Combinator}
+	% Show, using a typing derivation, that the $S$ combinator is well typed.
+	
+	Prove that the \textbf{S} combinator can be well-typed: 	
+	$$\textbf{S}:= \ \lambda x. \ \lambda y. \ \lambda z. \ x \ z \ (y \ z)$$
+	
+	% On this slide give a typing derivation of the type from the previous slide.
+	
+	\vspace{60mm}
+	
+	
 \end{frame}
 
 \begin{frame}
   \frametitle{Example}
 
-  Show that the following type is inhabited in the given context:
+  Show that the following type is inhabited:
+  $$ \vdash \ (A \to B) \to (B \to C) \to (A \to C)$$
 
-  $$ p : P \vdash \ ? \ : \ (Q \to P)$$
-
-  \vspace{7cm}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Example}
-
-  Show that the following type is inhabited in the given context:
-
-  $$ f : A \to (B \to C) \ \vdash \ ? \ : \ ((A \to B) \to (A \to C))$$
-
-  \vspace{7cm}
+  \vspace{70mm}
 \end{frame}
 
 \begin{frame}
   \frametitle{Explicit Lambda Types}
 
-  These $\lambda$-terms can be become unwieldy quickly. We can make them shorter by dropping explicit mention of the type of the variable in a $\lambda$ abstraction. Since this information is in the type signature of the term, we do not lose anything by doing this. 
+  These $\lambda$-terms with their type annotations can be become unwieldy quickly. We can make them shorter by dropping explicit mention of the type of the variable in an abstraction. Since this information is in the type signature of the term, we do not lose anything by doing this. 
+  
+  \tiny{$$\lambda x : (A \to B \to C). \ \lambda y : (A \to B). \ \lambda z : A. \ x \ z \ (y \ z) \ : (A \to B \to C) \to (A \to B) \to A \to C$$}
 
-  \vspace{5cm}
+  \vspace{50mm}
 
 \end{frame}
 
@@ -317,11 +384,13 @@
 \begin{frame}
   \frametitle{Motivation}
 
-  William Howard \cite{Howard1980} published \emph{The Formulae-as-Types Notion of Construction} in 1980 with the ultimate goal
+  William Howard published \emph{The Formulae-as-Types Notion of Construction} in 1980 with the ultimate goal
 
   \emph{... to develop a notion of construction suitable for the interpretation of intuitionistic mathematics.}
 
-  However, in so doing he also clarified ideas presented earlier by Haskell Curry (1958) and W. W. Tait (1965).
+  By intuitionistic mathematics, he meant the BHK. His goal was to realise the BHK in a formal system. In so doing he also clarified ideas presented earlier by Haskell Curry (1958) and W. W. Tait (1965).
+  
+  \vspace{40mm}
 
 \end{frame}
 
@@ -345,7 +414,7 @@
 
   \vspace{0.5cm}
 
-  This presentation is taken from the Standford Encyclopedia of Philosophy article by Bridges, Palmgren, and Ishihara \cite{sep-mathematics-constructive}.
+  This presentation is taken from the \href{https://plato.stanford.edu/entries/mathematics-constructive/}{Standford Encyclopedia of Philosophy} article by Bridges, Palmgren, and Ishihara.
 \end{frame}
 
 \begin{frame}
@@ -356,16 +425,16 @@
     William Howard (following Curry 1958) knew the simply typed $\lambda$-calculus could provide a concrete meaning to the word \emph{algorithm} used in the BHK. 
 
     He observed that if the types $P,Q, P\to Q$ of the simply typed $\lambda$-calculus were thought of as propositions, then the derivation of a term $f : P \to Q$ is equivalent to an intuitionistic implicational proof of the proposition $P \to Q$. 
+    
+    Moreover, if we interpret a term $x : P$ to represent a proof of $P$ as a proposition, then $f : P \to Q$ really is a function that takes a proof of $P$ and, by beta reduction, will return a proof $Q$.
 \end{frame}
 
 \begin{frame}
   \frametitle{Example}
 
-  Hello Maia this a change to the file.
-
   $$\vdash \ P \to P$$
 
-  \vspace{1cm}
+  \vspace{10mm}
 
   \begin{center}
     $\begin{array}{l c r}
@@ -376,7 +445,7 @@
       \end{array}
 
       &
-      \hspace{1cm}
+      \hspace{10mm}
       &
       
       \begin{array}{c}
@@ -387,7 +456,9 @@
     \end{array}$
   \end{center}
 
-  \vspace{2.5cm}
+  \vspace{25mm}
+  
+  The \textbf{I} combinator is a witness to the fact that $P \to P$ is a tautology.
 \end{frame}
 
 \begin{frame}
@@ -395,7 +466,7 @@
 
   $$P \ \vdash \ Q \to P$$
 
-  \vspace{1cm}
+  \vspace{10mm}
 
   \begin{center}
     $\begin{array}{l c r}
@@ -406,7 +477,7 @@
       \end{array}
 
       &
-      \hspace{1cm}
+      \hspace{10mm}
       &
       
       \begin{array}{c}
@@ -417,7 +488,9 @@
     \end{array}$
   \end{center}
 
-  \vspace{2.5cm}
+  \vspace{25mm}
+  
+  We call the term $\lambda x : Q. \ p$ the proof-object of the corresponding natural deduction.
 \end{frame}
 
 \begin{frame}
@@ -430,17 +503,20 @@
       Natural Deduction & Simply Typed $\lambda$-calculus \\
       \hline
       Proposition $P$ & Type $P$ \\
+      P $\to$ Q : Prop & P $\to$ Q : Type \\
       $\to$ Introduction & $\lambda$ Abstraction\\
       Modus Ponens & Function Application \\
       Proof of $P$ & Term $t$ of type $P$
     \end{tabular}
   \end{center}
 
-  We can state the following concrete metatheorem connecting theorems of positive minimal implicational logic and programs in the simply typed $\lambda$-calculus.
+  We can state the following concrete metatheorem connecting theorems of positive minimal \underline{implicational} logic and programs in the simply typed $\lambda$-calculus.
 
-  {\bf Theorem}$$ \Sigma \ \vdash_{IPL} \alpha \ \ \ \leftrightarrow \ \ \ \Sigma \ \vdash_{\lambda_{\to}} t \ : \ \alpha$$
+  {\bf Theorem}$$ \Sigma \ \vdash_{\text{PIL}} \alpha \ \ \ \leftrightarrow \ \ \ \Sigma \ \vdash_{\lambda_{\to}} t \ : \ \alpha$$
 
-  This first appeared in Curry (1958) \cite{curryCombinatoryLogic} and in a form closer to our notation in Howard (1980).
+  This first appeared in Curry (1958) and in a form closer to our notation in Howard (published 1980, manuscript circulated 1969).
+  % Curry-Howard is a bit richer than this, because it distinguishes between proofs!
+  % It is not just that if one sequent is provable, then the other is; it's the each proof on one side corresponds to a proof on the other.
 \end{frame}
 
 \begin{frame}
@@ -473,24 +549,52 @@
 
     \end{array}$
   \end{center}
+  
+  The \textbf{K} combinator is a proof-term (witness) of this theorem.
+  
 \end{frame}
 
 \begin{frame}
-  \frametitle{Example}
+  \frametitle{Illustration of Correspondence}
 
   $$ A \to B, \ \ B \to C \ \vdash A \ \to C$$
-
-  \vspace{6.5cm}
+  
+  % Write the ND in lecture first. 
+  % Then go back over that and annotate with lambda terms. 
+  
+%  \begin{center}
+%  	$\begin{array}{c}
+%  		\infer[\to I,1]{A \to C}
+%  			{\infer[\MP]{C}
+%  				{\infer[\MP]{B}
+%  					{\infer[1]{A}{}
+%  					&
+%  					A \to B}
+%  				&
+%  				B \to C}}
+%  	\end{array}$  
+%  \end{center}
+  
+  	\vspace{70mm}
+  
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Example}
+\begin{frame}
+	\frametitle{Illustration of Correspondence}
+	
+	Reconstruct the proof corresponding to the following term: 
+	$$\lambda f. \ \lambda g. \ g \ (f \ g) \ : \ ((A \to B) \to A) \to ((A \to B) \to B)$$
+	
+	% Types give the types of abs; these are local variables. 
+	% Working inside out on the terms gives the steps in the proof.
+	
+	\vspace{60mm}
+	
+	\textbf{$\lambda$-terms encode proofs. They \underline{are} proofs.}
 
-%   $$A \to (B \to C) \ \vdash \ (A \to B) \to (A \to C)$$
+\end{frame}
 
 
-%   \vspace{6.5cm}
-% \end{frame}
 
 \begin{frame}
   \frametitle{Proofs = Programs}
@@ -501,7 +605,7 @@
 
   {\bf Question:} How does this compare to BHK interpretation of proofs of implication?
 
-  \vspace{3cm}
+  \vspace{50mm}
 \end{frame}
 
 \begin{frame}
@@ -509,13 +613,18 @@
 
   Curry and Howard showed positive minimal implication proofs correspond to programs in the simply typed $\lambda$-calculus. 
   
-  In his paper, Howard extended the simply typed $\lambda$-calculus to include type constructors and destructors corresponding to the other propositional connectives \cite{Howard1980}. 
+  In his paper, Howard (1980) extended the simply typed $\lambda$-calculus to include type constructors and destructors corresponding to the other propositional connectives. 
 
   This extended type theory is referred to as \emph{simple type theory}, to distinguish it from dependent type theory. We may also refer to it as \emph{Intuitionistic Type Theory.} 
+  
+  \vspace{40mm}
+  
 \end{frame}
 
 \begin{frame}
   \frametitle{Curry-Howard Correspondence}
+
+	We will give a type theoretic interpretation of each propositional connective with a type former, constructor, and destructor. Along with computation rules for the corresponding redex.
 
   \begin{center}
     \begin{tabular}{l|l}
@@ -531,17 +640,39 @@
     \end{tabular}
   \end{center}
 
-  We will follow a modern formulation of these ideas from Simon Thompson's \emph{Type Theory and Functional Programming} \cite{thompson}.
+  We will follow a modern formulation of these ideas from \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Simon Thompson}. 
+  
+  \vspace{20mm}
+  
 \end{frame}
 
 \begin{frame}
   \frametitle{Product Type: Formation}
 
-  Given any two types $P,Q$ we may form another type   
-  $$P \times Q$$
-  We close our set of types under this operation.
+  Given any two types $P,Q$ we may form another type $P \times Q$ : Type.
+  
+	\vspace{5mm}
 
-  Given inhabited types $p : P$ and $q : Q$ we form a term of the product type as follows: 
+    \begin{center}
+  	$\begin{array}{c}
+  		\infer[]{A \times B  \ : \ \text{Type}}
+  			{A  \ : \ \text{Type}
+  			\hspace{10mm}&\hspace{10mm}
+  			 B  \ : \ \text{Type}}
+  	\end{array}$  
+  \end{center}
+  
+  \textbf{Examples}
+  
+  \vspace{50mm}
+  
+  \end{frame}
+  
+  
+  \begin{frame}
+  	\frametitle{Product Type: Constructor}  
+  
+    Given inhabited types $p : P$ and $q : Q$ we form a term of the product type as follows: 
 
   \begin{center}
     $\begin{array}{c}		
@@ -550,44 +681,41 @@
     \end{array}$
   \end{center}
 
-  \vspace{0.5cm}
-
   To construct a term of type $P \times Q$ a program needs to provide a term $p :P$ {\bf and} a term $q : Q$. 
+  
+  \vspace{50mm}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Product Type: Elimination}
+ \frametitle{Product Type: Destructor}
 
-  The product type has two destructors that form terms of the component types. These are FST (FirST) and SND (SecoND). 
+ The product type has two destructors that form terms of the component types. These are FST (FirST) and SND (SecoND). 
 
-  \begin{center}
-    $\begin{array}{c c c}
-      \infer[\text{\fst}]{\fst \ (a,b) \ : \ A}{(a,b) \ : \ A\times B}
+ \begin{center}
+   $\begin{array}{c c c}
+     \infer[\text{\fst}]{\fst \ (a,b) \ : \ A}{(a,b) \ : \ A\times B}
 
-      &
-      \quad
-      &
+     &
+     \quad
+     &
 
-      \infer[\text{\snd}]{\snd \ (a,b) \ : \ B}{(a,b) \ : \ A\times B}
+     \infer[\text{\snd}]{\snd \ (a,b) \ : \ B}{(a,b) \ : \ A\times B}
 
-    \end{array}$
-  \end{center}
+   \end{array}$
+ \end{center}
 
-\end{frame}
+ With these new terms we have to say how computations work i.e. what are the $\beta$ reduction rules for $\fst, \snd$?
 
-\begin{frame}
-  \frametitle{Product Type: Computation}
+ \begin{center}
+   $\fst (a,b) =_{\beta} a$ 
 
-  With these new terms we have to say how computations work i.e. what are the $\beta$ reduction rules for $\fst, \snd$?
+   $\snd (a,b) =_{\beta} b$ 
+ \end{center}
 
-  \begin{center}
-    $\fst (a,b) =_{\beta} a$ 
-
-    $\snd (a,b) =_{\beta} b$ 
-  \end{center}
-
-  If these terms appear in any program, then they are $\beta$-redex that can be $\beta$-reduced according to these equations.
+ If these terms appear in any program, then they are $\beta$-redex that can be $\beta$-reduced according to these equations.
+ 
+ \vspace{25mm}
 
 \end{frame}
 
@@ -615,26 +743,36 @@
     $\begin{array}{c}
       \infer[\lambda, 1]{(\lambda y : A\times B. \ (\snd y) \ (\fst y)) \ : \ (A\times B)\to(B \times A)}
         {\infer[\times]{(\snd x, \fst x) \ : \ B \times A}
-          {\infer[\snd]{\snd x \ : \ B}{\infer[1]{\cancel{x \ : \ A\times B}}{}} \quad & \quad \infer[\fst]{\fst x \ : \ A}{\infer[1]{\cancel{x \ : \ A\times B}}{}}}}
+          {\infer[\snd]{\snd x \ : \ B}{\infer[1]{x \ : \ A\times B}{}} \quad & \quad \infer[\fst]{\fst x \ : \ A}{\infer[1]{x \ : \ A\times B}{}}}}
     \end{array}$
   \end{center}
 
-  \vspace{0.5cm}
+  \vspace{5mm}
 
   {\bf Question:} If this proof is a program, then what does it do? 
 
-  \vspace{2cm}
+  \vspace{30mm}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Example}
+  \frametitle{Product is Associative}
 
   Show that the following type is inhabited:
+  $$ \vdash \ (A \times B) \times C \to A \times (B \times C)$$
 
+  \vspace{70mm}
+
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Currying}
+
+  Show that the following type is inhabited:
   $$ \vdash \ (A \times B \to C) \to (A \to (B \to C))$$
 
-  \vspace{6.5cm}
+  \vspace{70mm}
 
 
 \end{frame}
@@ -642,13 +780,26 @@
 \begin{frame}
   \frametitle{Coproduct Type: Formation}
 
-  Given any two types $P,Q$ we may form another type   
-  $$P + Q$$
-  We close our set of types under this operation.
+  Given any two types $P,Q$ we may form another type $P + Q$ : Type
+     \begin{center}
+  	$\begin{array}{c}
+  		\infer[]{A + B  \ : \ \text{Type}}
+  			{A  \ : \ \text{Type}
+  			\hspace{10mm}&\hspace{10mm}
+  			 B  \ : \ \text{Type}}
+  	\end{array}$  
+  \end{center}
 
-  Given types $P,Q$ we construct a term of the coproduct $P+Q$ given either a term $p : P$ or a term $q : Q$. 
+	\textbf{Examples}
 
-  \vspace{0.5cm}
+\vspace{50mm}
+  
+  \end{frame}
+  
+  \begin{frame}
+  \frametitle{Coproduct Type: Constructors}
+  
+  There are two constructors for the coproduct of two types.
 
   \begin{center}
     $\begin{array}{c c c}
@@ -669,6 +820,8 @@
 
   % The coproduct of two types is a "loose bag" labelled A+B. In order to put something in the bag it must either be from A or B and it must be labelled as to which it came from. 
 
+	\vspace{50mm}
+
 \end{frame}
 
 \begin{frame}
@@ -676,7 +829,7 @@
 
   The coproduct has one destructor which takes into account the two possible forms a term $x : P + Q$ could take. 
   
-  \vspace{0.5cm}
+  \vspace{5mm}
 
   \begin{center}
     $\begin{array}{c}
@@ -684,10 +837,7 @@
     \end{array}$
   \end{center}
 
-\end{frame}
-
-\begin{frame}
-  \frametitle{Coproduct Type: Computation}
+\vspace{5mm}
 
   There are two possibilities which correspond to whether the term $x$ of $P+Q$ is of the form $x = \inl p$ or $x = \inr q$. 
 
@@ -697,22 +847,17 @@
     $\sumElim (\inr q) \ a \ b =_{\beta} b \ q$
   \end{center}
 
-  If these terms appear in any program, then they are $\beta$-redex that can be $\beta$-reduced according to the these equations. 
-
-  \vspace{0.5cm}
-  
-  When writing a program with input $t : P+Q$ we have to know what type the element $t$ came from: either $P$ or $Q$. The two constructors ``inl'' and ``inr" act as tags for the program to know how to treat $t : P+Q$. 
+  If these terms appear in any program, then they are $\beta$-redex that can be $\beta$-reduced according to the these equations. When writing a program with input $t : P+Q$ we have to know what type the element $t$ came from: either $P$ or $Q$. The two constructors ``inl'' and ``inr'' act as tags for the program to know how to treat $t : P+Q$. 
 \end{frame}
 
 \begin{frame}
   \frametitle{Example}
 
   Show that the following type is inhabited:
-
   $$ \vdash \ (A \times B) \to (A + B)$$
   
 
-  \vspace{5cm}
+  \vspace{50mm}
   Can you give another proof?
 \end{frame}
 
@@ -779,9 +924,11 @@
       Proposition $P$ & Type $P$ \\
       Proof & Program \\
       $\to$ & Function type \\
+      $\to I$ & $\lambda$ \\
+      $\MP$ & app \\
       $\land$ & $\times$ \\
-      $\land E_{l}$ & FST \\
-      $\land E_{r}$ & SND \\
+      $\land E_{l}$ & fst \\
+      $\land E_{r}$ & snd \\
       $\lor$ & $+$\\ 
       $\lor I_{l}$ & inl \\
       $\lor I_{r}$ & inr \\
@@ -789,7 +936,7 @@
     \end{tabular}
   \end{center}
   
-  See Simon Thompson \emph{Type Theory and Functional Programming} \cite{thompson} and Thorsten Altenkirch \emph{Naive Type Theory} \cite{naiveTT} for more details.
+  See \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Simon Thompson} and \href{https://people.cs.nott.ac.uk/psztxa/publ/fomus19.pdf}{Naive Type Theory, Thorsten Altenkirch} for more details.
 \end{frame}
 
 \begin{frame}
@@ -797,7 +944,9 @@
 
   Inhabited types of so-called \emph{simple type theory} are therefore in one-to-one correspondence with the theorems of positive minimal logic. 
 
-  $$ \vdash t : P \hspace{1cm} \text{if and only if } \hspace{1cm} \vdash P$$
+  $$ \vdash_{\text{STLC}} P \hspace{1cm} \text{if and only if } \hspace{10mm} \vdash_{\text{ML}} P$$
+  
+  Moreover, each natural deduction of a theorem $P$ corresponds to a different $\lambda$-term. This isomorphism is not just capturing whether there is a natural deduction, or typing derivation, it is transferring specific deductions to the other side. In this sense the correspondence is proof-relevant. The proofs matter and are transported from logic to type theory and back again.
 
 \end{frame}
 
@@ -816,6 +965,10 @@
   % Pick a contingent statement and show that this type is uninhabited.
   Show that the following type is uninhabited:
   $$ \cancel{\vdash} \ (A + B) \to B$$ 
+  
+  % (i) inl a : A + B... no B in sight 
+  % (ii) Consider the following logical theorem. 
+  % (iii) not a classical tautology, therefore not provable with classical logic.
 
   \vspace{6cm}
 
@@ -836,32 +989,48 @@
 
   There is a precise correspondence between typed programs and natural deductions in the positive part of minimal logic. 
 
-  \vspace{0.5cm}
+  \vspace{5mm}
 
   Propositions are types. Proofs are programs. Propositional connectives are type formation rules. Rules of inference are term constructors/destructors. 
 
-  \vspace{0.5cm}
+  \vspace{5mm}
 
   How far do these ideas extend beyond positive minimal logic? Is there a type corresponding to the proposition $\bot$? Or, the negation type? Can we make type theoretic sense of the propositional rules of inference ex falso and reductio ad absurdrum? 
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{False Type}
+  \frametitle{Empty Type: Formation}
 
   We add to our type theory the type $\bot$ corresponding to the proposition denoted by the same symbol. 
-
-  \vspace{0.5cm}
+  
+  $$ \bot \ : \ \text{Type} $$
 
   Following the Curry-Howard correspondence:
   
   $$ \vdash t : P \hspace{1cm} \text{if and only if} \hspace{1cm} \vdash P$$
   
-  if the type $\bot$ is generally inhabited, then it would necessarily be a theorem of propositional minimal logic. It is not a theorem of propositional minimal logic. Therefore, the type $\bot$ should be considered generally uninhabited.
-
-  \vspace{0.5cm}
+  If the type $\bot$ is generally inhabited, then it would necessarily be a theorem of propositional minimal logic. It is not a theorem of propositional minimal logic. Therefore, the type $\bot$ should be considered uninhabited. Hence we will refer to it at as the empty type.
 
   In other words, the type $\bot$ has {\bf no introduction rule.} 
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Empty Type: Destructor}
+
+  Destructors tell us how to write a program out of the given type. What do we need to provide in order to write a program out of the empty type? Nothing! There is no input to deal with, so we simply return what ever we want!
+
+  \begin{center}		
+		$\begin{array}{c}		
+		\infer[\bot \text{E}]{\abort_{A}(t) \ : \ A}
+		{\begin{array}{c} t \ : \ \bot \end{array}}
+		\end{array}$
+	\end{center}
+
+  If a program context $\Sigma$ allows for the derivation of a term $t$ of type $\bot$, then this rule states that the program can construct a term of any type. This term records the derivation, $t$, of the type $\bot$ and tags it with ``abort'' to acknowledge this. That's all it does. There are no computation rules for the constructor $\abort_{T}$ for any type $T$. We may think of $\abort_{A}(t)$ as a record that the program has crashed. The type of an error. 
+    
+  This is the type theoretic interpretation of Ex Falso. 
 
 \end{frame}
 
@@ -889,51 +1058,9 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Contexts and $\bot$}
-
-  Although there is no introduction rule for $\bot$, we know that contradictory contexts may still derive terms of type $\bot$. Just as contradictory hypotheses can derive the False proposition $\bot$. 
-
-  \vspace{0.5cm}
-
-  In some programs/proofs the $\bot$ type/proposition gets tucked away in a negation using $\lambda$/implication introduction. As in the previous example. 
-
-  \vspace{0.5cm}
-
-  Although in other proofs there are rules of inference relating to the elimination of $\bot$ by other means. Namely, \emph{ex falso} and \emph{reductio ad absurdum}. What can we make of these logical rules on the side of type theory?
-\end{frame}
-
-\begin{frame}
-  \frametitle{Ex Falso}
-
-  The $\bot$ elimination rule follows from the \emph{ex falso} rule of inference.
-  
-  \vspace{0.5cm}
-
-  \begin{center}		
-		$\begin{array}{c}		
-		\infer[\bot \text{E}]{\abort_{A}(t) \ : \ A}
-		{\begin{array}{c} t \ : \ \bot \end{array}}
-		\end{array}$
-	\end{center}
-
-  If a program context allows for the derivation of a term $t$ of type $\bot$, then this rule states that the program can construct a term of any type.
-
-  \vspace{0.5cm}
-
-  This term records the derivation, $t$, of the type $\bot$ and tags it with ``abort'' to acknowledge this. That's all it does. There are no computation rules for the constructor $\abort_{T}$ for any type $T$. 
-
-  \vspace{0.5cm}
-
-  We may think of $\abort_{A}(t)$ as a record that the program has crashed. The type of an error. 
-
-\end{frame}
-
-
-\begin{frame}
   \frametitle{Example}
 
   Derive a proof object witnessing the proof of the sequent: 
-
   $$ \lnot A \lor B \ \vdash \ A \to B$$
 
   \vspace{5cm}
@@ -944,7 +1071,6 @@
   \frametitle{Example}
 
   Derive a proof object witnessing the proof of the sequent: 
-
   $$ \vdash \ \lnot(Q \to P) \to (P \to Q)$$
 
   \vspace{5cm}
@@ -952,11 +1078,30 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Curry-Howard for Classical Logic}
+  \frametitle{Curry-Howard Correspondence}
 
-  The following slides are a discussion about extending these ideas from the intuitionistic setting they were founded in to classical propositional logic. 
+	We have therefore a type theoretic interpretation of intuitionistic propositional logic. Can this be extended to classical logic?
 
-  Extending in this way has consequences for the interpretation of the proof-objects obtained.
+  \begin{center}
+    \begin{tabular}{l|l}
+      Logic & Type Theory \\
+      \hline
+      Proposition $P$ & Type $P$ \\
+      Proof & Program \\
+      $\to$ & Function type \\
+      $\to I$ & $\lambda$ \\
+      $\MP$ & app \\
+      $\land$ & $\times$ \\
+      $\land E_{l}$ & fst \\
+      $\land E_{r}$ & snd \\
+      $\lor$ & $+$\\ 
+      $\lor I_{l}$ & inl \\
+      $\lor I_{r}$ & inr \\
+      $\lor E$ & cases  \\
+      Falsum & Empty Type \\
+      XF & $\bot$E
+    \end{tabular}
+  \end{center}
 
 \end{frame}
 
@@ -973,9 +1118,7 @@
     \end{tabular}
   \end{center}
 
-  If we could extend the propositions-as-types idea to include classical logic, then types of the form $P \lor \lnot P$ would be inhabited for each proposition $P$. 
-
-  Following the classical proof of LEM given earlier in the course, these proof-objects could not give us a proof befitting the BHK i.e. would not tell us which of $P$ or $\lnot P$ is true. 
+  If we could extend the propositions-as-types idea to include classical logic, then types of the form $P + \lnot P$ would be inhabited for each proposition $P$. Following the classical proof of LEM given earlier in the course, these proof-objects could not give us a proof befitting the BHK i.e. would not tell us whether the term is of the form $\inl P$ or $\inr \lnot P$.
   % So something has to give if we extend this to classical logic. 
 
 \end{frame}
@@ -986,33 +1129,29 @@
   % The author of this .tex file knows nothing about the paper. 
   % This slide is here to communicate the existence of the idea to the student.
 
-  In 1990 Timothy Griffin wrote the paper \emph{A Formulae-as-Types Notion of Control} \cite{griffin}. In this paper he proves that the programming language \emph{Typed Idealized Scheme} allows for programs to be extracted from classical proofs.
+  In 1990 Timothy Griffin wrote the paper \emph{A Formulae-as-Types Notion of Control}. In this paper he proves that the programming language \emph{Typed Idealized Scheme} allows for programs to be extracted from classical proofs.
 
   \vspace{0.5cm}
 
   He states:
 
-  \emph{It is shown that classical proofs posses computational content when the notion of computation is extended to include explicit access to the current control context.}
+  \emph{It is shown that classical proofs possess computational content when the notion of computation is extended to include explicit access to the current control context.}
 
-  More about this in Chapter 6 of S\o rensen and Urzyczyn \cite{LoCHI}.
-
+ More about this in Chapter 6 of S\o rensen and Urzyczyn, \emph{Lectures on the Curry-Howard Isomorphism}.
 
 \end{frame}
 
 \begin{frame}
   \frametitle{Double Negation Translation}
 
-
-
-  For a different point-of-view on the computational content of classical theorems, recall that we can characterise the barrier between classical and intuitionistic logic as the use of double negation elimination. The following meta-theorem states exactly that: 
-
-  $$\text{{\bf Theorem:}} \hspace{0.5cm} \Sigma \vdash_{C} \ P \hspace{0.5cm} \text{ if and only if } \hspace{0.5cm} \Sigma \vdash_{I} \lnot\lnot P$$
+  For a different point-of-view on the computational content of classical theorems, recall that we can characterise the barrier between classical and intuitionistic logic as the use of double negation elimination.
+  $$\text{{\bf Meta-Theorem:}} \hspace{0.5cm} \Sigma \vdash_{C} \ P \hspace{0.5cm} \text{ if and only if } \hspace{0.5cm} \Sigma \vdash_{I} \lnot\lnot P$$
 
   For any classical theorem $P$, there is a proof-object witnessing an intuitionistic proof of $\lnot \lnot P$. 
 
   \vspace{0.5cm}
 
-  In this sense there is computational content, consistent with the Curry-Howard correspondence, in every classical theorem up-to the point one uses double negation elimination. 
+  In this sense there is computational content, consistent with the Curry-Howard correspondence, in every classical theorem up-to the point one uses double negation elimination or some other equivalent mode of classical reasoning.
   % This is different to Griffin's comment about continuations. 
 
 \end{frame}
@@ -1021,8 +1160,13 @@
   \frametitle{Example}
 
   Write a proof-object witnessing the intuitionistic theorem: $$ \vdash \ \lnot \lnot (P \lor \lnot P)$$
+  
+  % Write the natural deduction first. 
+  % Annotate it with terms. 
+  % Highlight the proof-term of notnot-LEM.
 
-  \vspace{5cm}
+  \vspace{60mm}
+  
   {\bf One \underline{cannot} \emph{refute} the law of excluded middle.}
 \end{frame}
 
@@ -1033,12 +1177,9 @@
 
   Can these languages check proofs of mathematical theorems? 
   
-  We have seen that first-order predicate logic is enough to express some areas of mathematics and prove mathematical theorems. Therefore, an interpretation of first-order logic in the theory of types would provide a language for doing mathematics where (i) theorem statements are types, and (ii) proofs of those theorems are terms of the corresponding type. 
-
-  $$\forall x \ s(x) = x + 1$$
-  % Give a computational interpretation of this. 
-
-  Per Martin-L\"{o}f (student of Andrey Kolmogorov, K of the BHK) and others have developed \emph{dependent type theory} which does this. Moreover modern programming languages have implemented these ideas. 
+  We have seen that first-order predicate logic is enough to express some areas of mathematics and prove \underline{mathematical} theorems. Therefore, an interpretation of first-order logic in the theory of types would provide a language for doing mathematics where (i) theorem statements are types, and (ii) proofs of those theorems are terms of the corresponding type. 
+  $$\forall x \ : \ \mathbb{N}, \ s(x) = x + 1 \ : \ \text{Type}$$  % Give a computational interpretation of this. 
+  Per Martin-L\"{o}f (student of Andrey Kolmogorov, K of the BHK) and others have developed \emph{dependent type theory} which does this. Moreover modern programming languages have implemented these ideas in what are known as \emph{proof assistants}.
 
   % Mathematicians can now write and check their theorems and proofs on a computer using these languages!
 
@@ -1049,7 +1190,7 @@
 
   % This slide is spoken from a point-of-view that is not exactly my own... 
   % I don't believe it... but I see the point of people who make it. 
-  Mathematicians can be forgiven for not wanting to do natural deductions to prove all their theorems; it's cumbersome and the interesting ideas are often hidden in a sea of uninteresting details. 
+  Mathematicians might be forgiven for not wanting to do natural deductions to prove all their theorems; it is cumbersome and the interesting ideas are often hidden in a sea of uninteresting details. 
 
   % I'd say the ideas aren't hidden. The mathematician would have all the ideas to come up with the theorem statement and proof technique in the first place. The ideas are all still there, it's just that they aren't explicitly stated in this presentation of the proof. 
 
@@ -1057,6 +1198,8 @@
   % Peter Scholze, Kevin Buzzard, Thomas Hales... 
 
   We might be at an inflection point for the rate of adoption of these formal methods. 
+  
+  \vspace{40mm}
 \end{frame}
 
 \begin{frame}
@@ -1077,6 +1220,8 @@
 
   % Still at the research level
   % Haskell, Agda, Coq, Isabelle, HoL, Lean... 
+  
+  \vspace{30mm}
 
 \end{frame}
 
@@ -1092,14 +1237,8 @@
     \item Consistent, 
     \item Decidable by an algorithm. 
   \end{itemize}
-\end{frame}
 
-\begin{frame}
-  \frametitle{Metamathematical Landmarks}
-
-  Along the way first-order logic and two ideas about proof and consequence were developed. G\"{o}del's completeness theorem showed them to be equivalent. 
-
-  G\"{o}del then showed that PA is not completable and that there can be no finitary proof that PA is consistent. 
+  G\"{o}del showed that PA is not completable and that there can be no finitary proof that PA is consistent. 
 
   Turing and Church showed that decidability by an algorithm is impossible for theorems of first-order logic. 
 
@@ -1111,9 +1250,9 @@
 
   ... But a great number of interesting ideas were developed along the way that have had an effect on mathematics and society. 
 
-  These developments have all happened alongside engineering of machines that can carry out computation at a great scale. Many of the mathematical models of computation fed into both the design of machines and the design of the languages we use to talk to the machines!
+  These theoretical developments have all happened in parallel with the engineering of machines that can carry out computation at a great scale. Many of the mathematical models of computation fed into both the design of machines and the design of the languages we use to talk to the machines!
 
-  Although Turing and Church showed that we can't have an algorithm for deciding theoremhood, we do now have machines that can help us write and check the proofs of theorems. Moreover, large parts of this process can now be automated by these machines. 
+  Although Turing and Church showed that we can't have an algorithm for deciding theoremhood, we do now have machines that can help us write and check the proofs of theorems. Moreover, parts of this process \underline{can} be automated by these machines. 
 \end{frame}
 
 
@@ -1122,8 +1261,16 @@
 	
     This lecture was prepared with the aid of the following references. 
     These should be consulted for further detail on the topics. 
-
-    \printbibliography
+    
+    Stanford Encyclopaedia of Philosophy Articles: \href{https://plato.stanford.edu/entries/type-theory/}{Type Theory}, \href{https://plato.stanford.edu/entries/type-theory-intuitionistic/}{Intuitionistic Type Theory}, and \href{https://plato.stanford.edu/entries/mathematics-constructive/}{Constructive Mathematics}. 
+    
+    \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Simon Thompson}
+    
+    \href{https://people.cs.nott.ac.uk/psztxa/publ/fomus19.pdf}{Naive Type Theory, Thorsten Altenkirch}
+    
+    Each of these are freely available on the world wide web.
+    
+    \vspace{50mm}    
 	
 \end{frame}
 \end{document}

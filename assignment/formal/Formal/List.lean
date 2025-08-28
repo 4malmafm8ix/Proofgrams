@@ -6,12 +6,6 @@ inductive List (α : Type) where
 
 open List
 
--- This function counts the cons' to compute length.
-def length {α : Type} (as : List α) : Nat :=
-  match as with
-  | null      => 0
-  | cons _ as => 1 + (length as)
-
 -- This function appends one list onto another.
 def append {α : Type} (as bs : List α) : List α :=
   match as with
