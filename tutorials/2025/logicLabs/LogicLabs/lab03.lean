@@ -21,6 +21,8 @@ open Classical
 -- Or.elim (em A) will suffice for each of these exercises.
 
 -- Section 3.5 of TPiL4 explains more about proving classical theorems.
+-- There are other keywords and tactics to help structure a proof
+-- that uses classical reasoning.
 
 theorem Q1 (f : ¬(A ∧ B)) : ¬A ∨ ¬B :=
   sorry

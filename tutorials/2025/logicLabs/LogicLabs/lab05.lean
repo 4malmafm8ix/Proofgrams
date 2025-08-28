@@ -145,6 +145,10 @@ def divides (m n : ℕ) := (m ≠ zero) ∧ (∃ x : ℕ, n = m * x)
 -- This is typed "\ mid" without the space.
 infix:50 " ∣ " => divides
 
+-- Things are getting complicated enough now that it is
+-- best to write an informal pencil-and-paper proof and
+-- figure out which intermediate lemma will be helpful.
+
 theorem divisibility_reflexive :
   ∀ x : ℕ, x ≠ zero → x ∣ x :=
     sorry
