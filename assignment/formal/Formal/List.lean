@@ -63,6 +63,8 @@ theorem rev_rev {α : Type} :
   ∀ xs : List α,
   reverse (reverse xs) = xs :=
     sorry
+
+
 -- Don't write any code after this end Formal.list line.
 -- Or else Lean won't know what you're talking about!
 end Formal.List

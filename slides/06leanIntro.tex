@@ -63,6 +63,23 @@
 
 \end{frame}
 
+\begin{frame}
+\frametitle{Curry-Howard Correspondence}
+
+$$\Sigma \vdash_{\text{I}} \alpha \ \iff \ \Sigma \vdash_{\text{STT}} \alpha$$
+
+Each natural deduction of $\alpha$ from hypotheses $\Sigma$ is equivalent to a program of type $\alpha$ in the context $\Sigma$.
+
+This suggests that we should be able to develop a programming language for which:
+
+\begin{itemize}
+	\item Propositions are particular types in that language,
+	\item The programs inhabitating those types are the proofs of the corresponding proposition,
+	\item Proofs can be validated by type checking, and
+	\item Proof authoring can be helped by higher-order programs.
+\end{itemize}
+\end{frame}
+
 \section{Lean}
 
 \begin{frame}
@@ -75,20 +92,12 @@ Lean is not the only language to implement the theoretical ideas that we have di
 \begin{frame}
 \frametitle{Getting Started}
 
-It is simplest to run Lean through the editor VS Code. Following the instructions at this link shows you how to do this. There are plugins for other editors, if you're that way inclined. However, if you're very new to programming, then it is recommended you stick to VSCode. This is the setup available in the computer labs of Jack Erskine. 
+It is simplest to run Lean through the editor VS Code. Following the instructions at this link shows you how to do this. There are plugins for other editors, if you're that way inclined. However, if you're new to programming, then it is recommended you stick to VSCode. This is the setup available in the computer labs of Jack Erskine. 
 
 These lectures were prepared with reference to the free textbook Theorem Proving in Lean 4. This can be referred to for more details.
 \end{frame}
 
-\begin{frame}
-\frametitle{Recall: Curry-Howard}
 
-% Give an ND and a typed lambda calculus deduction. 
-% Highlight, again, the centrality of the proof-term.
-
-% Proof-terms are what Lean is interested in. 
-% We can write this directly into Lean and have our proofs checked.
-\end{frame}
 
 \begin{frame}
 \frametitle{Example}
@@ -96,27 +105,136 @@ These lectures were prepared with reference to the free textbook Theorem Proving
 % Provide code and info-view here. 
 % Composition
 
+\begin{tabular}{c}
+
+$\begin{array}{c}
+	\infer[\to I,1]{A \to C}
+		{\infer[\MP]{C}
+			{\infer[\MP]{B}
+				{\infer[1]{A}{}
+				&
+				A \to B}
+			&
+			B \to C}}
+\end{array}$ \vspace{10mm}\\
+
+$\begin{array}{c}
+	\infer[\lambda,1]{\lambda x. \ g \ (f \ x) : A \to C}
+		{\infer[\app]{g \ (f \ a) : C}
+			{\infer[\app]{f \ a : B}
+				{\infer[1]{a : A}{}
+				&
+				f : A \to B}
+			&
+			g : B \to C}}
+\end{array}$
+\end{tabular}
+
+In the end it is sufficient to provide the proof-term:
+$$\lambda x. \ g \ (f \ x) : A \to C$$
 
 \end{frame}
 
-\begin{frame}
-\frametitle{Keywords}
-
-Lean, indeed all programming languages, have a number of keywords used to structure programs. For our purposes of theorem proving, we will not need to know all of the keywords of Lean. For now, it suffices to consider only the following two keywords: 
-
-% Variable
-
-
-% Theorem
-
+\begin{frame}[fragile]
+	\frametitle{Lean Demo}
+	
+	Before we talk about the syntax of Lean4; let's just see how it works with two familiar examples:	
+	$$A \to B, B \to C \ \vdash \ A \to C$$ 
+\begin{lstlisting}
+fun a => g (f a)
+\end{lstlisting}	
+	$$A \land B \to C \ \vdash \ A \to B \to C$$
+\begin{lstlisting}
+fun a => fun b => f (And.intro a b)
+\end{lstlisting}
 \end{frame}
+
+%\begin{frame}[fragile]
+%        \begin{lstlisting}
+%            variable (P Q R : Prop)
+%    
+%            --                       P -> Q       Q -> R  ⊢ P -> R
+%            theorem composition (f : P → Q) (g : Q → R) : P → R :=
+%              λ p : P =>
+%                g (f p)
+%        \end{lstlisting}
+%\end{frame}
 
 \begin{frame}
 \frametitle{de Moura's Stone}
 
 % Write three column table translating between logic, stlc, and Lean. 
+    \begin{table}[htbp]
+    \centering
+    \begin{tabular}{p{2cm} p{2cm} p{4.5cm}}
+        \textbf{PL} & $\boldsymbol{\lambda}$ & \textbf{L$\exists\forall$N 4} \\
+        \hline
+        $\land I$& $(p,q)$ & And.intro $p$ $q$\\ 
+        $\land E_{l}$& \fst $t$ & And.left $t$ \\
+        $\land E_{r}$& \snd $t$ & And.right $t$ \\
+        $\to I$& $\lambda \ p : P. \ $ & $\lambda \ p : P =>$\\
+        $\to E$& $(f \ t)$ & $(f \ t)$ \\
+        $\lor I_{l}$& \inl $p$ & Or.intro\_left <right-disj> $p$ \\
+        $\lor I_{r}$& \inr $p$ & Or.intro\_right <left-disj> $p$ \\
+        $\lor E$& \sumElim $t$ $f$ $g$ & Or.elim $t$ $f$ $g$
+    \end{tabular}
+    \caption{Syntax of logic, $\lambda$-calculus, and L$\exists\forall$N 4}
+    \label{tab:lean_translate}
+    \end{table}
+    
+    Examples from the previous page show that we have all but written Lean4 programs already. There are just minor syntax changes between the Simple Type Theory we have studied and the syntax of Lean4.
 
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Keywords: Variables}
+
+Lean, indeed all programming languages, have a number of keywords used to structure programs. For our purposes of theorem proving, we will not need to know all of the keywords of Lean. 
+
+One can declare type, or prop, variables globally or locally. They can be declared globally as follows: 
+
+\begin{lstlisting}
+variable (P Q R : Prop)
+\end{lstlisting}
+
+This puts propositional variables P, Q, and R into the context of the module you're writing. As they are propositions, Lean knows that can have the following operations introduced above applied to them.
+
+These variables can also be introduced locally into the definition/theorem one is writing. We will see how to do this below.
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Keywords: Thereom}
+
+Theorem statements have the following syntax in Lean4. Note the similarities with our usual sequent notation.
+
+\vspace{5mm}
+
+\small{
+\begin{lstlisting}
+theorem <name> <hypotheses> : <goal> := <proof-term>
+\end{lstlisting}	}
+
+Some things to note: 
+\begin{itemize}
+	\item Each hypothesis should be written with its own parentheses. 
+	\item Use whitespace, not commas, to separate hypotheses.
+	\item Goal is the Type/Prop to be proved.
+	\item Proof-term is is the proof of that Prop.
+	\item Theorems are just functions. One can use def instead.
+	\item One can opt for a nameless theorem with the ``example'' keyword. 
+\end{itemize}
+
+\small{
+\begin{lstlisting}
+example <hypotheses> : <goal> := <proof-term>
+\end{lstlisting}	}
+
+
+
+\end{frame}
+
+
 
 
 \begin{frame}
@@ -130,9 +248,62 @@ Lean's infoview is one of its key features. Along with the editor one writes the
 
 \begin{frame}
 \frametitle{Example}
-% Conjunction Commutative.
+We will work through the following examples to get a taste of theorem proving in Lean4:
+
+\begin{itemize}
+	\item[] $\vdash \ P \land Q \to Q \land P$
+	\item[] $\vdash \ P \lor Q \to Q \lor P$
+	\item[] $\vdash \ P \to P$ [I Combinator]
+	\item[] $\vdash \ P \to (Q \to P)$ [K Combinator]
+	\item[] $\vdash \ (P \to Q \to R) \to ((P \to Q) \to P \to R)$ [S Combinator]
+	\item[] $P \to Q, \lnot Q \ \vdash \lnot P$ [Modus Tollens]
+	\item[] $P \to Q \ \vdash \ \lnot Q \to \lnot P$ [Intuitionistic Contrapositive]
+	\item[] $(P \land Q) \land R \ \vdash \ P \land (Q \land R)$
+	\item[] $(P \lor Q) \lor R \ \vdash \ P \lor (Q \lor R)$
+	\item[] $\vdash \ (P \land Q \to R) \leftrightarrow (P \to Q \to R)$
+\end{itemize}
+\end{frame}
+
+\section{Tactic Proofs}
+\begin{frame}
+	\frametitle{Tactics}
+	
+	Proof-verification alone is all well and good. However, Lean4 (and the other proof assistants) have a number of built in metaprograms (tactics) to help in the authoring of proofs. 
+	
+	Moreover, because Lean4 is a general purpose programming language one can write new tactics in Lean to add further simplifcations to the process of writing proof terms.
+	
+	Tactics proofs do not write proof-terms explicitly, but use higher-order programs to help write the required proof-term. Remember that proof-terms are the object of interest - they are the certificate that is verified to know when a proof is complete. Even when we write tactic proofs, we still generate a proof-term.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Tactic Summary}
+	
+	\begin{table}[htbp]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \textbf{Lean 4 Tactics}\\
+    \vspace{0.2cm}        
+    \footnotesize
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \textbf{Tactic} & \textbf{Summary} & \textbf{Natural Language} \\
+    \hline
+    by & Opens tactic mode. & \\
+    intro(s) & Either (i) implication introduction, or (ii) $\forall$ introduction. & Let $n$ be some natural...\\
+    exact & This term has the same type as the goal. & ... as required \\
+    apply & & \\
+    have & Introduces a local variable, or intermediate step. & So far we have... \\
+    rfl & Closes goals that are (up to normalization) definitionally equal. & ... by definition \\
+    rw & Substitutes equals for equals. & \\
+    induction & Wraps base case and induction step into $\forall$ proof. & By induction...\\
+    calc & Line-by-line calculation showing $a = \dots = b$. & Algebra calculation!\\
+    \hline
+    \end{tabular}
+\end{table}
 
 \end{frame}
+
+
 \begin{frame}
 	\frametitle{Further Reading}
 	
