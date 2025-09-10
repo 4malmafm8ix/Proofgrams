@@ -1578,7 +1578,7 @@
 % Note the above is improved by abstracting over the predicate 
 % So mu takes predicate as an input. 
 
-% $\GO :\equiv \lambda s. \lambda p. \ \lambda x. \ \COND \ P?(x) \ x \ (s \ p \ (\SUCC \ x))$
+% $\GO :\equiv \lambda s. \lambda p. \ \lambda x. \ \COND \ p \ x \ (s \ p \ (\SUCC \ x))$
 
 \begin{frame}
 	\frametitle{Bounded Search $\overline{\mu}$}
@@ -1741,10 +1741,10 @@ Moses Sh\"{o}nfinkel was motivated to remove quantifiers and bound variables fro
 	3. & $T[\lambda x. \ E] \Rightarrow \textbf{K}(T[E])$ & $x$ not free in $E$\\
 	4. & $T[\lambda x. \ x] \Rightarrow \textbf{I}$ & Identity \\
 	5. & $T[\lambda x. \ \lambda y. \ E] \Rightarrow T[\lambda x. \ T[\lambda y. \ E]]$ & $x$ free in $E$ \\
-	6. & $T[\lambda x. \ (E_{1}E_{2})] \Rightarrow \textbf{S}(T[\lambda x. \ E_{1}])(T[\lambda x. \ E_{2}])$ & $x$ free in $E_{1}$ and $E_{2}$
+	6. & $T[\lambda x. \ (E_{1}E_{2})] \Rightarrow \textbf{S}(T[\lambda x. \ E_{1}])(T[\lambda x. \ E_{2}])$ & $x$ free in $E_{1}$ or $E_{2}$
 	\end{tabular}
 
-	This translation preserves extensional equality. It is described in S\"{o}ren Stenlund: Combinators, $\lambda$-Terms, and Proof Theory.
+	This translation preserves extensional equality. It is described in Chapter 7 of H. P. Barendregt: The Lambda Calculus, It's Syntax and Semantics, and in S\"{o}ren Stenlund: Combinators, $\lambda$-Terms, and Proof Theory.
 \end{frame}
 
 \begin{frame}

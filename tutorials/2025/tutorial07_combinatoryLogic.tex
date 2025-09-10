@@ -53,7 +53,7 @@
 }
 % Discussion questions for tutor.
 \newline
-\vspace{5mmm}
+\vspace{5mm}
 
 \noindent {\bf Discussion Questions}
 
@@ -121,7 +121,7 @@ Recall the following reduction rules of the CL combinators.
 \begin{tabular}{l l}
 $\textbf{S}xyz \to_{\beta} xz(yz)$ & $\textbf{K}xy \to_{\beta} x$ \\
 $\textbf{I}x \to_{\beta} x$ & $\textbf{B}fgx \to_{\beta}f(gx)$ \\
-$\textbf{W}fx \to_{\beta}fxx$ & $\textbf{C}fxy \to_{\beta} fyx$
+$\textbf{W}fx \to_{\beta}fxx$ & \
 \end{tabular}
 
 \item Verify each of the following extensional equality claims by evaluating each side at an appropriate number of variables and check the reductions are identical.
@@ -131,24 +131,27 @@ $\textbf{W}fx \to_{\beta}fxx$ & $\textbf{C}fxy \to_{\beta} fyx$
 		\item \textbf{SK} = \textbf{KI}
 		\item \textbf{B} = \textbf{S(KS)K}
 		\item \textbf{W} = \textbf{SS(KI)}
-		\item \textbf{C} = \textbf{S(BBS)(KK)}	
 	\end{enumerate}
 
-\item Each of these CL terms are reducible. Compute their normal form.
+\item Each of these CL terms are reducible. If they have a normal form, then compute it. Otherwise, show that the term has no normal form.
 
 	\begin{enumerate}
 		\item \textbf{SKI(KIS)}
 		\item \textbf{KS(I(SKSI))}
 		\item \textbf{SKIK}	
+		\item \textbf{SII(SII)}
 	\end{enumerate}
 
-\item Translate each of the $\lambda$-terms into combinatory logic expressions involving only \textbf{SKI} combinators using the translation defined in the slides.
+\item Translate each of these $\lambda$-terms into combinatory logic expressions involving only \textbf{SKI} combinators (and free variables) using the translation defined in the lecture slides.
 
 	\begin{enumerate}
 		\item $\lambda x. \ \lambda y. \ y$
-		\item $\lambda c. \ \lambda f. \ \lambda g.  \ c \ f \ g$
-		\item $\lambda s . \ \lambda x. \ s \ x$
-		\item $\lambda f. \ (\lambda x. \ f \ x \ x) \ (\lambda x. \ f \ x \ x)$ 	
+		\item $\lambda x. \ x \ x$
+		\item $(\lambda x. \ x \ x) \ (\lambda x. \ x \ x)$
+		\item $\lambda u . \ \lambda v. \ u \ v$
+		\item $\lambda x. \ f \ (x \ x)$
+		\item $\lambda f. \ \textbf{S}(\textbf{K}f)(\textbf{SII})$
+		\item $\lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))$ 	
 	\end{enumerate}
 
 	

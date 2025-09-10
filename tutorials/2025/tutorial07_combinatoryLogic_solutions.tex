@@ -1,0 +1,309 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Seven [Solutions]}
+\end{center}
+\begin{center}
+	{\bf Recursion and Combinatory Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write recursive processes in $\lambda$-calculus,
+				\item Write higher order procedures in $\lambda$-calculus, 
+				\item Prove extensional identities in combinatory logic, 
+				\item Translate between $\lambda$-calculus and combinatory logic.
+			\end{itemize}
+
+		Relevant topic: Untyped Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b, 4c, 5c, 6a, 7c\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{5mm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+	\item Determine some steps towards writing a program ($\lambda$-term) representing the unary function, INT-SQRT, that returns the greatest natural number whose square is less than or equal to the input. 
+	
+	{\bf Solution:}	The integer square root of a natural number $n$ is defined as the largest natural number $x$ such that $x^{2} \leq n$. We can search for this by starting at $t = 0$ and checking the condition $t^{2} > n$, incrementing $t$ by one until such a $t$ is found. At which point the procedure should return $t-1$. 
+
+	In order to code such a procedure in the $\lambda$-calculus we should use the Y combinator to recursively call a function. Following the process described in class we define a helper function which the Y combinator will recursively call. 
+
+	The first abstraction $\lambda s.$ is for the procedure to call itself. 
+
+	The second abstraction $\lambda t.$ is the abstraction we pass the test $t=0$ to. Finally, the third abstraction is the number whose integer square root is to be computed. 
+	\begin{align*}
+		\GO:\equiv \  \lambda s. \lambda t. \lambda n. \ \COND &\ (>? \ (\MULT \ t \ t) \ n) \\
+		&(\PRED \ t) \\
+		&(s \ (\SUCC \ t) \ n)
+	\end{align*}
+	Notice that third argument to COND calls the procedure with $t$ incremented and $n$ left unchanged. This is how the procedure moves on to test the next natural number. 
+
+	Together with the Y combinator and starting with $t=0$ we define the procedure: 
+	$$\text{INT-SQRT} :\equiv \YCOMB \ \GO \ \ZERO$$
+	Compute INT-SQRT FOUR to test this procedure. 
+
+\end{itemize}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Write recursive $\lambda$-expressions that represent the following functions of natural numbers. For each function determine an appropriate helper-function GO to put through the $\YCOMB$ combinator. 
+	
+		\begin{enumerate}
+			\item SUM of two natural numbers
+			
+			{\bf Solution:}
+			$$\GO :\equiv \lambda s. \lambda m. \lambda n. \ \COND \ (\ISITZERO \ b) \ a \ (\SUCC \ (s \ a \ (\PRED \ b)) $$
+			$$\SUM :\equiv \YCOMB \ \GO$$
+
+			\item MULTiply two natural numbers
+			
+			{\bf Solution:}
+			$$\GO :\equiv \lambda s. \lambda m. \lambda n. \ \COND \ (\ISITZERO \ b) \ \ZERO \ (\SUM \ a \ (s \ a \ (\PRED \ b))) $$
+			$$\MULT :\equiv \YCOMB \ \GO$$
+
+			\item EXPONentiation of a base to an exponent
+			
+			{\bf Solution:}
+			Here we use the abstraction $b$ for the base of the exponentiation and the abstraction over $e$ for the exponent of the exponentiation.
+			$$\GO :\equiv \lambda s. \lambda b. \lambda e. \ \COND \ (\ISITZERO \ e) \ \ONE \ (\MULT \ b \ (s \ b \ (\PRED \ e))) $$
+			$$\EXP :\equiv \YCOMB \ \GO$$
+
+			\item FACTorial of a natural number
+			
+			{\bf Solution:}
+			$$\GO :\equiv \lambda s. \lambda n. \ \COND \ (\ISITZERO \ n) \ \ONE \ (\MULT \ n \ (s \ (\PRED \ n)) $$
+			$$\SUM :\equiv \YCOMB \ \GO$$
+			
+			\item INT-SQRT the smallest integer whose square is greater than input
+			
+			{\bf Solution:} See discussion above for the derivation of this lambda encoding. 	
+			\begin{align*}
+				\GO:\equiv \  \lambda s. \lambda t. \lambda n. \ \COND &\ (>? \ (\MULT \ t \ t) \ n) \\
+				&(\PRED \ t) \\
+				&(s \ (\SUCC \ t) \ n)
+			\end{align*}
+			$$\text{INT-SQRT} :\equiv \YCOMB \ \GO \ \ZERO$$
+
+			\newpage
+			\item Calculate the nth FIBonacci number (Challenge!)
+			
+			{\bf Solution:}
+			
+			Recall the definition of the Fibonacci sequence:			
+			\begin{align*}
+			\text{Fib} \ 0 &= 0\\
+			\text{Fib} \ 1 &= 1 \\
+			\text{Fib} \ n &= \text{Fib}(n - 1) + \text{Fib}(n - 2)			
+			\end{align*}
+			As this recursive definition has two base cases, we will need nested COND to check for each of these. In the third condition we will need to recursively call the helper function twice; once for each summand.			
+			\begin{align*}
+				\GO :\equiv \ \lambda s. \ \lambda n. \ \COND \ &(\ISITZERO \ n) \\
+				&\ZERO \\
+				&(\COND \ (\ISITZERO \ (\PRED \ n))\\
+				&\hspace{15mm} \ONE \\
+				&\hspace{15mm} (\SUM \ (s \ (\PRED \ n)) \\
+				&\hspace{26mm} (s \ (\PRED \ (\PRED \ n)))))		
+			\end{align*}
+			
+			Indentation is used to aid readability. COND has three inputs; these are all aligned on new lines. SUM has two inputs, these are aligned on new lines. 
+			
+			We use the helper function GO to define 
+			$$\text{FIB} := \YCOMB \ \GO$$			
+		\end{enumerate}
+		
+		\textbf{Notice that once we have written a few fundamental $\lambda$-terms, a lot of the programming now happens at a level higher than pure lambdas and feels closer to actual programming.} Nonetheless, all of these terms with their syntactic sugar can be desugared down to their definitions and computed using just $\beta$-reduction.
+
+	\item Write a $\lambda$-expression that can be used to compute the smallest natural number that satisfies a given unary-predicate $P?(x)$ that is represented by some $\lambda$-expression.
+	
+	{\bf Solution:}
+
+	$$\GO :\equiv \lambda s. \lambda n. \ \COND \ (P? \ n) \ n \ (s \ (\SUCC \ n))$$
+
+	Combining this with the Y combinator yields a procedure $\mu$ that searches for the smallest natural number satifying the predicate P?
+
+	$$ \mu :\equiv \YCOMB \ \GO \ \ZERO $$	
+
+	\newpage
+	\item (Challenge!) Represent the following processes in the $\lambda$-calculus to get an expression that can be used to test whether a natural number is prime. For simplicity, assume the input is greater than TWO.
+	
+		\begin{enumerate}
+			\item REMAINDER calculate the remainder of a division.
+			
+			\textbf{Solution:} We will write a procedure that computes the remainder when $n$ is divided by $d$. It will do the naive thing of subtracting $d$ from $n$ until $n<d$.			
+			\begin{align*}
+				\GO :\equiv \lambda s. \ \lambda n. \ \lambda d. \ \COND \ &(>? d \ n) \\
+				&n \\
+				&(s \ (- \ n \ d) \ d)			
+			\end{align*}			
+			$$\text{REM}:= \YCOMB \ \GO$$
+			
+			\item DIVIDES? binary predicate does second divide first?
+			
+			In order to determine whether $d$ divides $n$ we need only check the remainder when $n$ is divided by $d$. 
+			
+			$$\text{DIVIDES?}:\equiv \lambda n. \ \lambda d. \ \ISITZERO \ (\text{REM} \ n \ d)$$
+			
+			\item Implement bounded-search to satisfy a predicate.
+			
+			\textbf{Solution:} We will write a procedure $\overline{\mu}$ which takes in a predicate, $p$, a lower bound $l$, and an upper bound $u$. It returns the smallest solution to $p$ in the interval $[l,u]$. If there are no such solutions, then it returns FALSE.			
+			\begin{align*}
+				\GO :\equiv \lambda s. \ \lambda p. \ \lambda l. \ \lambda u. \ \COND \ &(>? \ l \ u) \\
+				& \FALSE \\
+				&(\COND \ (p \ l) \\
+				&\hspace{12mm} \ p \\
+				&\hspace{12mm} \ (s \ p \ (\SUCC \ l) \ u))	
+			\end{align*}			
+			Using this helper function we define the bounded search operator $\overline{\mu}$
+			$$\overline{\mu} := \YCOMB \ \GO$$			
+			Note: the helper can be adjusted to return TRUE instead of the specific solution.		
+
+			\item PRIME? Unary-predicate to detect primality.
+			
+			In order to determine whether $n$ is prime we need only search for a divisor from 2 upto n-1. This a bounded search for a solution to the predicate (DIVIDES? $n$). We have used partial application of DIVIDES? to build a unary predicate that takes in a single number and determines whether it divides $n$. If there is a divisor found in the bounded search, then the number is composite. 
+			$$\text{COMPOSITE?}:\equiv \ \lambda x. \ \overline{\mu} \ (\text{DIVIDES? } x) \ \text{TWO} \ (- \ x \ \text{ONE})$$			
+			$$\text{PRIME?}:\equiv \ \lambda x. \ \NOT \ (\text{COMPOSITE? } x)$$
+			This all assumes the input is greater than 2. How can we fix this bug?
+		\end{enumerate}
+	
+
+	\newpage
+	 \item In lectures we introduced a $\lambda$-term for computing the sum of a sequence of consecutive integers. This used the helper-function: 
+	
+	 \begin{align*}
+	 	\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
+	 	& a \\ 
+	 	&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
+	 \end{align*}
+	
+	 We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
+	
+	 \begin{enumerate}
+	 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$	 	
+	 	\textbf{Solution:}	 		
+	 		\begin{align*}
+	 			\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND \ &(>? \ l \ u) \\
+	 			&a \\
+	 			&(s \ (\SUM \ a \\
+	 			&\hspace{15mm}(\MULT \ l \ l)) \\
+	 			&\hspace{5mm}(\SUCC \ l) \\
+	 			&\hspace{5mm}u)	
+	 		\end{align*}	 	
+	 	\item Compute the sum of each term passed through an arbitrary function, $\sum_{i=l}^u f(i)$	 	
+	 	\textbf{Solution:}	 		
+	 		\begin{align*}
+	 			\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND \ &(>? \ l \ u) \\
+	 			&a \\
+	 			&(s \ (\SUM \ a \\
+	 			&\hspace{15mm}(f \ l)) \\
+	 			&\hspace{5mm}(\SUCC \ l) \\
+	 			&\hspace{5mm}u)	
+	 		\end{align*}
+	 		Note: the function $f$ could be factored out into the abstractions.
+	 	\item Compute the sum of those terms in the interval that satisfy some predicate $P?(x)$.	 	
+	 	\textbf{Solution:}	 		
+	 		\begin{align*}
+	 			\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND \ &(>? \ l \ u) \\
+	 			&a \\
+	 			&(\COND \ (P? \ l) \\
+	 			&\hspace{15mm}(s \ (\SUM \ a \ l)\\
+	 			&\hspace{20mm}(\SUCC \ l) \\
+	 			&\hspace{20mm}u)\\
+	 			&\hspace{15mm}(s \ a \\ 
+	 			&\hspace{20mm}(\SUCC \ l) \\
+	 			&\hspace{20mm}u))
+	 		\end{align*}
+	 		Note: the predicate P? could be factored out into the abstractions.
+	 \end{enumerate}
+	 
+	 \vfill
+	 \hfill \textbf{PTO}
+
+
+
+\newpage
+
+% Give the reduction definition of the combinators to be used in this tutorial. 
+Recall the following reduction rules of the CL combinators. 
+
+\begin{tabular}{l l}
+$\textbf{S}xyz \to_{\beta} xz(yz)$ & $\textbf{K}xy \to_{\beta} x$ \\
+$\textbf{I}x \to_{\beta} x$ & $\textbf{B}fgx \to_{\beta}f(gx)$ \\
+$\textbf{W}fx \to_{\beta}fxx$ & \
+\end{tabular}
+
+\item Verify each of the following extensional equality claims by evaluating each side at an appropriate number of variables and check the reductions are identical.
+
+	\begin{enumerate}
+		\item \textbf{I} = \textbf{SKK}
+		\item \textbf{SK} = \textbf{KI}
+		\item \textbf{B} = \textbf{S(KS)K}
+		\item \textbf{W} = \textbf{SS(KI)}
+	\end{enumerate}
+
+\item Each of these CL terms are reducible. If they have a normal form, then compute it. Otherwise, show that the term has no normal form.
+
+	\begin{enumerate}
+		\item \textbf{SKI(KIS)}
+		\item \textbf{KS(I(SKSI))}
+		\item \textbf{SKIK}	
+		\item \textbf{SII(SII)}
+	\end{enumerate}
+
+\item Translate each of these $\lambda$-terms into combinatory logic expressions involving only \textbf{SKI} combinators (and free variables) using the translation defined in the lecture slides.
+
+	\begin{enumerate}
+		\item $\lambda x. \ \lambda y. \ y$
+		\item $\lambda x. \ x \ x$
+		\item $(\lambda x. \ x \ x) \ (\lambda x. \ x \ x)$
+		\item $\lambda u . \ \lambda v. \ u \ v$
+		\item $\lambda x. \ f \ (x \ x)$
+		\item $\lambda f. \ \textbf{S}(\textbf{K}f)(\textbf{SII})$
+		\item $\lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))$ 	
+	\end{enumerate}
+
+	
+
+	 
+\end{enumerate}
+	
+\end{document}
