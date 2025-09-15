@@ -67,10 +67,11 @@
 		\item[] $(\lambda x. \ x \ x)(\lambda y. \ \lambda z. \ y \ z \ z)$
 		\begin{align*}
 			(&\lambda x. \ x \ x)(\lambda y. \ \lambda z. \ y \ z \ z) \\
-			&\beq (\lambda y. \ \lambda z. \ y \ z \ z) \ z \ z \\
-			&\aeq (\lambda y. \ \lambda w. \ y \ w \ w) \ z \ z \\
-			&\beq (\lambda w. \ z \ w \ w) \ z \\
-			&\beq z \ z \ z
+			&\beq (\lambda y. \ \lambda z. \ y \ z \ z) (\lambda y. \ \lambda z. \ y \ z \ z) \\
+			&\aeq (\lambda y. \ \lambda w. \ y \ w \ w)(\lambda y. \ \lambda z. \ y \ z \ z)\\
+			&\beq \lambda w. \ (\lambda y. \ \lambda z. \ y \ z \ z) \ w \ w \\
+			&\beq \lambda w. \ (\lambda z. \ w \ z \ z) \ w \\
+			&\beq \lambda w. \ w \ w \ w			
 		\end{align*}
 		\item[] AND TRUE TRUE
 		\begin{align*}

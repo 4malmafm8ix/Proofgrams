@@ -218,7 +218,8 @@
 	 We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
 	
 	 \begin{enumerate}
-	 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$	 	
+	 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$	 
+	 		
 	 	\textbf{Solution:}	 		
 	 		\begin{align*}
 	 			\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND \ &(>? \ l \ u) \\
@@ -275,30 +276,166 @@ $\textbf{W}fx \to_{\beta}fxx$ & \
 
 	\begin{enumerate}
 		\item \textbf{I} = \textbf{SKK}
+		
+		\textbf{Solution:}
+		\begin{align*}
+			\cS \cK \cK \ a &\beq \cK \ a \ (\cK \ a) \\
+			&\beq \ a \\ 
+			&= \cI \ a
+		\end{align*}
+		Therefore $\cS \cK \cK =_{\text{EXT}} \cI$
+		
 		\item \textbf{SK} = \textbf{KI}
-		\item \textbf{B} = \textbf{S(KS)K}
-		\item \textbf{W} = \textbf{SS(KI)}
+		
+		\textbf{Solution:}		
+		\begin{align*}
+			\cS \cK \ a \ b \ &\beq \cK \ b \ (a \ b) \\
+			&\beq \ b		
+		\end{align*}
+		\begin{align*}
+			\cK \cI \ a \ b \ &\beq \cI \ b \\
+			&\beq b		
+		\end{align*}
+		
+		Therefore $\cS\cK =_{\text{EXT}} \cK \ \cI$
+		
+		\item \textbf{B} = \textbf{S(KS)K}		
+		\textbf{Solution:}		
+		\begin{align*}
+			\cS(\cK \cS)\cK f \ g \ x &\beq (\cK\cS) \ f \ (\cK \ f) \ g \ x \\
+			&\beq \cS(\cK \ f) \ g \ x \\
+			&\beq (\cK \ f) \ x \ (g \ x) \\
+			&\beq f \ g \ x \\
+			&= \cB \ f \ g \ x	
+		\end{align*}
+		Therefore $\cS(\cK\cS)\cK =_{\text{EXT}} \cB$
+		\item \textbf{W} = \textbf{SS(KI)}		
+		\textbf{Solution:}
+		
+		\begin{align*}
+			\cS \cS(\cK\cI)f \ x &\beq \cS \ f \ (\cK\cI \ f) \ x \\
+			&\beq f \ x \ (\cK\cI \ f \ x) \\
+			&\beq f \ x \ (\cI \ x) \\
+			&\beq f \ x \ x \\
+			&= \cW \ f \ x		
+		\end{align*}
+		Therefore $\cS \cS(\cK\cI) =_{\text{EXT}} \cW$
 	\end{enumerate}
 
+\newpage
 \item Each of these CL terms are reducible. If they have a normal form, then compute it. Otherwise, show that the term has no normal form.
+
+\textbf{These computations can be done by converting each combinator to their corresponding $\lambda$-terms, or you can simply refer to the $\beta$-reduction rules for the relevant combinators.} 
 
 	\begin{enumerate}
 		\item \textbf{SKI(KIS)}
+			\begin{align*}
+				\cS&\cK\cI(\cK\cI\cS) \\
+				&\beq \cK(\cK\cI\cS)(\cI(\cK\cI\cS)) \\
+				&\beq \cK\cI\cS \\
+				&\beq \cI
+			\end{align*}
 		\item \textbf{KS(I(SKSI))}
-		\item \textbf{SKIK}	
+			\begin{align*}
+				\cK&\cS(\cI(\cS\cK\cS\cI)) \\
+				&\beq \cS
+			\end{align*}
+		\item \textbf{SKIK}
+			\begin{align*}
+				\cS&\cK\cI\cK \\
+				&\beq \cK\cK(\cI\cK) \\
+				&\beq \cK			
+			\end{align*}
 		\item \textbf{SII(SII)}
+			\begin{align*}
+				\cS&\cI\cI(\cS\cI\cI) \\
+				&\beq \cI(\cS\cI\cI)(\cI(\cS\cI\cI))\\
+				&\beq \cS\cI\cI(\cI(\cS\cI\cI)) \\
+				&\beq \cS\cI\cI(\cS\cI\cI) \\
+				& \ \vdots			
+			\end{align*}
+			This term does not have a normal form. 
 	\end{enumerate}
 
 \item Translate each of these $\lambda$-terms into combinatory logic expressions involving only \textbf{SKI} combinators (and free variables) using the translation defined in the lecture slides.
 
 	\begin{enumerate}
-		\item $\lambda x. \ \lambda y. \ y$
+		\item 
+		
+		$\lambda x. \ \lambda y. \ y$
+		
+			$\nt[\lambda x. \ \lambda y. \ y]$
+			
+			\begin{tabular}{l c}
+				$= \cK\nt[\lambda y. \ y]$ & by 3 \\
+				$= \cK\cI$	 & by 4		
+			\end{tabular}		
+
 		\item $\lambda x. \ x \ x$
+		
+			$\nt[\lambda x. \ x \ x]$
+			
+			\begin{tabular}{l c}
+				$= \cS(\nt[\lambda x. \ x])(\nt[\lambda x. \ x])$ & by 6 \\
+				$=\cS\cI\cI$ & by 4	
+			\end{tabular}		
+		
+		\newpage
 		\item $(\lambda x. \ x \ x) \ (\lambda x. \ x \ x)$
+		
+			$\nt[(\lambda x. \ x \ x) \ (\lambda x. \ x \ x)]$
+			
+			\begin{tabular}{l l}
+				$= (\lambda x. \ x \ x)(\lambda x. \ x \ x)$ & by 2 \\
+				$= \cS\cI\cI(\cS\cI\cI)$ & by exercise 7b
+			\end{tabular}				
+	
 		\item $\lambda u . \ \lambda v. \ u \ v$
+		
+			$\nt[\lambda u . \ \lambda v. \ u \ v]$
+			
+			\begin{tabular}{l l}
+				$= \nt[\lambda u. \ \nt[\lambda v. \ u \ v]]$ & by 5\\
+				$= \nt[\lambda u. \ \cS(\nt[\lambda v. \ u])(\nt[\lambda v. \ v])]$ & by 6 \\
+				$= \nt[\lambda u. \ \cS(\cK u)\cI]$ & by 3,4 \\
+				$= \cS(\nt[\lambda u. \ \cS(\cK u)])(\nt[\lambda u. \ \cI])$ & by 6 \\
+				$= \cS(\cS(\nt[\lambda u. \ \cS])(\nt[\lambda u. \ \cK u]))(\cK\cI)$ & by 6,3 \\
+				$= \cS(\cS(\cK\cS)(\cS(\nt[\lambda u. \ \cK])(\nt[\lambda u. \ u]))(\cK\cI)$ & by 3,6 \\
+				$= \cS(\cS(\cK\cS)(\cS(\cK\cK)\cI)(\cK\cI)$ & by 3,4				
+			\end{tabular}	
+			
 		\item $\lambda x. \ f \ (x \ x)$
+			
+			$\nt[\lambda x. \ f \ (x \ x)]$
+			
+			\begin{tabular}{l l}
+				$= \cS(\nt[\lambda x. \ f])(\nt[\lambda x. \ x \ x])$ & by 6 \\
+				$= \cS(\cK f)(\cS(\nt[\lambda x. \ x])(\nt[\lambda x. \ x]))$ & by 3,6 \\
+				$= \cS(\cK f)(\cS\cI\cI)$ & by 4 \\
+			\end{tabular}		
+		
 		\item $\lambda f. \ \textbf{S}(\textbf{K}f)(\textbf{SII})$
+			
+			$\nt[\lambda f. \ \textbf{S}(\textbf{K}f)(\textbf{SII})]$
+			
+			\begin{tabular}{l l}
+				$= \cS(\nt[\lambda f. \ \cS(\cK f)])(\nt[\lambda f. \ \cS\cI\cI])$ & by 6 \\	
+				$= \cS(\cS(\nt[\lambda f. \ \cS])(\nt[\lambda f. \ \cK f]))(\cK(\cS\cI\cI)$ & by 6,3,2 \\
+				$= \cS(\cS(\cK\cS)(\cS(\nt[\lambda f. \ \cK])(\nt[\lambda f. \ f])))(\cK(\cS\cI\cI)$ & by 6 \\
+				$= \cS(\cS(\cK\cS)(\cS(\cK\cK)\cI))(\cK(\cS\cI\cI)$ & by 3,4 \\					
+			\end{tabular}
+			
 		\item $\lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))$ 	
+		
+		$\nt[\lambda f. \ (\lambda x. \ f \ (x \ x)) \ (\lambda x. \ f \ (x \ x))]$
+		
+		\begin{tabular}{l l}
+			$=\cS(\nt[\lambda f. \ \lambda x. \ f \ (x \ x)])(\nt[\lambda f. \ \lambda x. \ f \ (x \ x)])$ & by 6 \\
+			$=\cS(\nt[\lambda f. \ \nt[\lambda x. \ f \ (x \ x)]])(\nt[\lambda f. \ \nt[\lambda x. \ f \ (x \ x)]])$ & by 5 \\
+			$=\cS(\nt[\lambda f. \ \cS(\cK f)(\cS\cI\cI)])(\nt[\lambda f. \ \cS(\cK f)(\cS\cI\cI)])$ & by exercise 7e \\
+			$=\cS(\cS(\cS(\cK\cS)(\cS(\cK\cK)\cI))(\cK(\cS\cI\cI))(\cS(\cS(\cK\cS)(\cS(\cK\cK)\cI))(\cK(\cS\cI\cI))$ & by exercise 7f\\
+		\end{tabular}
+		
 	\end{enumerate}
 
 	
