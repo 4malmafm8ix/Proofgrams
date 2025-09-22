@@ -1,0 +1,500 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eight}
+\end{center}
+\begin{center}
+	{\bf Curry-Howard Correspondence}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write context dependent typing derivations.
+				\item Understand the connection between natural deductions and typing derivations.
+				\item Write proof-terms witnessing theorems of minimal logic.
+			\end{itemize}
+
+		Relevant lectures: Typed Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{2mm}
+
+	Hand in exercises: 1a, 1d, 1e, 1k, 3\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+	\item Write a program of the specified type in the given context: 
+	
+	$$p : A \times (B \times C) \ \vdash \ (A \times B) \times C$$
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\times]{((\fst \ p, \ \fst \ (\snd \ p)), \ \snd \ (\snd \ p)) \ : \ (A \times B) \times C}
+				{\infer[\times]{(\fst \ p, \ \fst \ (\snd \ p)) \ : \ A \times B}
+					{\infer[\fst]{\fst \ p \ : \ A}
+						{p : A \times (B\times C)}
+					&
+					\infer[\fst]{\fst \ (\snd \ p) \ : \ B}
+						{\infer[\snd]{\snd \ p \ : \ B \times C}
+							{p : A \times (B\times C)}}}
+				&
+				\infer[\snd]{\snd \ (\snd \ p) \ : \ C}
+					{\infer[\snd]{\snd \ p \ : \ B \times C}
+						{p \ : \ A \times (B\times C)}}}						
+		\end{array}$
+	\end{center}
+
+	This typing derivation shows the $\lambda$-term 
+	$$((\fst \ p, \ \fst \ (\snd \ p)), \ \snd \ (\snd \ p)) \ : (A\times B)\times C$$
+	inhabits the stated type in the given context. Compare this to the natural deduction proof of the sequent
+	$$A \land (B \land C) \ \vdash \ (A \land B) \land C $$
+	
+		\item  For a fixed typed $A$, prove that the type $(A \to A) \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type. 
+	
+	{\bf Solution:}
+	
+	If this type were inhabited, then one would get a function for any choice of type $A$. If we choose $A = \bot$ to be the empty type, then we see that this is impossible. Indeed, there is a function $\bot \to \bot$. However, we can't get a function from the non-empty type $\bot \to \bot$ to the empty type $\bot$; as there is nothing to map to! Therefore, there can be no such function.
+	
+	The Curry-Howard correspondence gives us another avenue to prove this. If there were a program of this type, then there would be a natural deduction of $\vdash (A \to A) \to A$. By the soundness of the natural deduction calculus, we know we can only have proofs of logical tautologies. By writing a truth table for this proposition one can see this is not a tautology. This means there can be no derivation of the proposition. Via the Curry-Howard correspondence we see that there can be no function of this type.
+
+\end{itemize}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	\item For each $\Sigma \ \vdash \ \alpha$ provide a term of type $\alpha$ from the given $\Sigma$ context. 
+	\begin{enumerate}
+		\item $f : A \to (B \to C) \ \vdash \ B \to (A \to C)$
+		
+		{\bf Solution:}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lambda,2,1]{\lambda x. \ \lambda y. \ (f \ x) \ y \ : B \to (A \to C)}
+					{\infer[\app]{(f \ a) \ b \ : \ C}
+						{\infer[\app]{f \ a \ : \ B \to C}
+							{\infer[1]{a : A}{}
+							&
+							f : A \to (B \to C)}
+						&
+						\infer[1]{b : B}{}}}
+			\end{array}$	
+		\end{center}
+		Compare this typing derivation to the natural derivation verifying the sequent
+		$$A \to (B \to C) \ \vdash \ B \to (A \to C)$$		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,2,1]{B \to (A \to C)}
+					{\infer[\MP]{C}
+						{\infer[\MP]{B \to C}
+							{\infer[1]{A}{}
+							&
+							A \to (B \to C)}
+						&
+						\infer[1]{B}{}}}
+			\end{array}$	
+		\end{center}
+		We refer to the resulting $\lambda$-term as the proof object witnessing this theorem:
+		$$\lambda x. \ \lambda y. \ (f \ x) \ y \ : B \to (A \to C)$$		
+		
+		\item $t : A \times B \ \vdash \ B \times A$
+		
+		\textbf{Solution:}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\times]{(\snd t, \fst t) : B \times A}
+					{\infer[\snd]{\snd t : B}{t : A \times B}
+					&
+					\infer[\fst]{\fst t : A}{t : A \times B}}
+			\end{array}$		
+		\end{center}
+		Compare this typing derivation to the natural deduction verifying the sequent
+		$$A \land B \ \vdash \ B \land A$$
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{A \land B}
+					&
+					\infer[\land E_{L}]{A}{A \land B}}
+			\end{array}$		
+		\end{center}
+		We refer to the resulting $\lambda$-term as the proof object witnessing this theorem:
+		$$(\snd t, \fst t) : B \times A$$		
+		
+		\newpage
+		\item $t : A + B \ \vdash \ B + A$ 
+		
+		{\bf Solution:}
+		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\sumElim]{\sumElim t \ (\lambda a. \ \inr a) \ (\lambda b. \ \inl b) \ : B + A}
+					{t : A + B
+					&
+					\infer[\lambda,1]{\lambda a. \ \inr a : A \to B + A}
+						{\infer[\inr]{\inr a : B + A}
+							{\infer[1]{a : A}{}}}
+					&
+					\infer[\lambda,2]{\lambda b. \ \inl b : B \to B + A}
+						{\infer[\inl]{\inr b : B + A}
+							{\infer[2]{b : B}{}}}}
+			\end{array}$		
+		\end{center}
+		Compare this typing derivation to the natural deduction verifying the sequent
+		$$A \lor B \ \vdash \ B \lor A$$
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{B \lor A}
+					{A \lor B
+					&
+					\infer[\to I,1]{A \to B \lor A}
+						{\infer[\lor I_{R}]{B \lor A}
+							{\infer[1]{A}{}}}
+					&
+					\infer[\to I,2]{B \to B \lor A}
+						{\infer[\lor I_{L}]{B \lor A}
+							{\infer[2]{B}{}}}}
+			\end{array}$		
+		\end{center}
+		We refer to the resulting $\lambda$-term as the proof object witnessing this theorem:
+		$$\sumElim t \ (\lambda a. \ \inr a) \ (\lambda b. \ \inl b) \ : B + A$$		
+		\newpage
+		\item $f : (A\times  B) \rightarrow  C \vdash  A\rightarrow ( B \rightarrow  C) $
+			
+			{\bf Solution:}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \lambda y. \ f(x,y) \ : \ A\to(B\to C)}
+							{\infer[\lambda,2]{\lambda y. \ f(a,y) \ : \ B\to C}
+								{\infer[\app]{f(a,b) \ : \ C}
+									{f \ : \ (A\times B) \to C
+									&
+									\infer[\times]{(a,b) : A\times B}
+										{\infer[1]{a:A}{}
+										&
+										\infer[2]{b:B}{}}}}}
+					\end{array}$
+				\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$(A \land B) \rightarrow C \ \vdash \ A \rightarrow (B \rightarrow  C) $$
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{A\to(B\to C)}
+							{\infer[\to I,2]{B\to C}
+								{\infer[\MP]{C}
+									{(A\land B) \to C
+									&
+									\infer[\land I]{A\land B}
+										{\infer[1]{A}{}
+										&
+										\infer[2]{B}{}}}}}
+					\end{array}$
+				\end{center}
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \lambda y. \ f(x,y) \ : \ A\to(B\to C)$$
+			is the proof-object witnessing the proof of the sequent.
+			
+		\item $f : A \rightarrow ( B \rightarrow  C) \vdash ( A\times  B) \rightarrow C$
+			
+			{\bf Solution:}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ (f \ (\fst \ x)) \ (\snd \ x) \ : \ (A\times B)\to C}
+							{\infer[\app]{(f \ (\fst \ p)) \ (\snd \ p) \ : \ C}
+								{\infer[\app]{f \ (\fst \ p) \ : \ B\to C}
+									{f : A \to (B \to C)
+									&
+									\infer[\fst]{\fst \ p \ : \ A}
+										{\infer[1]{p : A\times B}
+											{}}}
+								&
+								\infer[\snd]{\snd \ p : \ B}
+									{\infer[1]{p : A\times B}
+										{}}}}
+					\end{array}$
+				\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \rightarrow (B \rightarrow  C) \ \vdash \ (A \times  B) \rightarrow  C $$
+
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{(A\land B)\to C}
+							{\infer[\MP]{C}
+								{\infer[\MP]{B\to C}
+									{A \to (B \to C)
+									&
+									\infer[\land E_{l}]{A}
+										{\infer[1]{A\land B}
+											{}}}
+								&
+								\infer[\land E_{r}]{B}
+									{\infer[1]{A\land B}
+										{}}}}
+					\end{array}$
+				\end{center}
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ (f \ (\fst \ x)) \ (\snd \ x) \ : \ (A\times B)\to C$$
+			is the proof-object witnessing the proof of the sequent.
+
+		\newpage
+		\item $f : A \to B \ \vdash A \to (B + C)$
+		
+		{\bf Solution:}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lambda,1]{\lambda x. \ \inl (f \ x) : A \to B + C}
+					{\infer[\inl]{\inl (f \ a) : B + C}
+						{\infer[\app]{f \ a : B}
+							{f : A \to B
+							&
+							\infer[1]{a : A}{}}}}
+			\end{array}$
+		\end{center}
+		Compare this typing derivation to the natural deduction verifying the sequent: 
+		$$A \to B \ \vdash A \to (B \lor C)$$
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{A \to B \lor C}
+					{\infer[\lor I_{L}]{B \lor C}
+						{\infer[\MP]{B}
+							{A \to B
+							&
+							\infer[1]{A}{}}}}
+			\end{array}$
+		\end{center}
+		We refer to the resulting $\lambda$-term as the proof object witnessing this theorem:
+		$$\lambda x. \ \inl (f \ x) : A \to B + C$$
+		
+		\item $ f : A\rightarrow  B, \  g : B \rightarrow  C \vdash  A\rightarrow  C $
+			
+			{\bf Solution:}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lambda,1]{\lambda x. \ g(f \ x) \ : \ A \to C}
+							{\infer[\app]{g(f \ a) \ : \ C}
+								{g \ : \ B \to C
+								&
+								\infer[\app]{f \ a \ : \ B}
+									{f : A \to B
+									&
+									\infer[1]{a : A}{}}}}
+					\end{array}$
+				\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \rightarrow  B, \ B \rightarrow  C \vdash \ A \rightarrow  C $$
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\to I,1]{A \to C}
+							{\infer[\MP]{C}
+								{B \to C
+								&
+								\infer[\MP]{B}
+									{A \to B
+									&
+									\infer[1]{A}{}}}}
+					\end{array}$
+				\end{center}
+			The resulting $\lambda$-term (i.e. program) below
+			$$ \lambda x. \ g(f \ x) \ : \ A \to C$$
+			is the proof-object witnessing the proof of the sequent.
+		
+		\newpage
+		\item $t : A +  B, \  f : A\to  C, \  g : B \to  D \vdash   C +  D$
+			
+			{\bf Solution:}
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\sumElim]{\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ C + D}
+							{p : A + B
+							&
+							\infer[\lambda,1]{\lambda x. \ \inl \ (f \ x) : A \to C+D}
+								{\infer[\inl]{\inl \ (f \ a) : C + D}
+									{\infer[\app]{f \ a : C}
+										{f : A \to C
+										&
+										\infer[1]{a : A}
+											{}}}}
+							&
+							\infer[\lambda,2]{\lambda y. \ \inl \ (g \ y) : B \to C+D}
+								{\infer[\inr]{\inr \ (g \ b) : C + D}
+									{\infer[\app]{g \ b : D}
+										{g : B \to D
+										&
+										\infer[2]{b : B}
+											{}}}}}
+					\end{array}$}
+				\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent: 
+			$$A \lor B,\ A \to  C,\ B \to  D \vdash \ C \lor D$$
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\lor E]{C \lor D}
+							{A \lor B
+							&
+							\infer[\to I,1]{A \to C\lor D}
+								{\infer[\lor I]{C \lor D}
+									{\infer[\MP]{C}
+										{A \to C
+										&
+										\infer[1]{A}
+											{}}}}
+							&
+							\infer[\to I,2]{B \to C\lor D}
+								{\infer[\lor I]{C \lor D}
+									{\infer[\MP]{D}
+										{B \to D
+										&
+										\infer[2]{B}
+											{}}}}}
+					\end{array}$}
+				\end{center}		
+			The resulting $\lambda$-term (i.e. program) below
+			$$\sumElim \ p \ (\lambda x. \ \inl \ (f \ x)) \ (\lambda y. \ \inr \ (g \ y)) \ : \ C + D$$
+			is the proof-object witnessing the proof of the sequent.		
+		
+		\item $f : A \to B \ \vdash \ (C \to A) \to (C \to B)$	
+		
+		
+		\newpage
+		\item $t : (A \to B) \times (A \to C) \ \vdash \ A \to (B \times C)$
+		
+		\newpage
+		\item $t : A \times (B + C) \ \vdash \ (A \times B) + (A \times C)$ \hfill [Handin exercise]
+		
+		\newpage
+		\item $t : (A \times B) + (A \times C) \ \vdash \ A \times (B + C)$
+		
+		\newpage
+		\item $t : A + (B \times C) \ \vdash \ (A + B) \times (A + C)$
+		
+		\newpage
+		\item $t : (A + B) \times (A + C) \ \vdash \ A + (B \times C)$
+	\end{enumerate}
+	
+		\newpage
+		{\bf Extras:} For these extra problems consider $\bot$ to be type with no constructor or destructors. Furthermore, consider $\lnot P$ to be shorthand for the function type: $\lnot P:= P \to \bot$.
+
+		\begin{enumerate}
+			\item $f : \lnot A \ \vdash \ (C \to A) \to \lnot C$
+			\item $t : A \times \lnot B \ \vdash \ \lnot (A \to B)$
+			\item $f : A \to  C, \  g : B \to  D, \ t : \neg C + \neg  D \vdash  \neg A+ \neg  B$
+			\item $ t : A, \ f : \neg  A\vdash  \neg  B$
+			\item $ f : A\rightarrow B, \  g : A\rightarrow \lnot B \vdash \lnot  A$
+			\item $f : A \to \lnot B \ \vdash \ B \to \lnot A$
+			\item $f : \lnot (A \times B) \ \vdash \ A \to \lnot B$
+			\item $t : A \ \vdash \ \lnot\lnot A$
+			\item $f : \lnot \lnot \lnot A \ \vdash \ \lnot A$
+			\item $t : \lnot A + \lnot B \vdash \lnot( A\times  B)$
+			\item $f : \lnot  A\times \lnot  B \ \vdash \lnot( A +  B)$
+			\item $f : \lnot( A +  B) \ \vdash \lnot  A\times \lnot  B$
+			\item $f : A \to \lnot B \ \vdash \ \lnot (A \times B)$
+			\item $\vdash \ \lnot\lnot (A + \lnot A)$
+		\end{enumerate}
+
+	\item Revisit Lab 1 and Lab 2. For each derivation in those labs, provide a proof-object witnessing a natural deduction of the sequent. You don't need to do any more derivations at this point!
+
+	\newpage
+	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
+	
+	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
+	
+	\begin{center}
+		$\begin{array}{c}		
+		  \infer[\to, 1]{A \land B \to B}
+		  	{\infer[\land E_{L}]{B}
+				{\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{\infer[1]{A \land B}{}} 
+					\hspace{0.5cm}	&	\hspace{0.5cm}
+					\infer[\land_{L}]{A}{\infer[1]{A \land B}{}}}}}
+		\end{array}$
+	  \end{center}
+
+	  	\begin{enumerate}
+			\item Determine the corresponding proof-object for this proof. 
+			\item Why does the proof-object have a redex in it? 
+			\item Perform the $\beta$-reduction on the proof object from (a).
+			\item What proof does the reduced proof-object correspond to?
+		\end{enumerate}
+
+		{\bf Solution:}
+
+		The natural deduction proof stated in the question corresponds to the following type construction:
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\lambda, 1]{\lambda x : A \times B. \ \fst (\snd x, \fst x) \ : \ A \times B \to B}
+					{\infer[\fst]{B}
+					{\infer[\times]{B \times A}
+						{\infer[\snd]{B}{\infer[1]{p \ : \ A \times B}{}} 
+						\hspace{0.5cm}	&	\hspace{0.5cm}
+						\infer[\fst]{A}{\infer[1]{p \ : \ A \times B}{}}}}}
+			\end{array}$
+		\end{center}
+
+		The corresponding proof-object is $$\lambda x : A \times B. \ \fst (\snd x, \fst x) \ : \ A \times B \to B$$
+
+		Which can be $\beta$-reduced to $$\lambda x : A \times B. \ \snd x \ : \ A \times B \to B$$
+
+		This proof-object takes in a pair and returns the second of the pair. 
+		
+		As a natural deduction this corresponds to the following: 
+
+		\begin{center}
+			$\begin{array}{c}		
+				\infer[\to, 1]{A \land B \to B}
+					{\infer[\land E_{R}]{B}
+						{\infer[1]{A \land B}
+							{}}}
+			\end{array}$
+		\end{center}
+
+		This simplified program corresponds to a shorter proof. In this sense $\beta$-reduction (i.e. computation!) is related to the simplification of proofs.  
+
+	\newpage
+	\item Prove that the type $A + B \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type. Your proof should be an informal reason for why no such program can exist. You might refer to the corresponding minimal logic sequent to help your justification.
+	
+	{\bf Solution:}
+	
+	Terms in $A + B$ are either of type $A$ or type $B$. We can't, in general, get a function from $A + B$ to $A$ because we have no function for processing $B$s to $A$s. 
+	
+	The Curry-Howard correspondence gives us another avenue to prove this. If there were a program of this type, then there would be a natural deduction of $\vdash A \lor B \to A$. By the soundness of the natural deduction calculus, we know we can only have proofs of logical tautologies. By writing a truth table for this proposition one can see this is not a tautology. This means there can be no derivation of the proposition. Via the Curry-Howard correspondence we see that there can be no function of this type.
+
+	 
+\end{enumerate}
+	
+\end{document}

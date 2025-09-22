@@ -274,30 +274,53 @@ We will work through the following examples to get a taste of theorem proving in
 \end{frame}
 
 \begin{frame}
+	\frametitle{Tactic: intro}
+	
+	The tactic ``intro'' can be applied to simplfy a goal of the form $\Sigma \vdash \alpha \to \beta$ to the updated goal $\Sigma, \alpha \vdash \beta$. This puts the antedecent in the context and takes care of the implication introduction aka function abstraction we would normally do explictly at such a step. 
+	
+	This tactic takes argument(s) which are used as names for the terms of the corresponding proposition/type introduced. 
+	
+	If no arguments are passed to intro, then the term is anonymous. As such it is more difficult to make use of that hypothesis later in the proof. For this reason we will always name the terms inhabiting the hypotheses we introduce.
+	
+	This tactic **infers** the type of the term variable introduced from the goal. If the goal is not an implication, then the Lean will throw an error.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Tactic: apply}
+	
+	The ``apply'' tactic takes a theorem or constructor of the form $\Sigma \vdash \alpha$ and matches the current goal with the conclusion $\alpha$ in the theorem applied. This tactic updates the goal to a (list of) new goal(s) depending on the hypotheses used in the theorem. 
+	
+	For example, And.intro has two arguments $a : A$ and $b : B$ and the conclusion $A \land B$. If the goal of the current proof-state is a conjunction $P \land Q$, then using ``apply And.intro'' will update the proof-state to have two goals: one asking for a proof of $P$ and another asking for a proof of $Q$. All of the $\land$ introduction details are taken care of behind the scenes.
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Tactic: apply}
+
+	We can make use of apply with a hypothesis of the form $t : P \lor Q$. If the current proof-state is of the form $\Sigma, t : P \lor Q \ \vdash \gamma$, then we can use ``apply Or.elim t'' to split the proof into two cases: $\Sigma \vdash P \to \gamma$ and $\Sigma \vdash Q \to \gamma$.
+	
+	Or.elim takes three arguments (i) $t : P \lor Q$ (ii) $f : P \to \gamma$, and (iii) $g: Q \to \gamma$. Using apply with Or.elim $t$ then reduces the problem to determining the other two arguments $f, g$ respectively. 
+
+\end{frame}
+
+\begin{frame}
 	\frametitle{Tactic Summary}
 	
-	\begin{table}[htbp]
-    \centering
-    \renewcommand{\arraystretch}{1.5}
-    \textbf{Lean 4 Tactics}\\
-    \vspace{0.2cm}        
-    \footnotesize
-    \begin{tabular}{|l|l|l|}
-    \hline
-    \textbf{Tactic} & \textbf{Summary} & \textbf{Natural Language} \\
-    \hline
-    by & Opens tactic mode. & \\
-    intro(s) & Either (i) implication introduction, or (ii) $\forall$ introduction. & Let $n$ be some natural...\\
-    exact & This term has the same type as the goal. & ... as required \\
-    apply & & \\
-    have & Introduces a local variable, or intermediate step. & So far we have... \\
-    rfl & Closes goals that are (up to normalization) definitionally equal. & ... by definition \\
-    rw & Substitutes equals for equals. & \\
-    induction & Wraps base case and induction step into $\forall$ proof. & By induction...\\
-    calc & Line-by-line calculation showing $a = \dots = b$. & Algebra calculation!\\
-    \hline
-    \end{tabular}
-\end{table}
+	\begin{table}
+    		\begin{tabular}{l | l}
+			Tactic & Summary \\
+			\hline
+			by & Opens tactic mode. \\
+			intro & introduces named variable(s) with inferred type \\
+			apply & calls a theorem to update goal \\
+			have & creates an intermediate term (sub-proof) \\
+			exact & closes a goal by providing a term of required type.			
+		\end{tabular}
+	\end{table}
+	
+	These tactics are sufficient for the minimal logic proofs in the labs and assignment.
+	
+	Theorem Proving in Lean 4 chapters 3 and 5 have more detail on proving propositional logic theorems in Lean 4.
 
 \end{frame}
 

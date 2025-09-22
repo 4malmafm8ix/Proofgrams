@@ -1,7 +1,7 @@
---variable (P Q R : Prop)
+variable (P Q R : Prop)
 
 -- Example 01
--- ⊢ P ∧ Q → Q ∧ P$
+-- ⊢ P ∧ Q → Q ∧ P
 
 -- Example 02
 -- ⊢ P ∨ Q → Q ∨ P
