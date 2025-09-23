@@ -1,3 +1,4 @@
+variable (P Q R : Prop)
 -- We have seen that Curry Howard is an
 -- equivalence between intuitionistic
 -- logic and type theory. It does not
@@ -37,7 +38,7 @@ open Classical -- Pandora's Box is now open!
 -- Example 04
 -- ¬(P → Q) ⊢ P ∧ ¬Q
 
--- Example 05 [Contrapositive]
+-- Example 05 [ClassicalContrapositive]
 -- ¬Q → ¬P ⊢ P → Q
 
 -- Example 06 [Pierce's Law]

@@ -33,43 +33,87 @@ theorem PA6 (m n : ℕ) : m * (succ n) = (m * n) + m := by rfl
 
 -- Question 1
 theorem zero_add : ∀ x : ℕ, zero + x = x :=
-  sorry
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ n ih => rw [PA4, ih]
 
 -- Question 2
 theorem zero_mul : ∀ x : ℕ, zero * x = zero :=
-  sorry
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ n ih => rw [PA6,PA3,ih]
 
 -- Question 3
 theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
-  sorry
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ n ih => rw [PA6,PA4,PA5,zero_add]
 
 -- Question 4
 theorem succ_add : ∀ x y : ℕ, (succ x) + y = succ (x + y) :=
-  sorry
+  by
+    intro a b
+    induction b with
+    | zero      => repeat rw [PA3]
+    | succ n ih => rw [PA4,ih,PA4]
 
 -- Question 5
 theorem add_assoc : ∀ x y z : ℕ, (x + y) + z = x + (y + z) :=
-  sorry
+  by
+    intro a b c
+    induction a with
+    | zero      => rw [zero_add,zero_add]
+    | succ n ih => rw [succ_add,succ_add,succ_add,ih]
 
 -- Question 6
 theorem add_comm : ∀ x y : ℕ, x + y = y + x :=
-  sorry
+  by
+    intro a b
+    induction a with
+    | zero      => rw [zero_add, PA3]
+    | succ n ih => rw [succ_add,PA4,ih]
 
 -- Question 7
 theorem succ_mul : ∀ x y : ℕ, (succ x) * y = x * y + y :=
-  sorry
+  by
+    intro a b
+    induction b with
+    | zero      => rfl
+    | succ n ih => rw [PA4,PA6 a n,PA6,ih,PA4]
+                   rw [add_assoc,add_comm n a,<-add_assoc]
 
 -- Question 8
 theorem mul_comm : ∀ x y : ℕ, x * y = y * x :=
-  sorry
+  by
+    intro a b
+    induction a with
+    | zero      => rw [zero_mul,PA5]
+    | succ n ih => rw [succ_mul,PA6,ih]
 
 -- Question 9
 theorem add_mul : ∀ x y z : ℕ, (y + z) * x = y * x + z * x :=
-  sorry
+  by
+    intro a b c
+    induction a with
+    | zero      => rfl
+    | succ n ih => rw [PA6,ih,PA6,PA6,
+                      add_assoc, add_comm (c*n),
+                      add_assoc, add_comm c,
+                      <-add_assoc,<-add_assoc]
 
 -- Question 10
 theorem mul_assoc : ∀ x y z : ℕ, (x * y) * z = x * (y * z) :=
-  sorry
+  by
+    intro a b c
+    induction a with
+    | zero      => rw [zero_mul,zero_mul,zero_mul]
+    | succ n ih => rw [succ_mul,succ_mul,add_mul,ih]
 
 -- We now add ≤ predicate to our formal description of ℕ
 def leq (m n : ℕ) := (∃ x : ℕ, n = m + x)
@@ -89,19 +133,36 @@ instance : LE ℕ where
 
 -- Question 11
 theorem leq_refl : ∀ x : ℕ, x ≤ x :=
-  sorry
+  by
+    intro a
+    apply Exists.intro zero
+    rw [PA3]
 
 -- Question 12
 theorem zero_leq : ∀ x : ℕ, zero ≤ x :=
-  sorry
+  by
+    intro a
+    apply Exists.intro a
+    rw [zero_add]
 
 -- Question 13
 theorem leq_succ : ∀ x : ℕ, x ≤ succ x :=
-  sorry
+  by
+    intro a
+    apply Exists.intro zero.succ
+    rw [PA4,PA3]
 
 -- Question 14
 theorem leq_trans : ∀ x y z : ℕ, (x ≤ y) ∧ (y ≤ z) → x ≤ z :=
-  sorry
+  by
+    intro a b c
+    intro t
+    apply Exists.elim t.left
+    intro u hu
+    apply Exists.elim t.right
+    intro v hv
+    apply Exists.intro (u + v)
+    rw [<-add_assoc,<-hu,hv]
 
 -- You may require the following two theorems to write
 -- a proof of Question 15. These theorems: add_eq_self
@@ -129,4 +190,16 @@ theorem add_eq_zero : ∀ x y : ℕ, x + y = zero -> x = zero :=
                    injection h₁
 
 -- Question 15
-theorem leq_antisymm : ∀ x y : ℕ, (x ≤ y) ∧ (y ≤ x) → x = y := sorry
+theorem leq_antisymm : ∀ x y : ℕ, (x ≤ y) ∧ (y ≤ x) → x = y :=
+  by
+    intro a b
+    intro t
+    apply Exists.elim t.left
+    intro u wu
+    apply Exists.elim t.right
+    intro v wv
+    rw [wv,add_assoc] at wu
+    have h₁ := add_eq_self b (v + u) (Eq.symm wu)
+    have h₂ := add_eq_zero v u h₁
+    rw [h₂,PA3] at wv
+    assumption

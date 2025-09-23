@@ -328,9 +328,109 @@ We will work through the following examples to get a taste of theorem proving in
 %		 Topics to add         %
 %%%%%%%%%%%%%%
 % Classical Logic in Lean. 
+
+
+
 % First Order Logc in Lean. 
 %	Predicates
+\begin{frame}[fragile]
+	\frametitle{Predicates}
+Recall from earlier in the course that we defined predicates on $\mathbb{N}$ to be functions: 
+$$P : \mathbb{N} \to \text{Prop}$$
+Specifically, for each natural number $n:\mathbb{N}$ we get a proposition $$P \ n : \text{Prop}$$
+Adding the following puts a type variable $A$, term variables inhabiting that type, and unary predicates $F,G,H$ into the context of the Lean file.
+\begin{lstlisting}
+variable (A : Type)
+variable (a b c t u v : A)
+variable (F G H : A -> Prop)
+\end{lstlisting}
+For now we will talk about first order logic on arbitrary types and return later to talk about specific types like $\mathbb{N}$. 
+\end{frame}
 %	Quantifiers
+\begin{frame}
+	\frametitle{BHK}
+	
+	Although we did not cover the specific type constructors corresponding to the quantifiers $\forall$ and $\exists$ we can use the BHK to understand how to prove quantified claims. 	
+	\begin{center}
+		\begin{tabular}{p{1.5cm}p{8cm}}
+		$\forall$ & a proof of $\forall x \ P(x)$ is an algorithm that, applied to \emph{any} object $t$ returns a proof of $P(t)$.\\
+		$\exists$ & to prove $\exists x \ P(x)$ one must construct an object $t$ and a proof of $P(t)$. 
+		\end{tabular}
+	\end{center}
+	
+	One may also refer to Simon Thompson, or Theorem Proving in Lean 4 for more details. 	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Universal Quantifier}
+	
+	The constructor $\forall$ builds a proposition from (i) a type $\alpha$ (ii) a variable $x : \alpha$ of that type, and (iii) a unary predicate $P : \alpha \to \text{Prop}$ over that type.
+	$$f \ : \ \forall x: \alpha, \ P \ x$$
+	Following the BHK, each term $f$ of this type is to be thought of as a function which takes in any $a : \alpha$ and returns a proof $p : (P \ a)$ that $a$ satifies the predicate $P$. 
+	
+	Therefore the type destructor for $\forall$ is simply function application. 
+	
+	To construct a term of this type we must write such a function. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Existential Quantifier}
+	
+	The constructor $\exists$ builds a proposition from (i) a type $\alpha$ (ii) a variable $x : \alpha$ of that type, and (iii) a unary predicate $P : \alpha \to \text{Prop}$ over that type.
+	$$t \ : \ \exists x: \alpha, \ P \ x$$
+	Following the BHK, each term $t$ of this type is to be thought of as a pair $(a, p)$ where $a : \alpha$ and $p : (P \ a)$ is a proof that $a$ satisfies the predicate $P$. In this context we refer to $a$ as the witness to this existential claim and $p$ the proof that $a$ is the witness. 
+	
+	To construct a term of this type requires both of these pieces of information. 
+	
+	We can unpack a term $t$ into the witness and the proof the witness has the property. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Universal Quantifier and Lean}
+	
+	If $f : \forall x: \alpha, P \ x$ is a hypothesis in the context and $a : \alpha$, then function application $f \ a$ will return a term of type $P \ a$ i.e. a proof that $a$ satifies the predicate $p$. 
+	
+	If the goal $\Sigma \vdash \ \forall x : \alpha, P \ x$ is a universally quantified statement, then one can use the intro tactic to construct the required function. This time the name passed to intro will the name given to the arbtirary term $a : \alpha$. 
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Existential Quantifer and Lean}
+	
+	If $t : \forall x: \alpha, P \ x$ is a hypothesis in the context then one can use the tactic call: 
+		
+	\begin{lstlisting}	
+		rcases t with a p
+	\end{lstlisting}
+	
+	This gives the names $a$ to the term satifying $P$ and $p$ to the proof that $a$ satifies $P$.
+	
+	If the goal $\Sigma \vdash \ \exists x : \alpha, P \ x$ is an existential statement, then one can use the term builder Exists.intro as follows to build the required goal:
+	
+	\begin{lstlisting}
+		Exists.intro a p	
+	\end{lstlisting}
+	
+	Again, $a$ is the name of the term statisfying the predicate and $p$ is the proof that $a$ satifies the predicate.
+	
+\end{frame}
+
+\begin{frame}
+\frametitle{Example}
+We will work through the following examples to get a taste of theorem proving in Lean4:
+
+\begin{itemize}
+	\item[] $\forall x \ Fx \to Gx, \ F a \ \vdash \ G \ a$
+	\item[] $\forall x \ Fx \to Gx, \ \forall x \ Fx \ \vdash \ \forall x \ Gx$
+	\item[] $\forall x \ Fx \to Gx, \ \forall x \ Gx \to Hx \ \vdash \ \forall x \ Fx \to Hx$ 
+	\item[] $\forall x \ Fx \to Gx, \ \lnot G a \ \vdash \ \exists x \ \lnot F x$
+	\item[] $\forall x \ Fx \to Gx, \ \exists x \ F \ x \ \vdash \ \exists x \ G \ x$
+	\item[] $(\exists x \ F \ x) \lor (\exists x \ G \ x) \ \vdash \ \exists x \ (F \ x \lor G \ x)$
+	\item[] $\lnot \exists x \ F \ x \ \vdash \ \forall x \ \lnot F \ x$
+\end{itemize}
+\end{frame}
+
 %	Equality/Identity
 % Mathematics in Lean
 %	Inductive types
@@ -351,10 +451,15 @@ We will work through the following examples to get a taste of theorem proving in
 \begin{frame}
 	\frametitle{Further Reading}
 	
-    This lecture was prepared with the aid of the following references. 
-    These should be consulted for further detail on the topics. 
-
-    \printbibliography
+    These slides were prepared with the aid of the following references. These should be consulted for further detail on the topics. 
+    
+    \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Simon Thompson}
+    
+    \href{https://leanprover.github.io/theorem_proving_in_lean4/}{Theorem Proving in Lean 4}
+    
+    Each of these are freely available on the world wide web.
+    
+    \vspace{50mm}  
 	
 \end{frame}
 \end{document}
