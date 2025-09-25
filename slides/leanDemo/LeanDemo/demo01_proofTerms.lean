@@ -2,6 +2,13 @@ variable (P Q R : Prop)
 
 -- Example 01
 -- ⊢ P ∧ Q → Q ∧ P
+theorem conj_comm : P ∧ Q → Q ∧ P := by
+    intro t
+    apply And.intro
+    exact t.right
+    exact t.left
+
+#print conj_comm
 
 -- Example 02
 -- ⊢ P ∨ Q → Q ∨ P

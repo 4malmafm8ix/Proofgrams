@@ -1,0 +1,145 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+
+\title{Lean 4 Summary Sheet}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{1. Term Builders for \texttt{Prop}}
+These are constructors used to explicitly build terms inhabiting Prop in Lean4. The number of underscores following the constructor indicates the number of terms that can be passed to it. Note it can be useful, when using tactics, to only partially apply some constructors.
+
+\begin{enumerate}
+  \item \texttt{And.intro \_ \_}
+  
+  {\bf e.g.} Given terms $p:P$ and $q:Q$ the term And.intro $p \ q : P \land Q$.  
+  
+  This can also be written $\langle p,q \rangle : P \land Q$
+  
+  \item \texttt{And.left \_}
+  
+  {\bf e.g.} Given a term $t : P \land Q$, the term And.left $t : P$  
+  
+  This can also be written $t$.left $: P$
+  
+  \item \texttt{And.right \_}
+  
+  {\bf e.g.} Given a term $t : P \land Q$, the term And.right $t : Q$   
+  
+  This can also be written $t$.right $: Q$
+  
+  \item \texttt{Or.intro\_left \_ \_}
+  
+  {\bf e.g.} Given a term $p:P$ and a Prop $Q$ the term Or.intro\_left $Q \ p : P \lor Q$
+  
+  \item \texttt{Or.intro\_right \_ \_}
+  
+ {\bf e.g.} Given a term $p:P$ and a Prop $Q$ the term Or.intro\_right $Q \ p : Q \lor P$   
+  
+  \item \texttt{Or.elim \_ \_ \_}
+  
+  {\bf e.g.} Given terms $t : P \lor Q$, $f: P \to R$, and $g: Q \to R$ the term Or.elim $t \ f \ g : R$ 
+  
+  \item \texttt{fun \_ => \_}
+  
+  {\bf e.g.} Given an identifier (any lower case english string) say $t : P$ and a term $e : Q$ we can construct fun $t : P => e$ which has type $P \to Q$ 
+  
+  This can be written without the explicit typing on the variable $t$. It can also be written with a $\lambda$ instead of fun 
+  
+  $\lambda t => e$ is a term of type $P \to Q$. Lean can infer the type of $t$. 
+  
+  Notice the use of $=>$ instead of the $.$ used in our on-paper lambda calculus. 
+  
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\section*{2. Unicode Symbols in VSCode}
+Type a backslash \texttt{\textbackslash} followed by the keyword to insert the symbol:
+
+\begin{center}
+\begin{tabular}{|l@{\hspace{0.5cm}}|l@{\hspace{1.5cm}}|l@{\hspace{1.5cm}}|l|}
+\hline
+\textbf{Name} & \textbf{Lean Input} & \textbf{Symbol} & \textbf{Meaning} \\
+\hline
+And & \texttt{\textbackslash and} & $\land$ & Logical AND \\
+Or & \texttt{\textbackslash or} & $\lor$ & Logical OR \\
+Not & \texttt{\textbackslash not} & $\lnot$ & Logical NOT \\
+Implies & \texttt{\textbackslash to} & $\to$ & Implication \\
+Forall & \texttt{\textbackslash forall} & $\forall$ & Universal quantifier \\
+Exists & \texttt{\textbackslash exists} & $\exists$ & Existential quantifier \\
+Natural numbers & \texttt{\textbackslash bn} & $\mathbb{N}$ & Set of naturals \\
+Alpha & \texttt{\textbackslash alpha} & $\alpha$ & Greek letter alpha \\
+Beta & \texttt{\textbackslash beta} & $\beta$ & Greek letter beta \\
+Turnstile & \texttt{\textbackslash vdash} & $\vdash$ & Provability symbol \\
+Lambda & \texttt{\textbackslash lambda} & $\lambda$ & Lambda abstraction \\
+Left Angle bracket & \texttt{\textbackslash langle} & $\langle$ & AND introduction \\
+Right Angle bracket & \texttt{\textbackslash rangle} & $\rangle$ & AND introduction \\
+\hline
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\section*{3. Keywords}
+Avoid using these as identifiers (names) for terms, types, or variables.
+
+\begin{itemize}
+  \item \texttt{variable}
+  
+  	This is used to declare variables inhabiting particular types.
+  
+  \item \texttt{theorem}
+  
+  	This is used to state a theorem in Lean. It has the following pattern:
+  	
+  	theorem $<$name$>$ $<$list of hypotheses$>$ : $<$goal-type$>$ := $<$proof-term$>$
+  
+  \item \texttt{example}
+  
+  This is used to state an anonymous theorem in Lean. It has the following pattern:
+  	
+  	example $<$list of hypotheses$>$ : $<$goal-type$>$ := $<$proof-term$>$
+  
+   \item \texttt{def}
+  
+  \item \texttt{with}
+  \item \texttt{match}
+\end{itemize}
+
+\vspace{0.5cm}
+
+\section*{4. Tactics for Proofs in \texttt{Prop}}
+Rather than writing proof-terms explicitly, these tactics help authoring proofs about propositions. 
+
+\begin{itemize}
+  \item \texttt{intro \_ \_ \_ \dots}
+  
+  This mimics the use of the deduction theorem. If the goal is an implication, then it uses the name(s) passed to intro to put a term of the antecedent type in the current context. If there are nested implications, then intro can be passed a number of identifiers to move all the antecedents to the current context in one line. 
+  
+  {\bf e.g.} If the current goal is $A \to (B \to (C \land D \to E))$, then we can apply intro $a \ b \ t$ which will update the goal to $E$ and put three terms $a : A$, $b : B$, and $t : C\land D$ into the context. 
+  
+  It takes care of all the implication introductions behind the scenes.
+  
+  \item \texttt{apply \_}
+  \item \texttt{exact \_}
+  
+  {\bf e.g.} If the goal of the current proof-state is $P$ and $t : P$, then exact $t$ completes the proof.
+  
+  \item \texttt{have \_ := \_}
+  
+  {\bf e.g.} This tactic introduces an intermediate term into the context. It gives a name to a subproof used on the way to the goal. It doesn't change the goal of the proof-state. If $e : P$, then have $t := e$ introduces the term $t$ of type $P$ into the context.
+  
+  If the proof is particularly long, then using have can break the proof up into manageable steps.
+  
+\end{itemize}
+
+\end{document}

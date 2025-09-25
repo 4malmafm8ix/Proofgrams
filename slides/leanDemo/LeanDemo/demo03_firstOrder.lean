@@ -13,7 +13,7 @@
 -- For the purposes of these lectures let's suppose we
 -- have some type α and predicates F G H on that type.
 variable (α : Type)         -- Type to quantify over.
-variable (a b c t u v : α)  -- Term variables of type α.
+variable (a b c : α)  -- Term variables of type α.
 variable (F G H : α → Prop) -- Predicates on that type.
 
 -- ∀x Fx → Gx, Fa ⊢ Ga

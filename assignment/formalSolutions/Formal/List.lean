@@ -3,6 +3,7 @@ namespace Formal.List
 inductive List (α : Type) where
   | null : List α
   | cons : (a : α) →  (as : List α) → List α
+  deriving Repr
 
 open List
 
@@ -28,8 +29,7 @@ def cons_append {α : Type} :
       intro a as bs
       rfl
 
--- This proof is not merely computing the definition of ++
--- It will require proof by induction on xs
+-- Question 1
 theorem append_null {α : Type} :
   ∀ xs : List α, (xs ++ null) = xs :=
     sorry
@@ -40,6 +40,7 @@ def snoc {α : Type} : List α → α → List α
   | null, a      => cons a null
   | cons x xs, a => cons x (snoc xs a)
 
+-- Question 2
 theorem snoc_append {α : Type} :
   ∀ a : α, ∀ (as bs : List α),
     ((snoc as a) ++ bs) = (as ++ (cons a bs)) :=
@@ -49,16 +50,19 @@ def reverse {α : Type} : List α -> List α
 | null      => null
 | cons x xs => snoc (reverse xs) x
 
+-- Question 3
 theorem reverse_snoc {α : Type} :
   ∀ a : α, ∀ as : List α,
     reverse (snoc as a) = cons a (reverse as) :=
     sorry
 
+-- Question 4
 theorem snoc_reverse {α : Type} :
   ∀ a : α, ∀ as : List α,
     snoc (reverse as) a = reverse (cons a as) :=
     sorry
 
+-- Question 5
 theorem rev_rev {α : Type} :
   ∀ xs : List α,
   reverse (reverse xs) = xs :=

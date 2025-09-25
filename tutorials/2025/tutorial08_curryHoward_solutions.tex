@@ -388,10 +388,73 @@
 			is the proof-object witnessing the proof of the sequent.		
 		
 		\item $f : A \to B \ \vdash \ (C \to A) \to (C \to B)$	
-		
+			
+			{\bf Solution:}			
+			\begin{center}
+				$\infer[\lambda, 1]{\lambda x. \ \lambda y. \ f \ (x \ y) \ : \ (C \to B) \to (C \to B)}
+					{\infer[\lambda,2]{\lambda y. \ f \ (g \ y) \ : \ C \to B}
+						{\infer[\app]{f \ (g \ c) : B}
+							{\infer[\app]{g \ c : A}
+								{\infer[2]{c : C}{}
+								&
+								\infer[1]{g : C \to A}{}}
+							&
+							f : A \to B}}}$			
+			\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent:
+			\begin{center}
+				$\infer[\to I, 1]{(C \to B) \to (C \to B)}
+					{\infer[\to I,2]{C \to B}
+						{\infer[\MP]{B}
+							{\infer[\MP]{A}
+								{\infer[2]{C}{}
+								&
+								\infer[1]{C \to A}{}}
+							&
+							A \to B}}}$			
+			\end{center}
+			The resulting $\lambda$-term (i.e. program) below
+			$$\lambda x. \ \lambda y. \ f \ (x \ y) \ : \ (C \to B) \to (C \to B)$$
+			is the proof-object witnessing the proof of the sequent.
 		
 		\newpage
 		\item $t : (A \to B) \times (A \to C) \ \vdash \ A \to (B \times C)$
+					
+			{\bf Solution:}			
+			\begin{center}
+				$\infer[\lambda,1]{\lambda x. \ ((\fst t) \ x, (\snd t) \ x) : A \to B \times C}
+					{\infer[\times]{((\fst \ t) \ a, (\snd \ t) \ a) : B \times C}
+						{\infer[\app]{(\fst \ t) \ a : B}
+							{\infer[\fst]{\fst \ t : A \to B}
+								{t \ : \ (A \to B) \times (A \to C)}
+							&
+							\infer[1]{a:A}{}}
+						&
+						\infer[\app]{(\snd t) \ a : C}
+							{\infer[\snd]{\snd t : A \to C}
+								{t \ : \ (A \to B) \times (A \to C)}
+							&
+							\infer[1]{a:A}{}}}}$			
+			\end{center}
+			Compare this typing derivation to the natural deduction verifying the sequent:
+			\begin{center}
+				$\infer[\to I,1]{A \to B \land C}
+					{\infer[\land I]{B \land C}
+						{\infer[\MP]{B}
+							{\infer[\land E_{l}]{A \to B}
+								{(A \to B) \land (A \to C)}
+							&
+							\infer[1]{A}{}}
+						&
+						\infer[\MP]{C}
+							{\infer[\land E_{r}]{A \to C}
+								{(A \to B) \times (A \to C)}
+							&
+							\infer[1]{A}{}}}}$			
+			\end{center}
+			The resulting $\lambda$-term (i.e. program) below
+			$$\lambda x. \ ((\fst \ t) \ x, (\snd \ t) \ x) : A \to B \land C$$
+			is the proof-object witnessing the proof of the sequent.
 		
 		\newpage
 		\item $t : A \times (B + C) \ \vdash \ (A \times B) + (A \times C)$ \hfill [Handin exercise]
