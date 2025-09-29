@@ -1,0 +1,239 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Assignment }
+\end{center}
+\begin{center}
+	{\bf Arithmetic with Turing Machines}
+\end{center}
+
+This assignment is worth 20\% of your final grade for MATH230. Each of the questions below are stated with their weight for this assignment. You may submit any combination of questions that you like; you may do as many or as few as you wish. Your grade will be determined by the sum of the points of the questions that you answer correctly, upto a maximum of 100 points. Partial credit will be given for Turing machines that don't pass all tests. Partial credit will be given for clear explanations of steps towards the specification of a Turing machine. 
+
+\vspace{0.5cm}
+
+For each of the following exercises you must (i) achieve the required ouput for the specified inputs, (ii) explain in English how the machine works, and (iii) have the Turing machine halt with the read head on the starting (@) cell. Furthermore, assume all inputs are followed by an infinite tape of blank cells. 
+
+\vspace{0.5cm}
+
+You may discuss your solutions with the teachers and anyone in the class. However, the final Turing machine instructions must be written by yourself. If any of the instructions for the assignment are unclear, then do not hesitate to ask the teachers for clarification. 
+
+\vspace{0.5cm}
+
+{\bf Submission Format} You must submit one zipped folder. This folder must contain one .txt file for each of the Turing machines you write. The .txt files must contain the Turing machine instructions and sufficient comments to explain your machine. Your machine instructions must follow the format explained in tutorials and in lectures. Save your .txt files with useful file names e.g. If you're writing a Turing machine to determine whether an integer is odd or even and the input is assumed to be unary, then save the file using a name like  unary$\_$oddeven.txt.
+
+\vspace{0.5cm}
+
+{\bf Turing Machine Code Format} Ensure your Turing machine instructions are provided in a text file with the correct format. Keep the following in mind:
+
+	\begin{enumerate}
+		\item All instructions must be in the form: state,read,write,move,update;
+		\item Instructions are case sensitive
+		\item All instruction lines must end with a (semicolon) ; e.g. q0,@,@,R,q0;
+		\item All state names start with a q and are followed by an integer e.g. q12
+		\item In this assignment the only characters required are: 0,1,b,+,-
+		\item You may introduce other characters in your working
+		\item Only three possible move instructions: L,N,R
+		\item Final state is HALT;
+		\item Turing machine starts in a q0,@,@,R,... instruction
+		\item \emph{File must end on a new line}
+		\item No other lines in the file can be empty
+		\item Order of the instructions in the file do not matter
+		\item Comment lines all begin with a (hashtag) \# 
+	\end{enumerate}
+
+	An example is provided on Learn in the Turing section.
+
+% Assume the input is in the form stated for each TM. 
+% Specify the format of the TM code files more clearly.
+
+\newpage
+\begin{center}
+	{\bf Unary Arithmetic}
+\end{center}
+
+	For these questions represent non-negative integers with unary representation.
+
+	\begin{enumerate}
+		\item[(5 Points)] Write a Turing machine to increment a unary number. 
+		
+			\begin{itemize}
+				\item[] Input: a (possibly empty) string of 1s.
+				\item[] Output: a string of 1s corresponding to the successor of the input. 
+				\item[] Example: Input $= \ _{1}$ Output $= 1_{1}$.
+			\end{itemize}
+
+		\item[(5 points)] Write a Turing machine to decrement a unary number. 
+		
+			\begin{itemize}
+				\item[] Input: a (possibly empty) string of 1s.
+				\item[] Output: a string of 1s corresponding to the predecessor of the input. 
+				\item[] Example: Input $=11\ _{1}$ Output $= 1_{1}$.
+			\end{itemize}
+		
+			If input is 0 i.e. the empty string of 1s, then return 0 i.e. the empty string of 1s 
+		
+		\item[(10 points)] Write a Turing machine to sum two unary numbers.
+	
+			\begin{itemize}
+				\item[] Input: (possibly empty) strings of 1s separated by a + symbol.
+				\item[] Output: a string of 1s corresponding to the sum of the inputs. 
+				\item[] Example: Input $= 11111_{1} + 11_{1}$ Output $= 1111111_{1}$.
+			\end{itemize}
+
+		\item[(20 points)] Write a Turing machine to calculate the (limited) difference of two unary integers.
+	
+			\begin{itemize}
+				\item[] Input: strings of 1s separated by a - symbol.
+				\item[] Output: a string of 1s corresponding to the sum of the inputs. 
+				\item[] Example: Input $= 11111_{1} - 11_{1}$ Output $= 111_{1}$.
+			\end{itemize}
+
+			If $x \geq y$, then $x \dot - y = x - y$. Otherwise $x \dot - y = 0$. 
+		
+		\item[(15 points)] Write a Turing machine to determine whether a unary integer is odd/even.
+
+			\begin{itemize}
+				\item Input: a string of 1s.
+				\item Output: a bit. 0 if odd, 1 if even.
+				\item Example: Input $= 11111_{1}$ Output $= 0$.
+			\end{itemize}
+		
+		\item[(25 points)] Write a Turing machine to determine whether one integer is less than another.
+
+			\begin{itemize}
+				\item Input: two strings of 1s separated by a blank cell.
+				\item Output: a bit. 1 if first input smaller or equal, 0 if first input greater.
+				\item Example: Input $= 111b11111$ Output $= 1$.
+			\end{itemize}
+
+		\item[(80 points)] Write a Turing machine to decide if one integer divides another.
+		\item[(100 points)] Write a Turing machine to determine whether an integer is prime.			
+
+	\end{enumerate}
+
+	\newpage
+	\begin{center}
+		{\bf Binary Arithmetic}
+	\end{center}
+
+	For these questions represent non-negative integers with binary representation.
+
+	\begin{enumerate}
+
+		\item[(10 points)] (Half-Adder) Write a Turing machine which adds two-bits. 
+		
+			\begin{itemize}
+				\item[] Input: two bits $b_{1}b_{2}$
+				\item[] Ouput: two bits $sc$ according to the following table
+			\end{itemize}
+
+			\begin{center}
+				\begin{tabular}{c c || c c }
+					$b_{1}$ & $b_{2}$ & sum & carry \\
+					\hline
+					0 & 0 & 0 & 0 \\
+					1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0 \\
+					1 & 1 & 0 & 1
+					
+				\end{tabular}
+			\end{center}
+
+		\item[(15 points)] (Full-Adder) Write a Turing machine which adds two-bits with a carry bit.
+		
+			\begin{itemize}
+				\item[] Input: three bits $b_{1}b_{2}$ and a carry $c$
+				\item[] Ouput: two bits $sc$ according to the following table
+			\end{itemize}
+
+			\begin{center}
+				\begin{tabular}{c c c || c c }
+					$b_{1}$ & $b_{2}$ & $c$ & sum & carry \\
+					\hline
+					0 & 0 & 0 & 0 & 0 \\
+					0 & 0 & 1 & 1 & 0 \\
+					0 & 1 & 0 & 1 & 0 \\
+					0 & 1 & 1 & 0 & 1 \\
+					1 & 0 & 0 & 1 & 0 \\
+					1 & 0 & 1 & 0 & 1 \\
+					1 & 1 & 0 & 0 & 1 \\
+					1 & 1 & 1 & 1 & 1 
+					
+				\end{tabular}
+			\end{center}
+
+		\item[(25 points)] Write a Turing machine to increment a binary number. 
+		
+			\begin{itemize}
+				\item[] Input: a binary string.
+				\item[] Output: a binary string corresponding to the successor of the input.
+				\item[] Example: Input $=11_{2}$ Output $= 100_{2}$.
+			\end{itemize}
+
+		\item[(30 points)] Write a Turing machine to decrement a binary number. 
+		
+			\begin{itemize}
+				\item[] Input: a binary string.
+				\item[] Output: a binary string corresponding to the predecessor of the input.
+				\item[] Example: Input $=100_{2}$ Output $= 11_{2}$.
+			\end{itemize}
+							
+		\item[(80 points)] Write a Turing machine to sum two binary numbers.
+	
+			\begin{itemize}
+				\item[] Input: two binary strings separated by a + symbol
+				\item[] Output: a binary string corresponding to the sum of the inputs. 
+				\item[] Example: Input $= 111_{2} + 10_{2}$ Output $= 1001_{2}$.
+			\end{itemize}
+		
+		\newpage
+		\item[(70 points)] Write a Turing machine to calculate the (limited) difference of two binary integers.
+		
+			\begin{itemize}
+				\item[] Input: two binary strings separated by a - symbol
+				\item[] Output: a binary string corresponding to the limited difference of the inputs. 
+				\item[] Example: Input $= 1001_{2} - 10_{2}$ Output $= 111_{2}$.
+			\end{itemize}
+
+			If $x \geq y$, then $x \dot - y = x - y$. Otherwise $x \dot - y = 0$. 
+		
+		\item[(5 points)] Write a Turing machine to determine whether a binary integer is odd/even.
+
+			\begin{itemize}
+				\item Input: a binary string.
+				\item Output: a bit. 0 if the input is odd, 1 if the input is even.
+				\item Example: Input $= 11111_{2}$ Output $= 0$.
+			\end{itemize}
+		
+		\item[(30 points)] Write a Turing machine to determine whether one binary integer is less than another.
+
+			\begin{itemize}
+				\item Input: Two binary strings separated by a blank cell.
+				\item Output: Single bit, 1 if the first input smaller or equal, 0 if the first input greater.
+				\item Example: Input $= 11111_{2} \ 11110_{2}$ Output $= 0$.
+			\end{itemize}
+
+
+	\end{enumerate}
+
+
+\end{document}
