@@ -1,0 +1,41 @@
+### These instructions detect if the binary input is a palindrome. 
+q0,@,@,R,q0;
+q0,b,b,L,q7;
+# Machine will branch depending on whether first detecting zero or a one.
+q0,1,b,R,q1;
+q0,0,b,R,q2;
+# q1 searches right for the final bit one.
+# If 0 found, then machine moves towards HALT with 0.
+# If 1 found, then loop to find next bit on left. 
+q1,1,1,R,q1;
+q1,0,0,R,q1;
+q1,b,b,L,q11;
+q11,0,b,L,q9;
+q11,1,b,L,q8;
+# q2 searches right for the final bit zero.
+q2,1,1,R,q2;
+q2,0,0,R,q2;
+q2,b,b,L,q22;
+q22,0,b,L,q8;
+q22,1,b,L,q9;
+### Edge case: If odd number of bits, then right searching state will come across two blanks.
+### If it gets to this, then the number must be a palindrome. So go into accept state.
+q11,b,b,L,q7;
+q22,b,b,L,q7;
+q7,b,b,L,q7;
+q7,@,@,R,q77;
+q77,b,1,L,q77;
+q77,@,@,N,HALT;
+# State q8 entered to restart loop. 
+# Search left for blank cell. Go into q0.
+q8,1,1,L,q8;
+q8,0,0,L,q8;
+q8,b,b,R,q0;
+# State q9 entered when input not a palindrome. 
+# Move left. Clear tape. Print 0. Halt. 
+q9,1,b,L,q9;
+q9,0,b,L,q9;
+q9,b,b,L,q9;
+q9,@,@,R,q99;
+q99,b,0,L,q99;
+q99,@,@,N,HALT;

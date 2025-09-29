@@ -1,0 +1,58 @@
+### These instructions are an implementation of the example from Turing's Original paper.
+### They are designed to be run on a blank tape.
+# Initialise the blank tape.
+q0,@,@,R,q0;
+q0,b,0,R,q00;
+q00,b,b,R,q000;
+q000,b,0,L,q0000;
+q0000,1,1,L,q0000;
+q0000,0,0,L,q0000;
+q0000,b,b,L,q0000;
+q0000,@,@,N,q6;
+# Move right looking for next F square and print 1.
+q6,@,@,R,q6;
+q6,0,0,R,q6;
+q6,1,1,R,q6;
+q6,x,x,R,q6;
+q6,b,b,R,q66;
+q66,0,0,R,q6;
+q66,1,1,R,q6;
+q66,b,1,L,q1;
+# Move left looking for the second 0. On the way, print xs left of 1s. 
+q1,@,@,N,q4;
+q1,b,b,L,q1;
+q1,0,0,L,q1;
+q1,1,1,L,q11;
+q11,1,1,L,q11;
+q11,b,x,L,q11;
+q11,0,0,R,q2;
+### Use the x markers to append 1s to the end of the string.
+## Search right for an x
+q2,x,b,R,q22;
+q22,1,1,R,q22;
+q22,x,x,R,q22;
+q22,0,0,R,q22;
+## q222 used to test whether the blank scanned is the final blank.
+q22,b,b,R,q222;
+q222,1,1,R,q22;
+q222,0,0,R,q22;
+q222,b,1,L,q3;
+# Now searching left for the next x. Start for next loop.
+q3,1,1,L,q3;
+q3,0,0,L,q3;
+q3,b,b,L,q3;
+q3,x,x,N,q2;
+q3,@,@,R,q4;
+### Now searching for the end to print a 0.
+q4,@,@,R,q4;
+q4,0,0,R,q4;
+q4,1,1,R,q4;
+q4,b,b,R,q44;
+q44,1,1,R,q4;
+q44,0,0,R,q4;
+q44,b,0,L,q5;
+# Finally return home to close the loop. 
+q5,b,b,L,q5;
+q5,1,1,L,q5;
+q5,0,0,L,q5;
+q5,@,@,R,q6;

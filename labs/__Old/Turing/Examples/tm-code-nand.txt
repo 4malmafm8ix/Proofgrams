@@ -1,0 +1,19 @@
+### These instructions output the NAND of two bits. 
+# If the machine goes to q1, then the output is 1
+# If the machine goes to q2, then the output is 0
+q0,@,@,R,q0;
+q0,0,b,R,q1;
+q0,1,b,R,q0;
+q0,b,b,L,q2;
+# In the case NAND(b1,b2) = 1
+q1,1,b,L,q1;
+q1,0,b,L,q1;
+q1,b,b,L,q1;
+q1,@,@,R,q11;
+q11,b,1,L,q11;
+q11,@,@,N,HALT;
+# In the case NAND(b1,b2) = 0
+q2,b,b,L,q2;
+q2,@,@,R,q22;
+q22,b,0,L,q22;
+q22,@,@,N,HALT;

@@ -1,0 +1,11 @@
+# This Turing machine flips all bits, then returns home.
+# State q0 flips bits until it finds the end of the input.
+q0,@,@,R,q0;
+q0,0,1,R,q0;
+q0,1,0,R,q0;
+q0,b,b,L,q1;
+# Once the end of the input is found the state is switched
+# to q1 which just looks for the home (@) and then halts.
+q1,0,0,L,q1;
+q1,1,1,L,q1;
+q1,@,@,N,HALT;
