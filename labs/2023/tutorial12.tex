@@ -1,0 +1,178 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Twelve}
+\end{center}
+\begin{center}
+	{\bf Curry-Howard Correspondence}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write recursive processes in $\lambda$-calculus,
+				\item Write programs in simple type theory,
+				\item Interpret programs as proofs of propositions, 
+				\item Prove that certain types are uninhabited.
+			\end{itemize}
+
+		Relevant lectures: Lambda Calculus and Typed Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b, 1d, 4a, 4b, 4c, 6\\ 
+	{\bf Due before the exam to the lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+	\item Write a program of the specified type in the given context: 
+	
+	$$p : A \times (B \times C) \ \vdash \ ~ ? : (A \times B) \times C$$
+	
+	\vspace{5cm}
+
+	\item Determine some steps towards writing a program ($\lambda$-term) representing the unary function, INT-SQRT, that returns the greatest natural number whose square is less than or equal to the input. 
+
+\end{itemize}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Write recursive $\lambda$-expressions that represent the following functions of natural numbers. For each function determine an appropriate helper-function GO to put through the $\YCOMB$ combinator. 
+	
+		\begin{enumerate}
+			\item SUM of two natural numbers
+			\item MULTiply two natural numbers
+			\item EXPONentiation of a base to an exponent
+			\item FACTorial of a natural number
+			\item INT-SQRT the smallest integer whose square is greater than input
+			\item Calculate the nth FIBonacci number (Challenge!)
+		\end{enumerate}
+
+	\item Write a $\lambda$-expression that can be used to compute the smallest natural number that satisfies a given unary-predicate $P?(x)$ that is represented by some $\lambda$-expression. 		
+
+	\item (Challenge!) Represent the following processes in the $\lambda$-calculus to get an expression that can be used to test whether a natural number is prime. For simplicity, assume the input is greater than TWO.
+	
+		\begin{enumerate}
+			\item REMAINDER calculate the remainder of a division.
+			\item DIVIDES? binary predicate does second divide first?
+			\item Implement bounded-search to satisfy a predicate.
+			\item PRIME? Unary-predicate to detect primality.
+		\end{enumerate}
+	
+
+	
+	% \item In lectures we introduced a $\lambda$-term for computing the sum of a sequence of consecutive integers. This used the helper-function: 
+	
+	% \begin{align*}
+	% 	\GO :\equiv \lambda s. \ \lambda a. \ \lambda l. \ \lambda u. \ \COND & \ (>? \ l \ u) \\
+	% 	& a \\ 
+	% 	&(s \ (\SUM \ a \ l) \ (\SUCC \ l) \ u)
+	% \end{align*}
+
+	% We defined ACCUMULATE = $\YCOMB$ GO. Make alterations to the helper-function to compute the following: 
+
+	% \begin{enumerate}
+	% 	\item Compute the sum of the squares of each integer, $\sum_{i=l}^u i^{2}$
+	% 	\item Compute the sum of each term passed through an arbitrary function, $\sum_{i=l}^u f(i)$
+	% 	\item Compute the sum of those terms in the interval that satisfy some predicate $P?(x)$.
+	% 	\item Combine (b) and (c).
+	% \end{enumerate}
+
+	\newpage
+	\begin{center}
+		{\bf Curry-Howard Correspondence}
+	\end{center}
+
+	\item Each problem below is of the form: 
+	
+	$$ \Sigma \ \vdash \ ? : \text{TYPE}$$
+
+	To answer the question you must provide a $\lambda$-term of the specified TYPE from the context $\Sigma$ stated in the problem. To ensure the term is of the specified type you must use the typing rules for the construction and destruction of types. 
+	
+		\begin{enumerate}
+			\item $f : ( A \times  B) \rightarrow  C \vdash \ ? :  A \rightarrow (B \rightarrow  C)$
+			\item $f : A \rightarrow (B \rightarrow  C) \ \vdash \ ? : ( A \times  B) \rightarrow  C$			
+			\item $f : A \rightarrow  B, \  g : B \rightarrow  C \vdash \ ? : A \rightarrow  C $
+			\item $p : A + B,\ f : A \to  C,\ g : B \to  D \vdash \ ? : C +  D$
+		\end{enumerate}
+	
+	Compare each of the typing derivations to the minimal logic proofs from Tutorial Two. What do you notice? 
+	
+		{\bf Extras:} For these extra problems consider $\bot$ to be type with no constructor or destructors. Furthermore, consider $\lnot P$ to be shorthand for the function type: $\lnot P:= P \to \bot$.
+
+		\begin{enumerate}
+			\item $p : \lnot A + \lnot B \vdash \ ? : \lnot( A \times  B)$
+			\item $p : \lnot( A +  B) \vdash \ ? : \lnot  A \times \lnot  B$
+			\item $p : \lnot  A \times \lnot  B \vdash \ ? : \lnot( A + B)$
+			\item $f : A \to  C,\ g : B \to  D, \ p : \neg C + \neg  D \vdash \ ? :  \neg A + \neg  B$
+			\item $ a : A, \ f : \neg  A \vdash \ ? : \neg  B$
+			\item $f : A\rightarrow B, \ g : A \rightarrow \lnot B \vdash \ ? : \lnot  A$
+		\end{enumerate}
+
+
+	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
+	
+	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
+	
+	\begin{center}
+		$\begin{array}{c}		
+		  \infer[\to, 1]{A \land B \to B}
+		  	{\infer[\land E_{L}]{B}
+				{\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{\infer[1]{A \land B}{}} 
+					\hspace{0.5cm}	&	\hspace{0.5cm}
+					\infer[\land_{L}]{A}{\infer[1]{A \land B}{}}}}}
+		\end{array}$
+	  \end{center}
+
+	  	\begin{enumerate}
+			\item Determine the corresponding proof-object for this proof. 
+			\item Why does the proof-object have a redex in it? 
+			\item Perform the $\beta$-reduction on the proof object from (a).
+			\item What proof does the reduced proof-object correspond to?
+		\end{enumerate} 
+
+	\item Prove that the type $(A \to A) \to A$ is uninhabited i.e. there is no term $t$ of simple type theory that has this type.
+	$$ \cancel{\vdash} \ t : (A \to A) \to A$$		
+
+	 
+\end{enumerate}
+	
+\end{document}

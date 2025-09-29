@@ -1,0 +1,689 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Five (Solutions)}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions in First Order Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Interpret formulae in particular models.
+				\item Natural deductions with $\forall$ $\exists$ rules.
+			\end{itemize}
+
+		Relevant lectures: Lectures 10,11,12,13\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N} Sections 7,8, and 10.
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1e, 1g, 1i \\ 
+	{\bf Due following Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Consider the first order language with signature $\mathcal{L}: \{\emptyset, \in, \subset, =\}$ and the following well-formed formulae in this language 
+	
+		\begin{itemize}
+			\item $\forall x \ \forall y \ [\forall z \ (z \in x \leftrightarrow z \in y) \rightarrow x = y]$
+			\item $\lnot \exists x (x \in \emptyset)$
+			\item $\forall x \ \exists y \ \forall z \ (z \subset x) \rightarrow z \in y$
+		\end{itemize}
+
+	Interpret these wff in a model of sets i.e. a model such that elements of the universe of discourse are sets. The standard interpretation of the signature in a model of sets is the following: 
+
+	\begin{align*}
+		\emptyset &: \text{Empty set (Constant)} \\	
+		\in &: \text{is an element of (Binary relation)} \\	
+		\subset &: \text{is a subset of (Binary relation)} \\
+		= &: \text{is identical to (Binary relation)} 
+	\end{align*} 
+	
+	Use this interpretation to translate each of the wff into English.
+
+	{\bf Solution:} Under the standard interpretation given these formulae read as follows: 
+
+	\begin{itemize}
+		\item $\forall x \ \forall y \ [(\forall z \ (z \in x \leftrightarrow z \in y)) \rightarrow x = y]$
+		
+		Any two sets $x,y$ are identical when they contain exactly the same elements. 
+
+		\item $\lnot \exists x (x \in \emptyset)$
+		
+		It is not the case that there are any elements in the emptyset $\empty$. 
+
+		\item $\forall x \ \exists y \ \forall z \ (z \subset x) \rightarrow z \in y$ 
+		
+		For each set $x$ there is another set $y$ whose elements include all of the subsets of $x$. 
+	\end{itemize}
+
+	
+
+	\item In the language above write down a first-order wff that can be interpreted (in a particular model) as defining what it means for $x$ to be a subset of $y$. 
+
+	{\bf Solution:} This is very similar to the first example from the previous question. 
+
+	$\forall x \ \forall y \ [(\forall z \ (z \in x \to z \in y)) \rightarrow x \subset y]$
+
+	\newpage
+	\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+	
+	{\bf Solution:}
+
+	The first sequent 
+
+	$$\forall x \neg Fx \vdash  \neg \exists x Fx$$
+
+	is a proof of a refutation i.e. a negation introduction. This means we may temporarily add the hypotheses $\exists x \ Fx$ to our deduction. 
+
+	Ultimately then we need to prove 
+
+	$$\forall x \neg Fx, \ \exists x Fx \vdash  \bot$$
+
+	This will require both $\forall$ and $\exists$ elimination steps. Recall that the $\exists$ elimination uses an implication of the form $Fa \to ?$ which happens to match the predicate under the $\forall$ quantifier. Note: $\lnot Fx \equiv Fx \to \bot$.
+			
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\to I,1]{\lnot \exists x \ Fx}
+									{\infer[\exists E]{\bot}
+										{\infer[1]{\cancel{\exists x \ Fx}}{}
+										&
+										\infer[\forall E]{Fa \to \bot}{\forall x \ \lnot Fx}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+	The second sequent 
+
+	$$\neg \exists x Fx \ \vdash \ \forall x \neg Fx$$		
+	
+	calls for the introduction of a $\forall$ quantifier. Care should be taken to make sure the variable one is quantifying over does not appear in the hypotheses at the $\forall$ introduction step. Although it may appear earlier in the proof, it should be discharged by the $\forall$ introduction step. 
+
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\forall I]{\forall x \ \lnot Fx}
+									{\infer[\to I,1]{\lnot Fa}
+										{\infer[MP]{\bot}
+											{\infer[\exists I]{\exists x \ Fx}
+												{\infer[1]{\cancel{Fa}}{}}
+											&
+											\lnot \exists x \ Fx}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+	
+
+
+\end{enumerate}
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Prove the following in the predicate calculus. 
+	
+		\emph{Propositional rules together with the rules for either $\forall$ or $\exists$ alone:}
+
+		{\bf General comments:} The propositional rules and heuristics for coming up with proofs still apply for the first order logic proofs. In particular, one should still be looking to use elimination rules to on the hypotheses. 
+
+		In the case of $\forall$ elimination, this corresponds to saying ``Let a be an arbitrary element satisfying property P...''. 
+
+		Temporary hypotheses still need to be added to prove implications. 
+
+		{\bf Conditions:} Recall that there are conditions on the use of the $\forall$ and $\exists$ rules of inference. Whenever you use these rules you should be making a check that they are allowed to be applied. There is a ``proof'' below which is not careful about these rules. Can you spot the error? 
+
+		{\bf RAA:} It is important to note that proofs of $\exists x ... $ will often require RAA. Roughly speaking, one might expect this as intuitionistic proofs correspond to algorithms and these statements are too general - we know nothing about $F,G,P$ so it's too much to expect algorithms deriving elements that satisfy them. If you're stuck on proving $\exists x \ ...$ then it might be worth trying to use a proof by contradiction. Interpreting the statement you're trying to prove through the BHK might help decide whether RAA should be necessary. 
+
+		That being said, just because the solution given uses RAA does not mean one necessarily needs RAA for a proof of the sequent.
+
+		\begin{enumerate}
+			\item $\forall x (Fx \to Gx) \vdash  \forall x Fx \to \forall x Gx$
+			
+			{\bf Solution:} All of the propositional strategies are still available to us in the course of a proof in first order logic. For example, we can temporarily add the hypotheses $\forall x \ Fx$ in order to prove the implication. This means that a proof of the following sequent is a step towards the proof we are after: 
+
+			$$\forall x (Fx \to Gx), \forall x Fx \vdash  \forall x Gx$$
+
+			If there were no quantifiers, we could use modus ponens. This suggests using $\forall$ elimination on the hypotheses to allow for this. 
+
+			In order to make use of any quantified hypotheses like these, you will need to use $\forall$ elimination to argue from a ``general case''. This is analogous to writing something like ``Let p be an arbitrary prime...'' at the start of a natural language proof. 
+
+			Hypotheses: $\forall x (Fx \to Gx), \forall x Fx$
+
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\to I,1]{\forall x \ Fx \to \forall x \ Gx}
+								{\infer[\forall I]{\forall x \ Gx}
+									{\infer[MP]{Ga}
+										{\infer[\forall E]{Fa \to Ga}
+											{\forall x \ (Fx \to Gx)}
+										&
+										\infer[\forall E]{Fa}
+											{\infer[1]{\cancel{\forall x \ Fx}}{}}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			
+			\newpage
+			\item $\forall x ((Fx \lor Gx) \to Hx),\quad \forall x \neg Hx \vdash  \forall x \neg Fx$
+			
+			The conclusion for this sequent is a (quantified) negation. This means we will need to assume $Fa$ and derive a contradiction. In the implication introduction step this will remove $Fa$ from the hypotheses thus allowing for the use of forall introduction. 
+
+			Hypotheses: $\forall x ((Fx \lor Gx) \to Hx), \ \forall x \neg Hx, \ Fa$. 
+			
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\forall I]{\forall x \ \lnot Fx}
+								{\infer[\to I,1]{\lnot Fa}
+									{\infer[MP]{\bot}
+										{\infer[MP]{Ha}
+											{\infer[\forall E]{(Fa \lor Ga) \to Ha}{\forall x \ ((Fx \lor Gx) \to Hx)}
+											&
+											\infer[\lor I]{Fa \lor Ga}{\infer[1]{\cancel{Fa}}{}}}
+										&
+										\infer[\forall E]{\lnot Ha}
+											{\forall x \ \lnot Hx}}}}							
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			\item $\forall x (Fx\land Gx) \dashv \vdash  \forall x Fx\land \forall x Gx$
+			
+			For the first direction we need to use forall introduction to argue from a general case. No extra (temporary) hypotheses are needed. 
+			
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\land I]{\forall x \ Fx \land \forall x \ Gx}
+								{\infer[\forall I]{\forall x \ Fx}
+									{\infer[\land E_{l}]{Fa}
+										{\infer[\forall E]{Fa \land Ga}
+											{\forall x \ (Fx \land Gx)}}}
+								&
+								\infer[\forall I]{\forall x \ Gx}
+									{\infer[\land E_{r}]{Ga}
+										{\infer[\forall E]{Fa \land Ga}
+											{\forall x \ (Fx \land Gx)}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+				In the other direction we first eliminate the conjunction, before eliminating the forall. Again, no extra hypotheses needed. 
+
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\forall I]{\forall x \ (Fx \land Gx)}
+								{\infer[\land I]{Fa \land Ga}
+									{\infer[\forall E]{Fa}
+										{\infer[\land E_{l}]{\forall x \ Fx}
+											{\forall x \ Fx \land \forall x \ Gx}}
+									&
+									\infer[\forall E]{Ga}
+										{\infer[\land E_{r}]{\forall x \ Gx}
+											{\forall x \ Fx \land \forall x \ Gx}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			\item $\forall x (P \to Fx) \dashv \vdash  P \to \forall x Fx$
+			
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\to I,1]{P \to \forall x \ Fx}
+								{\infer[\forall I]{\forall x \ Fx}
+									{\infer[MP]{Fa}
+										{\infer[\forall E]{P \to Fa}{\forall x \ (P \to Fx)}
+										&
+										\infer[1]{\cancel{P}}{}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\forall I]{\forall x \ (P \to Fx)}
+								{\infer[\to I,1]{P \to Fa}
+									{\infer[\forall E]{Fa}
+										{\infer[MP]{\forall x \ Fx}
+											{P \to \forall x \ Fx
+											&
+											\hspace{0.7cm} \infer[1]{\cancel{P}}{}}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+			
+			\newpage
+			\item $\exists x (P \to Fx) \dashv \vdash  P \to \exists x Fx$
+			
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\exists E]{P \to \exists x \ Fx}
+								{\infer[\to I,2]{(P \to Fa) \to (P \to \exists x \ Fx)}
+									{\infer[\to I,1]{(P \to \exists x \ Fx)}
+										{\infer[\exists E]{\exists x \ Fx}
+											{\infer[MP]{Fa}
+												{\infer[1]{\cancel{P}}{}
+												&
+												\infer[2]{\cancel{P \to Fa}}{}}}}}
+								&
+								\exists x \ (P \to Fx)}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+
+
+				%\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[RAA,2]{\exists x \ (P \to Fx)}
+								{\infer[MP]{\bot}
+									{\infer[\exists I]{\exists x \ (P \to Fx)}
+										{\infer[\to I,3]{P \to Fb}
+											{\infer[XF]{Fb}
+												{\infer[\exists E]{\bot}
+													{\infer[\to I,1]{\lnot Fa}
+														{\infer[MP]{\bot}
+															{\infer[\exists I]{\exists x (P \to Fx)}
+																{\infer[\to I]{P \to Fa}
+																	{\infer[1]{\cancel{Fa}}{}}}
+															&
+															\infer[2]{\cancel{\lnot[\exists x \ (P \to Fx)]}}{}}}
+													&
+													\infer[MP]{\exists x \ Fx}
+														{\infer[3]{\cancel{P}}{}
+														&
+														P \to \exists x \ Fx}}}}}
+									&
+									\infer[2]{\cancel{\lnot[\exists x \ (P \to Fx)]}}{}}}
+						\end{array}$
+					\end{center}
+				%\end{mdframed}
+			
+			\newpage
+			\emph{All propositional and predicate rules:}
+
+			\item $\exists x \neg Fx \dashv \vdash  \neg  \forall x Fx$
+			
+					The first direction should be a direct proof. Knowing that some element doesn't satisfy the predicate $F$ should be enough to say, directly, that $\forall x \ Fx$ is not satisfied - because that element we know exists (from the hypothesis) will lead us to a contradiction! 
+
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\to I,1]{\lnot \forall x \ Fx}
+									{\infer[\exists E]{\bot}
+										{\infer[\to I,2]{\lnot Fa \to \bot}
+											{\infer[MP]{\bot}
+												{\infer[\forall E]{Fa}
+													{\infer[1]{\cancel{\forall x \ Fx}}
+														{}}
+												&
+												\infer[2]{\cancel{\lnot Fa}}{}}}
+										&
+										\exists x \ \lnot Fx}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+					In order to prove the second direction we need (?) to use RAA. Without RAA, the proof would be intuitionistic. This would therefore correspond to some algorithm that takes $\lnot \forall x \ Fx$ and returns a specific element that fails to satisfy $F$. But knowledge that $\forall x \ Fx \to \bot$ doesn't yield a specific value that does not satisfy $F$. 
+
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[RAA,2]{\exists x \ \lnot Fx}
+									{\infer[MP]{\bot}
+										{\infer[\forall I]{\forall x \ Fx}
+											{\infer[RAA,1]{Fa}
+												{\infer[MP]{\bot}
+													{\infer[\exists I]{\exists x \ \lnot F x}
+														{\infer[1]{\cancel{\lnot Fa}}{}}
+													&
+													\infer[2]{\cancel{\lnot[\exists x \ \lnot Fx]}}{}}}}
+										&
+										\lnot \forall x \ Fx}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+			\newpage
+			\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+			
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\to I,1]{\lnot \exists x \ Fx}
+									{\infer[\exists E]{\bot}
+										{\infer[1]{\cancel{\exists x \ Fx}}{}
+										&
+										\infer[\forall E]{Fa \to \bot}{\forall x \ \lnot Fx}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\forall I]{\forall x \ \lnot Fx}
+									{\infer[\to I,1]{\lnot Fa}
+										{\infer[MP]{\bot}
+											{\infer[\exists I]{\exists x \ Fx}
+												{\infer[1]{\cancel{Fa}}{}}
+											&
+											\lnot \exists x \ Fx}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+			\item $\forall x (Fx \to P) \dashv \vdash  \exists x Fx \to P$
+			
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\to I,1]{(\exists x \ Fx) \to P}
+									{\infer[\exists E]{P}
+										{\infer[\forall E]{Fa \to P}
+											{\forall x \ (Fx \to P)}
+										&
+										\infer[1]{\cancel{\exists x \ Fx}}{}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+					\begin{mdframed}
+						\begin{center}
+							$\begin{array}{c}
+								\infer[\forall I]{\forall x \ (Fx \to P)}
+									{\infer[\to I,1]{Fa \to P}
+										{\infer[MP]{P}
+											{\infer[\exists I]{\exists x \ Fx}
+												{\infer[1]{\cancel{Fa}}{}}
+											&
+											(\exists x \ Fx) \to P}}}
+							\end{array}$
+						\end{center}
+					\end{mdframed}
+
+			\item $\forall x (Fx \lor Gx) \vdash  \forall x Fx \lor \exists x Gx$
+			
+					%\begin{mdframed}
+						\begin{center}
+							\tiny{$\begin{array}{c}
+								\infer[RAA,2]{\forall x \ Fx \lor \exists x \ Gx}
+									{\infer[MP]{\bot}
+										{\infer[\lor I]{\forall x \ Fx \lor \exists x \ Gx}
+											{\infer[\forall I]{\forall x \ Fx}
+												{\infer[\lor E]{Fa}
+													{\infer[\forall E]{Fa \lor Ga}{\forall x \ (Fx \lor Gx)}
+													&
+													Fa \to Fa
+													&
+													\infer[\to I,1]{Ga \to Fa}
+														{\infer[XF]{Fa}
+															{\infer[MP]{\bot}
+																{\infer[\lor I]{\forall x \ Fx \lor \exists x \ Gx}
+																	{\infer[\exists I]{\exists x \ Gx}
+																		{\infer[1]{\cancel{Ga}}{}}}
+																&
+																\infer[2]{\cancel{\lnot[\forall x \ Fx \lor \exists x \ Gx]}}{}}}}}}}
+										&
+										\infer[2]{\cancel{\lnot[\forall x \ Fx \lor \exists x \ Gx]}}{}}}
+							\end{array}$}
+						\end{center}
+					%\end{mdframed}
+			
+			\newpage
+			\item $\exists x (Fx \to Gx) \dashv \vdash  \forall x Fx \to \exists x Gx$
+			
+			A direct proof can be provided for the forward sequent:
+
+			$$\exists x (Fx \to Gx) \vdash \forall x Fx \to \exists x Gx$$
+			
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\to I,1]{\forall x \ Fx \to \exists x \ Gx}
+								{\infer[\exists E]{\exists x \ Gx}
+									{\infer[\to I,2]{(Fa \to Ga) \to \exists x Gx}
+										{\infer[\exists I]{\exists x \ Gx}
+											{\infer[MP]{Ga}
+												{\infer[\forall E]{Fa}
+													{\infer[1]{\cancel{\forall x \ Fx}}{}}
+												&
+												\infer[2]{\cancel{Fa \to Ga}}{}}}}
+									&
+									\exists x (Fx \to Gx)}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			My first ``proof" of the forward sequent follows. There is an error! Can you spot it? One of the rules of inference is not used under the appropriate conditions. 
+
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[\to I,1]{\forall x \ Fx \to \exists x \ Gx}
+								{\infer[\exists I]{\exists x \ Gx}
+									{\infer[\exists E]{Ga}
+										{\exists x \ (Fx \to Gx)
+										&
+										\infer[\to I,2]{(Fa \to Ga) \to Ga}
+											{\infer[MP]{Ga}
+												{\infer[\forall E]{Fa}
+													{\infer[1]{\cancel{\forall x \ Fx}}{}}
+												&
+												\infer[2]{\cancel{Fa \to Ga}}{}
+												}}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			Now to the other direction. This sequent requires the proof of an $\exists$ claim: 
+			
+			$$\forall x Fx \to \exists x Gx \ \vdash \ \exists x (Fx \to Gx)$$
+
+			For this reason RAA is (probably) required. This means making the assumption $\lnot \exists x \ (Fx \to Gx)$. Furthermore, it helps to use the results from Tutorial 5 Exercise 1g and then Tutorial 3 Exercise 2l to justify particular steps in the proof. Try complete the proof with these hints before looking at the proof below. 
+
+				\begin{mdframed}
+					\begin{center}
+						$\begin{array}{c}
+							\infer[RAA,2]{\exists x \ (Fx \to Gx)}
+								{\infer[\exists E]{\bot}
+									{\infer[MP]{\exists x \ Gx}
+										{\infer[\forall I]{\forall x \ Fx}
+											{\infer[\land E_{l}]{Fa}
+												{\infer[\text{T3.E2l}]{Fa \land \lnot Ga}
+													{\infer[\forall E]{\lnot(Fa \to Ga)}
+														{\infer[\text{T5.E1g}]{\forall x \ \lnot(Fx \to Gx)}
+															{\infer[1]{\cancel{\lnot \exists x \ (Fx \to Gx)}}
+																{}}}}}}
+										&
+										\forall x \ Fx \to \exists x \ Gx}
+									&
+									\infer[\land E_{r}]{Ga \to \bot}
+										{\infer[\text{T3.E2l}]{Fa \land \lnot Ga}
+											{\infer[\forall E]{\lnot(Fa \to Ga)}
+												{\infer[\text{T5.E1g}]{\forall x \ \lnot(Fx \to Gx)}
+													{\infer[1]{\cancel{\lnot \exists x \ (Fx \to Gx)}}
+														{}}}}}}}
+						\end{array}$
+					\end{center}
+				\end{mdframed}
+
+			\newpage
+			\item $\exists x Fx \dashv\vdash \lnot \forall x \ \lnot Fx$
+			
+				{\bf Solution:} Notice that this means we can \emph{define} $\exists$ in terms of $\forall$. That is to say, only $\forall$ needs to be introduced into the language, as we can derive the properties of $\exists$ from it.
+
+						\begin{mdframed}
+							\begin{center}
+								$\begin{array}{c}
+									\infer[\to I,1]{\lnot \forall x \ \lnot Fx}
+										{\infer[\exists E]{\bot}
+											{\exists x \ Fx
+											&
+											\infer[\forall E]{\lnot Fa}
+												{\infer[1]{\cancel{\forall x \ \lnot Fx}}{}}}}
+								\end{array}$
+							\end{center}
+						\end{mdframed}
+
+						\begin{mdframed}
+							\begin{center}
+								$\begin{array}{c}
+									\infer[RAA,2]{\exists x \ Fx}
+										{\infer[MP]{\bot}
+											{\infer[\forall I]{\forall x \ \lnot Fx}
+												{\infer[\to I,1]{\lnot Fa}
+													{\infer[MP]{\bot}
+														{\infer[\exists I]{\exists x \ Fx}
+															{\infer[1]{\cancel{Fa}}{}}
+														&
+														\infer[2]{\cancel{\lnot \exists x \ Fx}}{}}}}
+											&
+											\lnot \forall \ \lnot F x}}
+								\end{array}$
+							\end{center}
+						\end{mdframed}
+
+			\item $\forall x Fx \dashv\vdash \lnot \exists x \ \lnot Fx$
+			
+				{\bf Solution:} This exercise shows that you can also choose to add $\exists$ into the language and define $\forall$ in terms of it. 
+
+						\begin{mdframed}
+							\begin{center}
+								$\begin{array}{c}
+									\infer[\to I,2]{\lnot\exists x \ \lnot Fx}
+										{\infer[\exists E]{\bot}
+											{\infer[2]{\cancel{\exists x \lnot Fx}}{}
+											&
+											\infer[\to I,1]{\lnot Fa \to \bot}
+												{\infer[MP]{\bot}
+													{\infer[\forall E]{Fa}{\forall x \ Fx}
+													&
+													\infer[1]{\cancel{\lnot Fa}}{}}}}}
+								\end{array}$
+							\end{center}
+						\end{mdframed}
+
+						\begin{mdframed}
+							\begin{center}
+								$\begin{array}{c}
+									\infer[\forall I]{\forall x \ Fx}
+										{\infer[DNE]{Fa}
+											{\infer[\to I,1]{\lnot \lnot Fa}
+												{\infer[MP]{\bot}
+													{\lnot \exists x \ \lnot Fx
+													&
+													\infer[\exists I]{\exists x \ \lnot Fx}
+														{\infer[1]{\cancel{\lnot Fa}}
+															{}}}}}}
+								\end{array}$
+							\end{center}
+						\end{mdframed}
+
+		\end{enumerate}	
+	
+	\newpage
+	\item Presburger arithmetic has signature $\mathcal{P}: \{0,1,+,=\}$ and axioms
+
+		\begin{enumerate}
+			\item $\forall x \ \lnot(0 = x + 1)$
+			
+			The number $0$ is not the successor of any other number. 
+
+			\item $\forall x \ \forall y \ ((x + 1  = y + 1) \rightarrow x = y)$
+			
+			If the successors of two numbers are equal, then the numbers themselves must be equal. 
+
+			\item $\forall x \ (x + 0 = x)$
+			
+			Adding $0$ to any number returns that same number. 
+
+			\item $\forall x \ \forall y \ (x + (y + 1) = (x + y) + 1)$
+			
+			Addition by $1$ on the right is associative. You may also just note that this is a recursive definition of addition. 
+
+			\item $(P(0) \land \forall x \ (P(x) \to P(x+1))) \rightarrow \forall y (P(y))$
+			
+			If $P(x)$ is a predicate with a free variable such that (i) it is true at $x=0$ and (ii) if P is true at any $x$, then it is true at the next $x$, we may conclude that in fact $P$ must be true for every natural number. 
+			
+			{\bf This is proof by induction in first-order disguise!}
+
+		\end{enumerate}
+			
+			The standard model for $\mathcal{P}$ is the natural numbers with (the logical symbol) $0$ interpreted as (the number) $0$, $1$ as $1$, $+$ as addition of natural numbers, and $=$ as equality as natural numbers. Translate these axioms into English using the standard model of arithmetic. 
+			
+			For (e) assume $P$ is a wff which can take one input from the universe of discourse. 
+			
+	% Write down a model in which this true. Write down a model in which this is false.
+
+	\newpage
+	\item Consider the first-order language with signature $\mathcal{L}: \{0, +, =\}$ such that $0$ is a constant, $+$ is a binary function, and $=$ is a binary predicate.
+			
+	The following are three well-formed formulae in $\mathcal{L}$
+			
+		\begin{itemize}
+			\item $\forall x \ \forall y \ (x + y = y + x)$
+			\item $\forall x \ \exists y \ (x + y = 0)$
+			\item $\forall x \ (x + 0 = x)$
+		\end{itemize}
+		
+		\begin{enumerate}
+			\item State a model in which all of these wff are \textit{true}. 
+			
+			{\bf Solution:} Notice that the second wff is not satisfied in $\mathbb{N}$ e.g. the equation $2+y=0$ does not have a solution in $\mathbb{N}$. However, if we instead interpret the signature on the integers $\mathbb{Z}$, then each of the wff are true. 			
+
+			(For those of you familiar with group theory you may notice that any Abelian group will model these three wff.)
+
+			\item State a model in which at least one of these wff are \textit{false}.
+			
+			{\bf Solution:} As mentioned above interpreting this language over $\mathbb{N}$ will make the second wff false. Again, if you're familiar with group theory, then you may notice that any non-Abelian group will fail to model these formulae as the first wff will be false. 
+
+	  \end{enumerate}
+
+\end{enumerate}
+	
+\end{document}

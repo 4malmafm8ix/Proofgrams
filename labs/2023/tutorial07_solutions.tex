@@ -1,0 +1,485 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eight Solutions}
+\end{center}
+\begin{center}
+	{\bf Peano Arithmetic \& Recursive Functions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas and learning outcomes
+		\begin{itemize}
+			\item Further understanding of the expressibility of $\PA$,
+			\item Practice writing natural deductions in $\PA$,
+			%\item Know and apply the formal definition of recursion,
+			\item Recognise when procedures are primitive recursive,
+			\item Informally describe procedures with primitive recursive steps. 
+		\end{itemize}
+
+
+		Relevant notes: Peano and Primitive Recursion Slides\\
+		Relevant reading: \emph{Computability Theory} Enderton, Chapter 2. 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 2a, 3a, 3f, 3g, 7\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item The first-order language of Peano Arithmetic is often presented with an extra binary relation symbol $<$ where $x < y$ is given the usual interpretation: $x$ is strictly less than $y$. In fact it is not necessary to add anything extra, for this relation can be defined using a sentence in $\PA$ as stated. 
+	
+	Write down a wff in $\PA$ which, when interpreted in the standard model, defines the binary relation $<$ of being ``strictly less than''. Use this to write down formulae that represent: less than or equal to, strictly greater than, and greater than or equal to. 
+
+	{\bf Solution:} There are a number of ways to do this. Here is one: $$ x < y :\equiv \exists z \ (x + s(z) = y) $$
+
+	Following on from this we can make the following definitions: 
+
+		\begin{enumerate}
+			\item $x \geq y :\equiv \lnot (x < y)$
+			\item $x > y :\equiv (x \geq y) \land \lnot(x = y)$
+			\item $x \leq y :\equiv \lnot (x > y)$
+		\end{enumerate}
+
+	It might be better to define $x > y$ directly instead of via $x < y$. 
+
+	$$ x > y :\equiv \exists z \ (y + s(z) = x) $$
+
+	\item If $P({\bf x})$ and $Q({\bf x})$ are two primitive recursive $n$-ary predicates, then show that the predicate $P({\bf x})\to Q({\bf x})$ is primitive recursive. 
+	
+	% Discuss what this means, in terms of characteristic functions. 
+	% Recall the valuations and their defining equations. 
+	% Use this to define the equation. 
+	% Rearrange to show it's a composition of primitive recursive functions. 
+	{\bf Solution:} The characteristic function of a compound propositional formula can be calculated from the characteristic function of the atomic formulae from which it's built. 
+
+	This follows from the work we did with valuations in the topic on propositional logic. There we saw, for example, that for some valuation $v$
+
+	$$v(P \rightarrow Q) = 1 - v(P) + v(P)v(Q)$$
+
+	If we swap the valuation for the characteristic functions $\chi_{P}$ and $\chi_{Q}$ we obtain the formula 
+
+	$$\chi_{P \rightarrow Q}(x) = 1 - \chi_{P}(x) + \chi_{P}(x)\chi_{Q}(x)$$
+
+	If the predicates $P,Q$ are primitive recursive, then the formula above is obtained from the iterated compositions of primitive recursive functions. 
+
+	\begin{align*}
+		\chi_{P \rightarrow Q}(x) &= 1 - \chi_{P}(x) + \chi_{P}(x)\chi_{Q}(x) \\
+		&= +(1 - \chi_{P}(x), \chi_{P}(x)\chi_{Q}(x))\\
+		&= +(-(C_{1}(x), \chi_{P}(x)), \times(\chi_{P}(x),\chi_{Q}(x)))
+	\end{align*}
+
+	\item Discuss whether the search for roots to a given polynomial equation is a primitive recursive procedure.
+	
+	% Not primitive recursive, but (generally) recursive. One can make changes/restrictions to get primitive recursive procedures (i) bounded search (ii) roots modulo an integer.
+
+	{\bf Solution:} Evaluating a polynomial involves additions, subtractions, and multiplications. Both of which are primitive recursive. Checking for equality is also primitive recursive. 
+	
+	However, we've seen in class that \emph{bounded} search for the smallest number satisfying a predicate, less than a given number, is a primitive recursive procedure. Therefore, searching for solutions below some bound is primitive recursive. For a general polynomial, there is no bound to put so the process of looking for zeroes of a polynomial is an unbounded search. These are not primitive recursive, because primitive recursive functions are finite i.e. always halt! 	
+	
+	The unbounded $\mu$ operator can be used to define a search procedure, but this takes us out of the class of primitive recursive functions. Search for roots of a polynomial is not primitive recursive, but $\mu$-recursive. 
+
+	Restricting the search space by looking for zeroes modulo N will make the procedure primitive recursive - as the search space is now finite. 
+
+
+\end{enumerate}	
+
+% % New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{center}
+	{\bf Peano Arithmetic}
+\end{center}
+
+\begin{enumerate}
+
+	\item Write down well-formed formulae in the first-order language of $\PA$ corresponding to the following statements. 
+	
+		\begin{enumerate}
+			\item Each natural number is either equal to $0$ or greater than $0$.
+			
+				{\bf Solution:} $\forall x \ [(x = 0) \lor (0 < x)]$
+
+			\item If $x$ is not less than $y$, then $x$ equals $y$ or $y$ is less than $x$.
+			
+				{\bf Solution:} $\forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))]$
+
+			\item If $x$ is less than or equal to $y$ and $y$ is less than or equal to $x$, then $x=y$.
+			
+				{\bf Solution:} $\forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y$ 
+
+		\end{enumerate}
+	 
+	\item Provide natural deductions of the following theorems of Peano Arithmetic.
+	
+		\begin{enumerate}
+			\item $\PA , \ 0 < a \ \vdash \ 0 < s(a)$
+
+				{\bf Solution:} 
+
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[]{0 < s(a)}
+							{\infer[\exists E]{\exists x \ (s(a) = 0 + s(x))}
+								{\infer[]{\exists y \ (a = 0 + s(y))}	
+									{0 < a}
+									&
+								\infer[\to I,1]{(a = 0 + s(b)) \to \exists x \ (s(a) = 0 + s(x))}
+									{\infer[\exists I]{\exists x \ s(a) + 0 + s(x)}
+										{\infer[=E]{s(a) = 0 + s(s(b))}
+											{\infer[\MP]{s(a) = s(0 + s(b))}
+												{\infer[1]{a = 0 + s(b)}{}
+													&
+												\infer[\THM]{a = 0 + s(b) \to s(a) = s(0 + s(b))}{}}
+												&
+											\infer[\forall E]{0 + s(s(b)) = s(0 + s(b))}
+												{\PA 4}}}}}}
+					\end{array}$}
+				\end{center}
+
+			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
+
+			{\bf Solution:} 
+
+			This should go similar to the proof above :) 
+
+			\newpage
+			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
+
+			{\bf Solution:} 
+
+			The proof that follows contains a lot of terms with the sugar left on. Remember that $a<b$ is really an $\exists$-statement. Therefore to introduce or eliminate it, one must use $\exists$ rules of inference.
+
+			The $\THM$ being called is the proof that + is associative i.e. one can rebracket as done in that step. This was proved in the previous tutorial.
+
+				\begin{center}
+					\footnotesize{$\begin{array}{c}
+						\infer[\exists E]{a<c}
+							{\infer[\exists E]{b = a + s(u) \to a<c}
+								{\infer[\to I,2]{(c=b+s(v)) \to ((b=a+s(u)) \to (a<c))}
+									{\infer[\to I,1]{(b=a+s(u)) \to a<c}
+										{\infer[\exists I]{a<c}
+											{\infer[=E]{c = a + s(s(u)+v)}
+												{\infer[\THM]{c = a + (s(u)+s(v))}
+													{\infer[=]{c = (a+s(u))+s(v)}
+														{\infer[1]{b=a+s(u)}{}
+														&
+														\infer[2]{c=b+s(v)}{}}}
+												&
+												\infer[\forall E]{s(u)+s(v)=s(s(u)+v)}
+													{\PA 4}}}}}
+								&
+								\infer[\land E_{r}]{b<c}{(a<b)\land (b<c)}}
+							&
+							\infer[\land E_{l}]{a<b}
+								{a<b \land b<c}}					
+					\end{array}$}
+				\end{center}
+
+			\newpage
+			\item $\PA \ \vdash \ \forall x \ [(x = 0) \lor (0 < x)] \hspace{6cm} \text{(Challenge!)}$
+
+			{\bf Solution:} For this proof we will use induction on the formula 
+
+			$$P(x) :\equiv (x=0 \lor 0<x)$$
+
+			First we provide the base case deduction $\mathcal{D}_{BC}$ for the sequent:
+
+			$$\PA \ \vdash \ 0=0 \lor 0<0$$
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor I]{0=0 \lor 0<0}
+						{\infer[=]{0=0}
+							{}}
+				\end{array}$
+			\end{center}
+			
+			Next we provide the induction step $\mathcal{D}_{IS}$ for the sequent 
+
+			$$\PA, \ (a=0) \lor (0<a) \ \vdash \ s(a)=0 \lor 0<s(a)$$
+
+			This requires the use of $\lor$E since the induction hypothesis is a disjunction. Therefore the induction step will be of the following form: 
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{s(a)=0 \ \lor \ 0<s(a)}
+						{\infer[\IH]{(a=0) \lor (0<a)}
+							{}
+						&
+						\infer[\to I]{(a=0) \to \gamma}
+							{\mathcal{D}_{1}}
+						&
+						\infer[\to I]{(0<a) \to \gamma}
+							{\mathcal{D}_{2}}}					
+				\end{array}$
+			\end{center}
+
+			Where $\gamma :\equiv s(a)=0 \lor 0<s(a)$. So the induction step is split into two deductions $\mathcal{D}_{1}$ and $\mathcal{D}_{2}$ which are presented below. 
+			
+			First $\mathcal{D}_{1}$ is a proof of the sequent: 
+
+			$$\PA, \ a=0 \ \vdash \ s(a)=0 \lor 0<s(a)$$
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{a=0 \to (s(a)=0 \lor 0<s(a))}
+						{\infer[\lor I]{s(a)=0 \lor 0<s(a)}
+							{\infer[]{0 < s(a)}
+								{\infer[\exists I]{\exists x \ (s(a) = 0 + s(x))}
+									{\infer[=]{s(a) = 0 + s(0)}
+										{\infer[\THM]{s(0)=0+1}{}
+										&
+										\infer[=]{s(a)=s(0)}
+											{\infer[1]{a=0}{}
+											&
+											\infer[=]{a=0 \to s(a)=s(0)}{}}}}}}}
+				\end{array}$
+			\end{center}
+
+			Next the deduction $\mathcal{D}_{2}$ is a proof of the sequent 
+
+			$$\PA, \ 0<a\ \vdash \ s(a)=0 \lor 0<s(a)$$
+
+			However, this is (pretty much) exercise 2a; just add an $\lor$I at the end of the proof. 
+
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hspace{3cm} \text{(Challenge!!!)}$
+			
+			{\bf Solution:} Needs RAA for the disjunction.
+
+			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hspace{3.8cm} \text{(Challenge!!!)}$
+			
+			{\bf Solution:} 
+
+		\end{enumerate}
+
+		\vspace{0.5cm}
+		\newpage
+		\begin{center}
+			{\bf Primitive Recursive Functions}
+		\end{center}
+
+		For each of the procedures below it is sufficient to provide an informal explanation of how they can be computed from primitive recursive functions using composition and recursion. For an extra challenge, you can also provide the formal definition from the base primitive recursive functions. 
+
+		\item Give an informal description of a primitive recursive procedure that computes the following predicates and functions. You may refer to any primitive recursive procedure from class or earlier in the tutorial. 
+	
+		\begin{enumerate}
+
+			\item Strictly less than relation $<?(x,y) = 1$ if $x<y$ otherwise $<?(x,y) = 0$.
+			
+			{\bf Solution:} 
+
+			This can be defined in a similar way to the predicate defined in the first discussion question. Here the point is that $x<y$ is the limited difference ld$(x+1,y) = 0$. Notice that we need the successor on the $x$ in order to get \emph{strictly} less than. Therefore the strictly-less-than predicate can be defined as a composition of primitive recursive functions, and is therefore itself primitive recursive. 
+
+			$$<?(x,y) :\equiv \text{Zero?}(\text{LD}(s(x),y))$$
+			
+			\item  less than relation $\leq ?(x,y) = 1$ if $x\leq y$ otherwise $\leq ?(x,y) = 0$.
+			
+			{\bf Solution:} This is similar. Only this time the successor function is not needed. 
+			
+			\item Greater than relation $>?(x,y) = 1$ if $x>y$ otherwise $>?(x,y) = 0$.
+			
+			{\bf Solution:}
+			
+			This can be computed with x,y swapped in the procedure for <?
+			
+			\item Strictly greater than relation $\geq ?(x,y) = 1$ if $x\geq y$ otherwise $\geq ?(x,y) = 0$.
+			
+			{\bf Solution:}
+
+			This can be computed with x,y swapped in the procedure $\leq ?(x,y)$.
+
+			\item Identity relation $=?(x,y) = 1$ if $x=y$ otherwise $=?(x,y) = 0$. 
+			
+			{\bf Solution:}
+
+			Two numbers are equal if they are both less-than or equal to each other. In that case both $\leq ?(x,y) = 1$ and $\geq ?(x,y) = 1$. Therefore $=?(x,y)$ can be computed as the product of these two procedures: 
+
+			$$=?(x,y) :\equiv \ \leq ?(x,y) \times \geq ?(x,y)$$
+			
+			\item Absolute difference $|x-y|$
+			
+			{\bf Solution:}
+			
+			Absolute value functions are piecewise functions i.e. they branch depending on the values of some predicates. 
+			
+			$$|x-y| :\equiv \begin{cases}
+				\text{LD}(x,y) & x \geq y \\
+				\text{LD}(y,x) & x < y
+			\end{cases}$$
+			
+			In lectures we showed that such branching can be obtained by a combination of multiplication and addition.
+			
+			$$|x-y| = (\geq?(x,y))\times(\text{LD}(x,y)) + (<?(x,y))\times(\text{LD}(y,x))$$
+			
+			\item Min(x,y)
+			
+			{\bf Solution:}
+			
+			As before, this function is a branching procedure: 
+
+			$$\text{min}(x,y) :\equiv \begin{cases}
+				x & x \leq y \\
+				y & x > y
+			\end{cases}$$
+
+			$$\text{min}(x,y) :\equiv \leq?(x,y) \times x + >?(x,y) \times y$$
+			
+			\item Max(x,y)
+			
+			{\bf Solution:}
+			
+			$$\text{max}(x,y) :\equiv \geq?(x,y) \times x + <?(x,y) \times y$$
+		
+		\end{enumerate}
+	
+	\item Addition is iterated succession. Multiplication is iterated addition. Exponentiation is iterated multiplication. Use recursion and exponentiation to define a new primitive recursive function $f(a,b+1) = exp(a,f(a,b))$, such that $f(a,0) = 1$. What does this function do? Compute $f(5,3)$.
+	
+	{\bf Solution:}	
+	
+	\begin{align*}
+		f(5,3) &= exp(5,f(5,2)) \hspace{3.4cm} 5^{f(5,2)}\\
+		&= exp(5,exp(5,f(5,1))) \hspace{2.2cm} 5^{5^{f(5,1)}} \\
+		&= exp(5, exp(5,exp(5,f(5,0)))) \hspace{1cm} 5^{5^{5^{f(5,0)}}} \\
+		&= exp(5, exp(5,exp(5,1))) \hspace{1.9cm} 5^{5^{5}} 
+	\end{align*}
+		
+	This iterated exponentiation is called tetration. 
+	
+	\item Give an informal description of the primitive recursive definitions of the function which returns the maximum (resp. minimum) of three inputs. 
+	
+	{\bf Solution:}
+
+	$$\text{max}(x,y,z) :\equiv \text{max}(\text{max}(x,y),z)$$
+
+	$$\text{min}(x,y,z) :\equiv \text{min}(\text{min}(x,y),z)$$
+
+	\item Use bounded minimisation (along with other functions already shown to be primitive recursive) to show that bounded maximisation is primitive recursive.  
+
+	\item Give informal descriptions of how the following functions could be defined using functions and predicates that were shown to be primitive recursive in class. Hence conclude that each of these procedures are primitive recursive. 
+	
+		\begin{enumerate}
+			\item Remainder$(n,d)$: remainder when $n$ divided by $d$. 
+			
+			{\bf Solution:}
+
+			This can be computed as follows: 
+
+			$$\text{remainder}(n,d) :\equiv \begin{cases}
+				n & n < d \\
+				\text{remainder}(n-d,d) & \text{otherwise}
+			\end{cases}$$
+
+			This procedure uses composition and recursion of functions and predicates already shown to be primitive recursive. 
+
+			\item Divides?$(n,d)$: 0 or 1 according to whether $n$ divides $d$. 
+			
+			{\bf Solution:}
+
+			This can be computed as a ZERO? test on the remainder. 
+
+			DIVIDES?$(n,d) = \text{ZERO?}(\text{remainder}(n,d))$
+
+			\item Prime?$(x)$: 0 or 1 according to whether $x$ is prime.  
+			
+			{\bf Solution:}
+
+			This is a bounded search for DIVISORS? of x. One can bound by n-1. Or, one can bound by the integer square-root. However, you have to then show that the integer square-root can be computed by a primitive recursive procedure. 
+
+			\item nextPrime$(x)$: returns the smallest prime greater than\footnote{Hint 1: Prove that there must be a prime, $p$, between $x < p \leq x! + 1$. \\ Hint 2: Chebyshev said it, so I'll say it again, there's always a prime, between $N$ and $2N$.} $x$.  
+			
+			{\bf Solution:}
+
+			This is a search, starting from $x+1$, for the next number satisfying PRIME? Following the hints, one can put an upper bound on this search. We are guaranteed to come across a prime by the time we get to $2x$. Therefore this procedure is primitive recursive. 
+
+			\item $p: \mathbb{N} \rightarrow \mathbb{N}$ such that $p(n) = $ nth prime.  
+			
+			{\bf Solution:}
+
+			This function can be computed recursively as follows: 
+
+			$$p(n) :\equiv \begin{cases}
+				2 & n = 0 \\
+				\text{nextPrime}(p(n-1)) & \text{otherwise}
+			\end{cases}$$
+
+			As such the procedure is primitive recursive. 
+
+		\end{enumerate}
+	
+	\newpage
+	\item Propositional logic is primitive recursive. Suppose $P({\bf x})$ and $Q({\bf x})$ are two primitive $n$-ary predicates i.e. the characteristic functions $\chi_{P}$ and $\chi_{Q}$ are primitive recursive. Show that the (characteristic functions of the) following predicates are primitive recursive. 
+		
+		\begin{enumerate}
+			\item $\lnot P({\bf x})$
+			
+			{\bf Solution:}
+
+			$$\chi_{\lnot P}(x) :\equiv 1 - \chi_{P}(x)$$
+
+			\item $P({\bf x}) \lor Q({\bf x})$
+			
+			{\bf Solution:}
+
+			$$\chi_{P \lor Q}(x) :\equiv \chi_{P}(x) + \chi_{Q}(x) - \chi_{P}(x) \times \chi_{Q}(x)$$
+			 
+			\item $P({\bf x}) \land Q({\bf x})$ 
+			
+			{\bf Solution:}
+
+			$$\chi_{P \land Q}(x) :\equiv \chi_{P}(x) \times \chi_{Q}(x)$$
+			
+			\item $P({\bf x}) \to Q({\bf x})$
+			
+			{\bf Solution:}
+
+			See discussion questions. 
+			
+			\item NAND$(P({\bf x}), Q({\bf x}))$
+			
+			{\bf Solution:}
+
+			$$\chi_{\lnot (P \land Q)}(x) :\equiv 1 - \chi_{P \land Q}(x) = 1 - \chi_{P}(x) \times \chi_{Q}(x)$$
+			
+		\end{enumerate}
+
+
+\end{enumerate}
+	
+\end{document}

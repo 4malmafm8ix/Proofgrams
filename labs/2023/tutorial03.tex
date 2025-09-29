@@ -1,0 +1,168 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Three}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions: Classical Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write some natural deductions using RAA,
+				\item Prove LEM and DNE,
+				\item Understand the induction step in the soundness theorem,
+				%\item Appreciate the oddities of classical theorems. 
+			\end{itemize}
+
+		Relevant lectures: Lectures 6,7,8, and 9\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4,5}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 2a, 2b, 2e, 3a, 3b\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item If $\Sigma_{1} \models \alpha \to \beta$ and $\Sigma_{2} \models \alpha$, then show $\Sigma_{1} \cup \Sigma_{2} \models \beta$.
+	% This is one of the steps in the proof of the soundness theorem. Draw the rule of inference (MP) that this corresponds to. 
+	
+	\vspace{5cm} 
+	
+	\item $\lnot (A \land B) \vdash \lnot A \lor \lnot B$
+	
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item Make sure you have finished all of the minimal and intuitionistic natural deductions before doing this tutorial. It is more important that you understand those.
+	
+	\item \textbf{Classical derivations.} Provide natural deduction proofs of the following. All rules \emph{may} be required.
+	
+	\begin{enumerate}
+		\item $\vdash   A \lor \neg A$ \hfill (law of excluded middle - RAA)
+		\item $\neg\neg A \vdash   A$ \hfill (double negation elimination - RAA)
+		\item $\neg( A \land  B) \vdash  \neg  A \lor \neg  B$ \hfill (De Morgan - RAA)
+		\item $ A \to  B \vdash  \neg  A \lor  B$ \hfill (material implication - RAA)
+
+		\item $\vdash  ( A \to  B) \lor ( B \to  C)$ \hfill (Challenge! - RAA)
+		\item \(\vdash   A\land \neg  A \to  B\) \hfill (the \emph{paradox of entailment})
+		\item \(\vdash   A\to B\lor\neg B\) \hfill (LEM)
+		\item \(\vdash   A\to( B\to A)\) \hfill (weakening)
+		\item \(\vdash  \neg A\to( A \to B)\) \hfill (a form of \emph{ex falso})
+		\item $\vdash (\neg A\to A)\to A$ \hfill (RAA)
+		\item $( A \to  B) \land ( C \to  D) \vdash ( A \rightarrow  D) \lor ( C \rightarrow  B)$ \hfill (Challenge! - RAA) 
+		\item $\lnot ( A \to  B) \dashv\vdash  A \land \lnot B$ \hfill (Challenge! - RAA helps)
+	\end{enumerate}
+
+\item {\bf Soundness Proof}	Complete the induction step of the soundness theorem by answering the following. 
+
+		\begin{enumerate}
+			\item Implication introduction
+			
+			If $\Gamma \models \beta$, then show $\Gamma \backslash\{\alpha\} \models \alpha \rightarrow \beta$.
+			
+			\item Disjunction introduction
+					
+			If $\Gamma \models \alpha$, then show $\Gamma \models \alpha \lor \beta$.
+			
+			\item Disjunction elimination
+			
+			If $\Gamma_{1} \models \alpha \lor \beta$, $\Gamma_{2} \models \alpha \rightarrow \gamma$, and $\Gamma_{3} \models \beta \rightarrow \gamma$ then show the following is valid $\Gamma_{1}\cup\Gamma_{2}\cup\Gamma_{3} \models \gamma$.
+			
+			\item Conjunction introduction
+			
+			If $\Gamma_{1} \models \alpha$ and $\Gamma_{2} \models \beta$, then we need to show that $\Gamma_{1} \cup \Gamma_{2} \models \alpha \land \beta$. 
+			
+			\item Conjunction elimination
+			
+			If $\Gamma \models \alpha\land\beta$, then show $\Gamma \models \alpha$.
+
+			\item Ex Falso Quodlibet
+			
+			If $\Gamma \models \bot$, then show $\Gamma \models \alpha$.
+			
+			\item Reductio Ad Absurdum
+			
+			If $\Gamma, \lnot \alpha \models \bot$, then show $\Gamma \models \alpha$.
+	
+		\end{enumerate}
+
+	\item Ex Falso Quodlibet (The Law of Explosion) states that, for any propositions $P,Q$ we have the sequent $\{P \land \lnot P\} \ \vdash \ Q$. 
+	
+	Show that the rule of inference {\bf XF} can be \emph{derived} from {\bf minimal logic + RAA}. In this sense we might say classical logic is more powerful the intuitionistic logic.
+	
+	\newpage
+	\item In class we discussed how classical logic can be obtained from intuitionistic logic by adding the following rule of inference \emph{reductio ad absurdum}: If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+	
+	\begin{center}		
+		$\begin{array}{c}		
+		\infer[RAA]{\alpha}
+		{\begin{array}{c} \hline \cancel{\lnot\alpha} \\ \Sigma \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
+
+	In this question we will explore this extension of logics in more detail. We will see that there are different methods for obtaining classical logic from intuitionistic logic.
+
+		\begin{enumerate}
+			\item Show that adding the rule of inference \emph{reductio ad absurdum} to intuitionistic propositional logic is equivalent to asserting that all the formulae $P \lor \lnot P$ for each proposition $P$ are theorems.
+			
+			% We have seen {\bf RAA} implies {\bf LEM} in class. Therefore, it suffices to show that we can derive the {\bf RAA} rule of inference from the assumption that $P \lor \lnot P$ is a theorem for every $P$.
+
+			That is, if given a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$, then show that it can be extended (without using RAA) using the assumption of LEM i.e. $\vdash P \lor \lnot P$ to a derivation of $P$ with the assumption $\lnot P$ eliminated.
+
+			\item Show that adding the rule of inference reductio ad absurdum to intuitionistic propositional logic is equivalent to adding the rule of inference of double negation elimination. 
+			
+			% We have seen {\bf RAA} implies {\bf DNE} in class. Therefore, it suffices to show that we can derive the {\bf RAA} rule of inference from the assumption that $\lnot \lnot P \to P$ is a theorem for every $P$. 
+
+			That is, if given a derivation $\mathcal{D}$ witnessing $\Sigma,\lnot P \vdash \bot$, then show that it can be extended (without using RAA) using the assumption of DNE i.e. $\lnot \lnot P \ \vdash P$ to a derivation of $P$ with the assumption $\lnot P$ eliminated.
+		\end{enumerate}
+
+		Together these exercises show that the logics: 
+
+			\begin{enumerate}
+				\item Intuitionistic + RAA
+				\item Intuitionistic + LEM 
+				\item Intuitionistic + DNE 
+			\end{enumerate}
+
+		All have the same set of theorems. In this way, we see classical logic can be obtained from intuitionistic in a number of ways.
+
+	\end{enumerate}	
+\end{document}

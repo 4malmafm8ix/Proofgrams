@@ -1,0 +1,120 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Two}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Natural Deductions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				
+				\item Write natural deduction proofs using the intuitionistic abusrdity rule. 
+			\end{itemize}
+
+		Relevant lectures: Lectures 4,5, and 6\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1, 2a, 2b, 2d, 2f, 3a\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or lecturer.}\\
+	{\bf Email lecturer to report on topic and references for essay.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Show $ A\vdash \lnot \lnot  A$.
+	% This exercise is to focus on what it means to derive the negation of a statement. No absurdity rules needed, just implication introduction. 
+	
+	\vspace{5cm}
+	
+	\item Show $ A\rightarrow  B \vdash  A\rightarrow ( A\land  B)$.
+	% Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+	
+	\vspace{5cm}
+	
+	\item Show $( A\land  B) \lor  C \ \vdash \ ( A\lor  C) \land ( B \lor  C)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separetely. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item This exercise breaks the proof of the sequent 
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent. 
+		
+		(!) Remember $\lnot A \equiv A \to \bot$.
+
+		\item Prove the following sequent 
+		
+		$$ P \to Q, \lnot Q, P \ \vdash \ \bot$$
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+
+	\end{enumerate}
+	
+	\item \textbf{Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of minimal logic. Some of these sequents have a double turnstile. This means you need to prove both directions. 
+	 
+	\begin{enumerate}
+		\item $( A\land  B) \rightarrow  C \dashv\vdash  A\rightarrow ( B \rightarrow  C) $
+		\item $\lnot A\lor \lnot B \vdash \lnot( A\land  B)$
+		\item $\lnot( A\lor  B) \dashv\vdash \lnot  A\land \lnot  B$
+		\item $ A\rightarrow  B, \  B \rightarrow  C \vdash  A\rightarrow  C $
+		\item $ A\lor  B,\ \  A\to  C,\ \  B \to  D \vdash   C \lor  D$
+		\item $ A\to  C,\ \  B \to  D,\ \ \neg C \lor \neg  D \vdash  \neg A\lor \neg  B$
+		\item $ A,\ \ \neg  A\vdash  \neg  B$
+	   \item $ A\rightarrow B, \  A\rightarrow \lnot B \vdash \lnot  A$
+	\end{enumerate}	
+
+	\item \textbf{Intuitionistic derivations.} Provide natural deduction proofs of the following. You do not need to use the \emph{classical} $\bot$ rule for these questions, but may find that the \emph{intuitionistic} $\bot$ rule is necessary.
+	 
+	\begin{enumerate}
+		\item $ A, \neg  A\vdash \ B$ 
+		\item $\neg  A\lor  B \vdash \ A\to B$ 
+		\item $ A\lor  B,\ \ \neg A\vdash \ B$ 
+		\item $ \vdash \ \lnot(Q \to P) \to (P \to Q)$
+	\end{enumerate}
+
+\end{enumerate}	
+\end{document}

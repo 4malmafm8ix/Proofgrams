@@ -1,0 +1,10 @@
+#####################################
+#   Tutorial 09 :: Question 02      #
+#####################################
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,0,R,q0;
+q0,1,1,R,q0;
+q0,b,*,R,q1;
+q1,b,b,N,HALT;
+# End of instructions.

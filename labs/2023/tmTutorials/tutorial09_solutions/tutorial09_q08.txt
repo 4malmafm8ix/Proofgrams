@@ -1,0 +1,38 @@
+#####################################
+#   Tutorial 09 :: Question 08      #
+#####################################
+# Beginning of instructions.
+q0,@,@,R,q0;
+q0,0,*,R,q0;
+q0,1,$,R,q0;
+q0,b,b,L,q1;
+q1,*,*,L,q1;
+q1,$,$,L,q1;
+q1,@,@,R,qStart;
+# Start the loop here:
+qStart,$,1,R,qPrintOne;
+qStart,*,0,R,qPrintZero;
+qStart,0,0,R,qStart;
+qStart,1,1,R,qStart;
+qStart,b,b,L,qHALT;
+qPrintOne,0,0,R,qPrintOne;
+qPrintOne,1,1,R,qPrintOne;
+qPrintOne,*,*,R,qPrintOne;
+qPrintOne,$,$,R,qPrintOne;
+qPrintOne,b,1,L,qHome;
+qPrintZero,0,0,R,qPrintZero;
+qPrintZero,1,1,R,qPrintZero;
+qPrintZero,*,*,R,qPrintZero;
+qPrintZero,$,$,R,qPrintZero;
+qPrintZero,b,0,L,qHome;
+qHome,0,0,L,qHome;
+qHome,1,1,L,qHome;
+qHome,*,*,L,qHome;
+qHome,$,$,L,qHome;
+qHome,@,@,R,qStart;
+qHALT,0,0,L,qHALT;
+qHALT,1,1,L,qHALT;
+qHALT,*,*,L,qHALT;
+qHALT,$,$,L,qHALT;
+qHALT,@,@,N,HALT;
+# End of instructions.

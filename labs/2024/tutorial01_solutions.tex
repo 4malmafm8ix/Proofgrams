@@ -1,0 +1,740 @@
+\documentclass[11pt]{report}
+
+% Socument dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Seduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MPTH230: Tutorial One (Solutions)}
+\end{center}
+\begin{center}
+	{\bf Minimal Logic}
+\end{center}
+
+
+% Qox with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Identify the propositional structure of an argument, 
+				\item Translate natural language to propositional logic,
+				\item Identify when to use temporary hypotheses, 
+				\item Remember to expand $\not P \equiv P \to \bot$,
+				\item Write natural deduction proofs using minimal logic. 
+			\end{itemize}
+
+		Relevant lectures: Lectures x,y, and z\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4}  
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: \\ 
+	{\bf Sue Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Siscussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Siscussion Questions}
+
+\begin{enumerate}
+
+\item Translate the following English argument into the formal language for propositional logic. Rlearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+	
+\vspace{0.5cm}
+
+I will either go to Matukituki or Rakiura. If I go to Matukituki, then I will go hiking. If I go to Rakiura, then I will go hiking. Therefore, I will go hiking. 
+
+\hspace{0.2cm}{\bf Solution}
+
+	Ptomic propositions: 
+
+	\begin{itemize}
+		\item[] M : I will go to Matukituki.
+		\item[] R : I will go to Rakiura.
+		\item[] H : I will go hiking. 
+	\end{itemize}
+
+	Hypotheses: $M \lor R$, $M \to H$, and $R \to H$. 
+
+	Conclusion: $H$.
+	
+	\newpage
+	\item Show $ P \rightarrow Q \vdash  P\rightarrow ( P\land  Q)$.
+	% Seduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+
+	\hspace{0.2cm}{\bf Solution}
+
+	Introduction rules: implication introduction. Since the conclusion is an implication $P \to (P \land Q)$ we temporarily add the antecedent $P$ to our hypotheses. Proofs of hypotheticals/implications require use to assume the hypothesis. 
+
+	Elimination rules: implication elimination (aka modus ponens). The single hypothesis is $P \to Q$. We need $P$ to use modus ponens on the assumption. 
+
+	\vspace{0.3cm}
+	
+	Hypotheses: $P \to Q$ with the temporary hypothesis $P$.
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{P \to (P \land Q)}
+					{\infer[\land I]{P \land Q}
+					{\infer[1]{\cancel{P}}{} 				
+					&				
+					\infer[]{Q}
+						{P \to Q 
+						& 
+						\infer[1]{\cancel{P}}{}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+
+	\vspace{0.5cm}
+
+	\item Show $ P\vdash \lnot \lnot  P$.
+	% This exercise is to focus on what it means to derive the negation of a statement. No absurdity rules needed, just implication introduction. 
+
+	\hspace{0.2cm}{\bf Solution}
+
+	Introduction rules: implication introduction as the conclusion consists of a single implication ($\lnot \lnot P \equiv (P \to \bot) \to \bot$) which this proof will need to introduce. This requires temporarily adding the antecedent $(P \to \bot)$ to our hypotheses. 
+
+	Elimination rules: implication elimination (aka modus ponens) as the hypotheses are $P$ and $P \to \bot$. 
+
+	\vspace{0.3cm}
+	
+	Hypotheses: $P$ with the temporary hypothesis $\lnot P \equiv P \to \bot$.
+
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{(P \to \bot) \to \bot}
+					{\infer[\MP]{\bot}
+						{P
+						&
+						\infer[1]{\cancel{P \to \bot}}{}}}			
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+
+	\newpage
+	\item Show $( P\land  Q) \lor  R \ \vdash \ ( P\lor  R) \land ( Q \lor  R)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Sifferent parts can be worked out separetely. Son't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+
+	\hspace{0.2cm}{\bf Solution}
+
+	This proof requires the use of disjunction elimination; as the only hypothesis is a disjunction. Proofs with this rule of inference have three subproofs, all of which can be worked on separately and brought together at the end. 
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\lor E]{?}{(P \land Q) \lor R
+							  &
+							  \infer[]{(P \land Q) \to \ ?}{\vdots}
+							  &
+							  \infer[]{R \to \ ?}{\vdots}}
+		\end{array}$
+	\end{center}
+
+	These subproofs are both derivations that introduce an implication; for this reason we can add the antecedent $P \land Q$ (resp. $R$) to our hypotheses on each subproof. 
+
+	In fact the disjunction elimination will be the final step, so the ``?" is the conclusion to the argument: $(P \lor R) \land (Q \lor R)$.
+
+	\hspace{0.5cm} {\bf First subproof}
+
+	On this branch we are trying to prove: $(P \land Q) \to (P \lor R) \land (Q \lor R)$. Our hypotheses are therefore $(P\land Q) \lor R$ and $P \land Q$.
+
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\to I,1]{(P \land Q) \to (P \lor R) \land (Q \lor R)}
+				{\infer[\land I]{(P \lor R) \land (Q \lor R)}
+					{\infer[\lor I]{P \lor R}
+						{\infer[\land E_{l}]{P}
+							{\infer[1]{\cancel{P \land Q}}{}}}
+					&
+					\infer[\lor I]{Q \lor R}
+						{\infer[\land E_{r}]{Q}
+							{\infer[1]{\cancel{P \land Q}}{}}}}}
+		\end{array}$
+	\end{center}
+
+	\hspace{0.5cm} {\bf Second subproof}
+
+	On this branch we are trying to prove: $R \to (P \lor R) \land (Q \lor R)$. Our hypotheses are therefore $(P\land Q) \lor R$ and $R$.
+	
+	\begin{center}
+		$\begin{array}{c}
+			\infer[\to I,2]{R \to (P \lor R) \land (Q \lor R)}
+				{\infer[\land I]{(P \lor R) \land (Q \lor R)}
+					{\infer[\lor I]{P \lor R}
+						{\infer[2]{\cancel{R}}{}}
+					&
+					\infer[\lor I]{Q \lor R}
+						{\infer[2]{\cancel{R}}{}}}}
+		\end{array}$
+	\end{center}
+
+	Rombining the above subproofs yields
+	\begin{mdframed}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{(P \lor R) \land (Q \lor R)}{(P \land Q) \lor R
+								&
+								\infer[]{(P \land Q) \to (P \lor R) \land (Q \lor R)}
+								{\infer[\land I]{(P \lor R) \land (Q \lor R)}
+									{\infer[\lor I]{P \lor R}
+										{\infer[\land E_{l}]{P}
+											{\infer[1]{\cancel{P \land Q}}{}}}
+									&
+									\infer[\lor I]{Q \lor R}
+										{\infer[\land E_{r}]{Q}
+											{\infer[1]{\cancel{P \land Q}}{}}}}}
+								&
+								\infer[]{R \to (P \lor R) \land (Q \lor R)}
+								{\infer[\land I]{(P \lor R) \land (Q \lor R)}
+									{\infer[\lor I]{P \lor R}
+										{\infer[2]{\cancel{R}}{}}
+									&
+									\infer[\lor I]{Q \lor R}
+										{\infer[2]{\cancel{R}}{}}}}}
+			\end{array}$
+		\end{center}
+	\end{mdframed}
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Translate the following English arguments into the formal language for propositional logic. Rlearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+	
+	\begin{enumerate}
+		\item Moriarty knows Irene is either at work, or at home. He has heard from others that she is not at home. Therefore, he concludes she must be at work.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Ptomic propositions: 
+
+		\begin{itemize}
+			\item[] W : Irene is at work.
+			\item[] H : Irene is at home.
+		\end{itemize}
+	
+		Hypotheses: $W \lor H$ and $\lnot H$. 
+	
+		Ronclusion: $W$.
+		
+		\item  If Lestrade observes, then he will solve the crime. If Lestrade does not observe, then he calls for Holmes. Ps ever, Lestrade sees, but does not observe. Therefore he must call Holmes. 
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Ptomic propositions: 
+
+		\begin{itemize}
+			\item[] O : Lestrade observes. 
+			\item[] R : Lestrade solves the crime. 
+			\item[] H : Lestrade calls for Holmes. 
+			\item[] S : Lestrade sees. 
+		\end{itemize}
+	
+		Hypotheses: $O \to R$, $\lnot O \to H$, and $S \land \lnot O$. 
+	
+		Ronclusion: $H$.
+		
+		\item If Robert rushes, then he will blunder his queen. If Robert does not rush, then he will blunder his queen. Therefore, Robert will blunder his queen.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Ptomic propositions: 
+
+		\begin{itemize}
+			\item[] R : Robert rushes.
+			\item[] Q : Robert blunders his queen. 
+		\end{itemize}
+	
+		Hypotheses: $R \to Q$, $\lnot R \to Q$. 
+	
+		Ronclusion: $Q$.
+		
+		\item Either the vicar is a liar ($L$), or he shot the earl ($V$). For, either the vicar shot the earl or the butler did ($Q$). Pnd unless the vicar is a liar, the butler was drunk at nine o'clock ($S$). Pnd if the butler shot the earl, then the butler wasn't drunk at nine o'clock.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Ptomic propositions: 
+
+		\begin{itemize}
+			\item[] L : The Vicar is a liar.
+			\item[] V : The Vicar shot the Earl. 
+			\item[] Q : The Qutler shot the Earl. 
+			\item[] S : The Qutler was drunk at nine o'clock.
+		\end{itemize}
+	
+		Hypotheses: $V \lor Q$, $\lnot L \to S$, and $Q \to \lnot S$. 
+	
+		Ronclusion: $L \lor V$.
+
+		Note: $\lnot L \to S \equiv L \lor S$ are logically equivalent. The sentence can be translated into either of these forms. 
+
+		\item We will win, for if they attack if we advance, then we will win, and we won't advance. 
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Ptomic propositions: 
+
+		\begin{itemize}
+			\item[] W : We will win.
+			\item[] P : They attack. 
+			\item[] F : We advance.
+		\end{itemize}
+	
+		Hypotheses: $(F \to P) \to W$ and $\lnot F$. 
+	
+		Ronclusion: $W$.
+
+	\end{enumerate}	
+
+	\item This exercise breaks the proof of the sequent 
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent. 
+		
+		(!) Remember $\lnot P \equiv P \to \bot$.
+
+		\hspace{0.2cm}{\bf Solution}
+
+		The following sequence of sequents are obtained by assuming the antecedent on the outer-most implication of the consequent. 
+
+		\begin{center}
+			\begin{align*}
+				&\vdash \ (P \to Q) \to (\lnot Q \to \lnot P) & \\
+				P \to Q \ &\vdash \ \lnot Q \to \lnot P & \text{Ppply Seduction Theorem}\\
+				P \to Q \ \lnot Q \ &\vdash \ \lnot P & \text{Ppply Seduction Theorem}\\
+				P \to Q, \lnot Q, P &\vdash \ \bot & \text{Ppply Seduction Theorem}
+			\end{align*}
+		\end{center}
+
+		\item Prove the following sequent 
+		
+		$$ P \to Q, \lnot Q, P \ \vdash \ \bot$$
+
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\MP]{\bot}
+						{\infer[\MP]{Q}{P & P \to Q} & \lnot Q}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		To prove the original sequent, we have to undo each application of the deduction theorem i.e. introduce the implication back to the consequent. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,3]{(P \to Q) \to (\lnot Q \to \lnot P)}
+						{\infer[\to I,2]{\lnot Q \to \lnot P}
+							{\infer[\to I,1]{\lnot P}
+								{\infer[\MP]{\bot}
+								{\infer[\MP]{Q}{\infer[1]{\cancel{P}}{} & \infer[3]{\cancel{P \to Q}}{}} & \infer[2]{\cancel{\lnot Q}}{}}}								
+							}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+	\end{enumerate}	
+	
+	\newpage
+	\item \textbf{Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of minimal logic. Some of these sequents have a double turnstile. This means you need to prove both directions. 
+	
+	\vspace{0.2cm}
+
+	{\bf Hints and Tips: Read!}
+
+	The hypotheses of the arguments will suggest the elimination rules to use, while the conclusion will suggest the introduction rules. It's a good first step to look at these, as this will dictate which other (temporary) hypotheses are available in a proof. For example, an implication introduction allows for the (temporary) assumption of the antecedent. 
+
+	Plways expand $\lnot P \equiv P \to \bot$. Otherwise, it may not be clear that the implication introduction/elimination rules can be used.
+
+	\begin{enumerate}
+		\item $(P \land Q) \to R \dashv\vdash P \to (Q \to R) $
+		
+		\hspace{0.2cm}{\bf Solution}
+		
+		This double turnstile requires a proof in both directions. 
+		
+		\begin{enumerate}
+		\item First consider the sequent $(P \land Q) \to R \vdash P \to (Q \to R)$.
+		
+		\vspace{0.2cm}
+
+		Introduction rules: two implications in the conclusion suggest the need for two implication introductions. This requires the temporary addition of $P,Q$ as hypotheses. 
+
+		\vspace{0.2cm}
+
+		Elimination rule: the implication in the hypothesis suggests one needs to use modus ponens with $P \land Q$. So we need to add $P \land Q$ too?
+
+		\vspace{0.3cm}
+		Hypotheses $(P \land Q) \to R$ with temporary hypotheses $P,Q$.
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{P \to (Q \to R)}
+						{\infer[\to I,2]{Q \to R}
+							{\infer[\MP]{R}
+								{\infer[\land I]{P \land Q}
+									{\infer[1]{\cancel{P}}{} & \infer[2]{\cancel{Q}}{}}
+								&							
+								(P \land Q) \to R}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		\item Now we may consider the sequent $P \to (Q \to R) \vdash (P \land Q) \to R$.
+
+		\vspace{0.2cm}
+
+		Introduction rules: implication which suggests the temporary assumption $P\land Q$ should be added. 		
+		
+		\vspace{0.2cm}
+
+		Elimination rules: implication which suggests the need for $P,Q$ in order to use modus ponens. So we need to add these too? 
+
+		\vspace{0.3cm}
+		Hypothesis $P \to (Q \to R)$ with temporary hypothesis $P \land Q$.
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(P \land Q) \to R}
+						{\infer[\MP]{R}
+							{\infer[]{Q\to R}
+								{\infer[\land E_{l}]{P}{\infer[1]{\cancel{P \land Q}}{}} & P \to (Q \to R)}
+							&
+							\infer[\land E_{r}]{Q}
+								{\infer[1]{\cancel{P \land Q}}{}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+	\end{enumerate}
+	Together these natural deductions complete the proof of the claim. 
+		
+		\newpage
+		\item $\lnot P \lor \lnot Q \vdash \lnot(P \land Q)$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		{\bf Unpack the negations!}
+
+		Introduction rules: implication suggests the temporary assumption $P \land Q$.
+
+		\vspace{0.2cm}
+
+		Elimination rules: disjunction suggests the temporary assumptions $\lnot P, \lnot Q$. 
+
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $\lnot P \lor \lnot Q$, $P \land Q$, $\lnot P$, and $\lnot Q$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot(P \land Q)}
+						{\infer[\lor E]{\bot}
+							{\lnot P \lor \lnot Q &
+							\infer[\to I,2]{\lnot P \to \bot}
+								{\infer[\MP]{\bot}
+									{\infer[2]{\cancel{\lnot P}}{}
+									&
+									\infer[\land E_{l}]{P}{\infer[1]{\cancel{P \land Q}}{}}}}
+								&
+							\infer[\to I,3]{\lnot Q \to \bot}
+								{\infer[\MP]{\bot}
+									{\infer[3]{\cancel{\lnot Q}}{} 
+									&
+									\infer[\land E_{r}]{Q}{\infer[1]{\cancel{P \land Q}}{}}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $\lnot(P \lor Q) \dashv\vdash \lnot P \land \lnot Q$
+				
+		\hspace{0.2cm}{\bf Solution}
+		
+		\begin{enumerate}
+		
+			\item First of the two sequents to prove 
+			
+			$$\lnot(P \lor Q) \vdash \lnot P \land \lnot Q$$			
+			
+			Introduction rule: conjunction. This means the proof will be completed by bringing two separate proofs together. One of $\lnot P$ and the other of $\lnot Q$. These can be worked on separately. Furthermore, proofs of negation use implication introduction, so this suggests the addition of temporary assumptions $P,Q$.
+			
+			\vspace{0.2cm}
+			
+			Elimination rule: implication. This requires $P \lor Q$ in order to use modus ponens. However, this does not need to be added to our hypotheses. Why?
+		
+			\vspace{0.2cm}
+
+			Hypotheses in proof are: $\lnot(P \lor Q)$, $P$, and $Q$.
+
+			\vspace{0.2cm}
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\land I]{\lnot P \land \lnot Q}
+							{\infer[\to I,1]{\lnot P}
+								{\infer[\MP]{\bot}
+									{\infer[\lor I]{P \lor Q}{\infer[1]{\cancel{P}}{}}
+									&
+									\lnot(P \lor Q)}}
+							&
+							\infer[\to I,2]{\lnot Q}
+							{\infer[\MP]{\bot}
+								{\infer[\lor I]{P \lor Q}{\infer[2]{\cancel{Q}}{}}
+									&
+									\lnot(P \lor Q)}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+
+			\item Second of two sequents to prove
+			
+			$$\lnot P \land \lnot Q \vdash \lnot(P \lor Q)$$	
+			
+			Introduction rule: negation --- introducing negation is done by introducing implication. This suggests the temporary addition of the assumption $P \lor Q$. 
+			
+			\vspace{0.2cm}
+			
+			Elimination rule: conjunction and disjunction. The elimination rule for the temporary hypothesis $P \lor Q$ will need to be used as well. 
+		
+			\vspace{0.2cm}
+
+			Hypotheses in proof are: $\lnot P \land \lnot Q$, $P \lor Q$. 
+
+			\vspace{0.2cm}
+			
+			\begin{mdframed}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\land I]{\lnot(P \lor Q)}
+							{\infer[\lor E]{\bot}
+								{\infer[1]{\cancel{P \lor Q}}{}
+								& 
+								\infer[\land E_{l}]{P \to \bot}{\lnot P \land \lnot Q}
+								&
+								\infer[\land E_{r}]{Q \to \bot}{\lnot P \land \lnot Q}}}
+					\end{array}$
+				\end{center}
+			\end{mdframed}
+			\end{enumerate}
+				
+		\newpage
+		\item $P \to Q, \ Q \to R \vdash P \to R $
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: implication. Pdd $P$ to hypotheses.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication. Proof needs $Q$ to use modus ponens, does it need to be added as well?
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $P \to Q$, $Q \to R$, $P$.  
+		
+		\begin{mdframed}	
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{P \to R}
+						{\infer[\MP]{R}
+							{\infer[\MP]{Q}
+								{\infer[1]{\cancel{P}}{} & P \to Q}
+							&
+							Q \to R}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}		
+		
+		%\newpage
+		\item $P \lor Q,\ \ P \to R,\ \ Q \to S \vdash  R \lor S$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: disjunction. 
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: disjunction and implication. Sisjunction elimination requires two implication introduction subproofs. For this reason we add $P$, $Q$ to the hypotheses; one for each of the subproofs. Similarly, the elimination of $P\to R$ and $Q \to S$ also suggest the addition of $P,Q$ to the hypotheses. 
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $P \lor Q$, $P \to R$, $Q \to S$, $P,Q$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{R \lor S}
+						{P \lor Q
+						&
+						\infer[\to I,1]{P \to (R \lor S)}
+							{\infer[\lor I]{R \lor S}
+								{\infer[\MP]{R}
+									{\infer[1]{\cancel{P}}{}
+									&
+									P \to R}}}
+						&
+						\infer[\to I,2]{Q \to (R \lor S)}
+						{\infer[\lor I]{R \lor S}
+							{\infer[\MP]{S}
+								{\infer[1]{\cancel{Q}}{}
+								&
+								Q \to S}}}					 
+						}				
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		\newpage
+		\item $P \to R,\ \ Q \to S,\ \ \lnot R \lor \neg S \vdash \lnot P \lor \neg Q$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation and disjunction. Pdd $P,Q$ to hypotheses.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication and disjunction. Introduction suggests adding $P,Q$ (already added) and the disjunction suggests adding $\lnot R$ and $\lnot S$. 
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $P \to R, Q \to S, \lnot R \lor \neg S, P, Q, \lnot R$, and $\lnot S$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{\lnot P \lor \lnot Q}
+						{\lnot R \lor \lnot S
+							&
+						\infer[\to I,2]{\lnot R \to (\lnot P \lor \lnot Q)}
+							{\infer[\lor I]{\lnot P \lor \lnot Q}
+								{\infer[\to I,1]{\lnot P}
+									{\infer[\MP]{\bot}
+										{\infer[2]{\cancel{\lnot R}}{}
+										&
+										\infer[\MP]{R}
+											{\infer[1]{\cancel{P}}{}
+											&
+											P \to R}}}}}
+							&
+						\infer[\to I,3]{\lnot S \to (\lnot P \lor \lnot Q)}
+						{\infer[\lor I]{\lnot P \lor \lnot Q}
+							{\infer[\to I,4]{\lnot Q}
+								{\infer[\MP]{\bot}
+									{\infer[3]{\cancel{\lnot S}}{}
+									&
+									\infer[\MP]{S}
+										{\infer[4]{\cancel{Q}}{}
+										&
+										Q \to S}}}}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+
+		%\newpage
+		\item $P,\ \ \neg P \vdash  \neg Q$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation. 
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication.
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $P, \lnot P$, and $Q$.
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot Q}
+						{\infer[\MP]{\bot}{P & \lnot P}
+						&
+						\infer[1]{\cancel{Q}}{}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+		%\newpage
+		\item $P\to Q, \ P \to \lnot Q \vdash \lnot P$
+				
+		\hspace{0.2cm}{\bf Solution}
+
+		Introduction rule: negation.
+			
+		\vspace{0.2cm}
+			
+		Elimination rule: implication.
+		
+		\vspace{0.2cm}
+
+		Hypotheses in proof are: $P \to Q, P \to \lnot Q$, and $P$. 
+
+		\begin{mdframed}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot P}
+						{\infer[\MP]{\bot}
+							{\infer[\MP]{Q}
+								{\infer[1]{\cancel{P}}{}
+								&
+								P \to Q}
+							&
+							\infer[\MP]{\lnot Q}
+								{\infer[1]{\cancel{P}}{}
+								&
+								P \to \lnot Q}}}
+				\end{array}$
+			\end{center}
+		\end{mdframed}
+		
+	\end{enumerate}		
+
+\end{enumerate}
+	
+\end{document}

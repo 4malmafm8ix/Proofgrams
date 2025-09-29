@@ -1,0 +1,10 @@
+name = "logicLabs"
+version = "0.1.0"
+defaultTargets = ["logiclabs"]
+
+[[lean_lib]]
+name = "LogicLabs"
+
+[[lean_exe]]
+name = "logiclabs"
+root = "Main"

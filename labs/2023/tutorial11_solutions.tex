@@ -1,0 +1,378 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eleven}
+\end{center}
+\begin{center}
+	{\bf Solutions}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Practice $\beta$-reduction, 
+				\item Encode logic in $\lambda$-calculus, 
+				\item Encode natural numbers in $\lambda$-calculus.
+			\end{itemize}
+
+		Relevant notes: Lambda Calculus Slides\\
+		Relevant reading: Type Theory and Functional Programming, Simon Thompson
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1c, 2, 3a, 5\\ 
+	{\bf Due following Friday @ 5pm.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{itemize}
+
+
+	\item Logical connectives are encoded as functions in the $\lambda$-calculus. They're intended to take in the Boolean $\lambda$-expressions TRUE and FALSE. However, without any extra structure to the $\lambda$-calculus, there is nothing stopping us writing:
+
+	\vspace{0.2cm}
+	\begin{itemize}
+		\item[] NOT NOT NOT 
+	\end{itemize}
+
+	\vspace{0.2cm}
+
+	Perform $\beta$-reduction on the above until the expression is in normal form. The strange answer you get suggests that we should not do this! To avoid this, extra \emph{type} structure is added to the $\lambda$-calculus; this amounts to saying only certain $\lambda$-expressions can be applied to others. If the language were typed sensibly, we would get a type error when trying to evaluate NOT NOT NOT.
+
+	{\bf Solution:}
+
+	\begin{align*}
+		\NOT \ \NOT \ \NOT &\equiv (\lambda p. \ p \ \FALSE \ \TRUE) \ \NOT \ \NOT \\
+		&\beq (\NOT \ \FALSE \ \TRUE) \ \NOT \\
+		&\beq \TRUE \ \TRUE \ \NOT \\
+		&\beq \TRUE
+	\end{align*}
+	
+\end{itemize}	
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item By substituting the explicit $\lambda$-expressions (as necessary) and performing $\beta$-reduction, show that the expressions below are $\beta$-equivalent to the Boolean values we should expect from the logical connectives involved. 
+	
+	{\bf Hint:} You do not need to desugar each term at the start. Only as you need them. 
+	
+		\begin{enumerate}
+			\item NOT FALSE
+			
+			{\bf Solution:}
+
+			\begin{align*}
+				\NOT \ \FALSE &\equiv (\lambda p. \ p \ \FALSE \ \TRUE) \ \FALSE \\
+				&\beq \FALSE \ \FALSE \ \TRUE \\
+				&= (\lambda p. \ \lambda q. \ q) \ \FALSE \ \TRUE \\
+				&\beq (\lambda q. \ q) \ \TRUE \\
+				&\beq \TRUE
+			\end{align*}
+
+
+			\item OR TRUE FALSE 
+			
+			{\bf Solution:}
+
+			\begin{align*}
+				\OR \ \TRUE \ \FALSE &= (\lambda p. \ \lambda q. \ p \ p \ q) \ \TRUE \ \FALSE \\
+				&\beq \TRUE \ \TRUE \ \FALSE \\
+				&= (\lambda p. \ \lambda q. \ p) \TRUE \FALSE \\
+				&\beq (\lambda q. \ \TRUE) \ \FALSE \\
+				&\beq \TRUE
+			\end{align*}
+
+			\item AND FALSE TRUE 
+			
+			{\bf Solution:}
+
+			\begin{align*}
+				\AND \ \FALSE \ \TRUE &= (\lambda p. \ \lambda q. \ p \ q \ p) \ \FALSE \ \TRUE \\
+				&\beq \FALSE \ \TRUE \ \FALSE \\
+				&= (\lambda p. \ \lambda q. \ q) \ \TRUE \ \FALSE \\
+				&\beq (\lambda q. \ q) \ \FALSE \\
+				&\beq \FALSE 
+			\end{align*}
+
+			\newpage
+			\item IMPLIES FALSE TRUE
+			
+			{\bf Solution:}
+
+			\begin{align*}
+				\IMP \ \FALSE \ \TRUE &= (\lambda p. \ \lambda q. \ p \ q \ (\NOT \ p)) \ \FALSE \ \TRUE \\
+				&\beq \FALSE \ \TRUE \ (\NOT \ \FALSE) \\
+				&= (\lambda p. \ \lambda q. \ q) \ \TRUE \ (\NOT \ \FALSE) \\ 
+				&\beq (\lambda q. \ q) \ (\NOT \FALSE) \\
+				&\beq \NOT \ \FALSE \\
+				&= (\lambda p. \ p \ \FALSE \ \TRUE) \ \FALSE \\ 
+				&\beq \FALSE \ \FALSE \ \TRUE \\
+				&= (\lambda p. \ \lambda q. \ q) \ \FALSE \ \TRUE \\
+				&\beq (\lambda q. \ q) \ \TRUE \\
+				&\beq \TRUE				
+			\end{align*} 
+
+		\end{enumerate} 
+	
+	\newpage
+	\item Write down $\lambda$-expressions that represent the following propositional binary connectives.
+			
+	\vspace{0.5cm}
+
+	\begin{center}
+		$\begin{array}{c c c}
+
+			\begin{array}{ c c | c }			
+				P & Q & \text{XOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & F
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NAND}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & T \\ 
+				F & T & T \\ 
+				F & F & T
+			\end{array} 
+			& \hspace{0.5cm}
+			\begin{array}{ c c | c }			
+				P & Q & \text{NOR}(P,Q)\\
+				\cline{1 - 3}
+				T & T & F \\ 
+				T & F & F \\ 
+				F & T & F \\ 
+				F & F & T
+			\end{array} 
+		\end{array}$
+	\end{center}
+	
+	{\bf Solution:}
+
+	TRUE and FALSE are defined as selectors of two inputs. For this reason it's helpful to think about what the binary-connective must return if the first input is TRUE, and then what it must return if the first input is FALSE. All binary connectives can be written in the following form where the first input is used as a selector: 
+
+	$$\lambda p. \ \lambda q. \ p \ \text{<<EXP-TRUE>>} \ \text{<<EXP-FALSE>>}$$
+
+	If the first input is TRUE, then the binary connective will return EXP-TRUE, whereas if the first input is FALSE, then the binary connective will return EXP-FALSE. 
+
+	\hspace{0.5cm} {\bf XOR}
+
+	If the first input is TRUE, then the truth table shows that the XOR connective should return the negation of the second input. Whereas, if the first input is FALSE, the XOR connective should return the second input. 
+
+	$$\XOR :\equiv \lambda p. \ \lambda q. \ p \ (\NOT \ q) \ q$$
+
+	\hspace{0.5cm} {\bf NAND}
+
+	If the first input is TRUE, then the truth table shows that the NAND connective should return the negation of the second input. Whereas, if the first input is FALSE, then NAND connective should return TRUE. Equivalently, NAND should return the negation of the first input in this case. 
+
+	$$\NAND :\equiv \lambda p. \ \lambda q. \ p \ (\NOT \ q) \ \TRUE$$
+
+	\hspace{0.5cm} {\bf NOR}
+
+	Alternatively, one can write compound connectives using the $\lambda$-terms of their component parts. NOR is, by definition, the negation of OR. So we can define the $\lambda$-term: 
+
+	$$\NOR :\equiv \lambda p. \ \lambda q. \ \NOT \ (\OR \ p \ q)$$
+
+	\vspace{0.5cm}
+
+	It is interesting to note that these two approaches don't necessarily yield $\beta$-equivalent $\lambda$-terms for the propositional connectives. However, they are equivalent in the sense that they agree on Boolean inputs. That is, they are \emph{extensionally} equivalent. 
+
+	\newpage
+	\item By substituting the explicit $\lambda$-expressions (as necessary) and performing $\beta$-reduction, determine the normal forms of the following $\lambda$-expressions. 
+	
+	{\bf Only expand those expressions necessary for each step.}
+
+	\begin{enumerate}
+		\item SUCC ONE
+		
+		{\bf Solution:}
+			\begin{align*}
+				\SUCC &\ \ONE \\
+				&= (\lambda n. \ \lambda u. \ \lambda v. \ u \ (n \ u \ v) ) \ \ONE \\
+				&\beq \lambda u. \ \lambda v. \ u \ (\ONE \ u \ v) \\
+				&= \lambda u. \ \lambda v. \ u \ ((\lambda s. \ \lambda x. \ s \ x) \ u \ v) \\
+				&\beq \lambda u. \ \lambda v. \ u \ (u \ v) \\
+				&\aeq \ \TWO 
+			\end{align*}
+
+
+		%\newpage
+		\item SUM ONE TWO 
+		
+		{\bf Solution:}
+			\begin{align*}
+				\SUM &\ \ONE \ \TWO \\
+				&= (\lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ m \ u\ (n \ u \ v)) \ \ONE \ \TWO \\ 
+				&\beq \lambda u. \ \lambda v. \ \ONE \ u\ (\TWO \ u \ v) \\
+				&= \lambda u. \ \lambda v. \ \ONE \ u\ ((\lambda s. \ \lambda x. \ s \ (s \ x)) \ u \ v) \\
+				&\beq \lambda u. \ \lambda v. \ \ONE \ u\ (u \ (u \ v)) \\
+				&= \lambda u. \ \lambda v. \ (\lambda s. \ \lambda x. \ s \ x) \ u\ (u \ (u \ v)) \\
+				&\beq \lambda u. \ \lambda v. \ u\ (u \ (u \ v))\\
+				&\aeq \THREE
+			\end{align*}
+
+		%\newpage
+		\item MULT TWO THREE 
+		
+		{\bf Solution:}
+			\begin{align*}
+				\MULT &\ \TWO \ \THREE \\
+				&= (\lambda m. \ \lambda n. \ \lambda u. \ \lambda v. \ m \ (n \ u) \ v) \ \TWO \ \THREE \\
+				&\beq \lambda u. \ \lambda v. \ \TWO \ (\THREE \ u) \ v \\
+				&= \lambda u. \ \lambda v. \ (\lambda s. \ \lambda x. \ s \ (s \ x)) \ (\THREE \ u) \ v \\
+				&\beq \lambda u. \ \lambda v. \ (\THREE \ u) \ (\THREE \ u \ v)\\
+				&= \lambda u. \ \lambda v. \ (\THREE \ u) \ ((\lambda s. \ \lambda x. \  s \ (s \ (s \ x))) \ u \ v)\\
+				&\beq \lambda u. \ \lambda v. \ (\THREE \ u) \ (u \ (u \ (u \ v)))\\
+				&= \lambda u. \ \lambda v. \ ((\lambda s. \ \lambda x. \  s \ (s \ (s \ x))) \ u) \ (u \ (u \ (u \ v)))\\
+				&\beq \lambda u. \ \lambda v. \ (\lambda x. \  u \ (u \ (u \ x))) \ (u \ (u \ (u \ v)))\\
+				&\beq \lambda u. \ \lambda v. \ u \ (u \ (u \ (u \ (u \ (u \ v)))))\\
+				&\aeq \SIX
+			\end{align*}
+
+		
+	\end{enumerate}
+	
+	\newpage
+	\begin{center}
+		{\bf Compound Data with PAIR}
+	\end{center}
+
+	\item We have defined the following $\lambda$-expression to construct pairs of $\lambda$-expressions:
+	
+	$$\text{PAIR} = \lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y$$
+
+	The third input is a built-in place ready to take a selector:
+
+	$$\text{FirST} = \lambda x. \ \lambda y. \ x \hspace{1cm} \text{SecoND} = \lambda x. \ \lambda y. \ y$$
+
+	 Reduce these to normal form 
+
+		\begin{enumerate}
+			\item PAIR a b FST 
+			
+			{\bf Solution:}
+			\begin{align*}
+				\PAIR &\ a \ b \ \FST \\
+				&= (\lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y) \ a \ b \ \FST \\
+				&\beq (\lambda f. \ a \ b) \ \FST \\
+				&\beq \ \FST \ a \ b \\
+				&= (\lambda x. \ \lambda y. \ x) \ a \ b \\
+				&\beq (\lambda y. \ a) \ b \\
+				&\beq a
+			\end{align*}
+
+			\item PAIR a b SND 
+			{\bf Solution:}
+			\begin{align*}
+				\PAIR &\ a \ b \ \SND \\
+				&= (\lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y) \ a \ b \ \SND \\
+				&\beq (\lambda f. \ a \ b) \ \SND \\
+				&\beq \ \SND \ a \ b \\
+				&= (\lambda x. \ \lambda y. \ y) \ a \ b \\
+				&\beq (\lambda y. \ y) \ b \\
+				&\beq b
+			\end{align*}
+
+			\item PAIR (PAIR a b) (PAIR c d) SND
+			{\bf Solution:}
+			\begin{align*}
+				\PAIR &\ (\PAIR \ a \ b) \ (\PAIR \ c \ d) \ \SND \\
+				&= (\lambda x. \ \lambda y. \ \lambda f. \ f \ x \ y) \ (\PAIR \ a \ b) \ (\PAIR \ c \ d) \ \SND \\
+				&\beq (\lambda f. \ (\PAIR \ a \ b) \ (\PAIR \ c \ d)) \ \SND \\
+				&\beq \ \SND \ (\PAIR \ a \ b) \ (\PAIR \ c \ d) \\
+				&= (\lambda x. \ \lambda y. \ y) \ (\PAIR \ a \ b) \ (\PAIR \ c \ d) \\
+				&\beq (\lambda y. \ y) \ (\PAIR \ c \ d) \\
+				&\beq (\PAIR \ c \ d)
+			\end{align*}
+
+		\end{enumerate}
+
+	\newpage
+	\item Integers are solutions to equations $x + b = a$. We can represent natural number solutions using Church numerals. However, further abstractions are required to represent the negative solutions to such equations. 
+
+	{\bf Example} The equation $x + 1 = 0$ has solution $x = -1$. One way to represent this in the $\lambda$-calculus is to use the pair $(0,1)$ which we interpret as $-1 = (0,1)$. 
+	
+	More generally $k = (a,b) = a - b$ represents the solution to $x + b = a$.
+
+	\hspace{0.5cm} {\bf Such representations are not unique!} e.g. $0 = (0,0) = (1,1) = \dots$
+
+	Write $\lambda$-expressions for arithmetic on integers as pairs of Church numerals.
+		\begin{itemize}
+			\item[] INT-SUM to calculate the sum of two integers.
+				
+			{\bf Solution:}	As we are representing integers as pairs of natural numbers we write an abstraction with the understanding that pairs will be used as input. The following lambda expression constructs the pair representing the sum of two integers. 
+
+				$$\text{INT-SUM}\equiv\lambda m. \ \lambda n. \ \PAIR \ (\SUM \ (\FST \ m) \ (\FST \ n)) \ (\SUM \ (\SND \ m) \ (\SND \ n)) $$
+
+
+			\item[] INT-MULT to calculate the product of two integers.
+			
+			{\bf Solution:} If $a-b \equiv (a,b)$ and $(c-d) \equiv (c,d)$, then in order to find the correct expression for multiplication of pairs we can calculate $(a-b)(c-d)$ and collect the positive and negative parts: 
+			$$(a-b)(c-d) = (ac + bd) - (ad + bc)$$
+			It follows that when integers are represented as pairs of natural numbers we can define integer multiplication as: 
+			$$(a,b)(c,d) = (ac + bd, ad + bc)$$
+			\begin{align*}
+				\text{INT-MULT}\equiv\lambda m. &\ \lambda n. \ \PAIR  \\ 
+				&(\SUM \ (\MULT \ (\FST \ m) \ (\FST n)) \ (\MULT \ (\SND \ m) \ (\SND \ n))) \\
+				&(\SUM \ (\MULT \ (\FST \ m) \ (\SND n)) \ (\MULT \ (\SND \ m) \ (\FST \ n))) 
+			\end{align*}
+
+			\item[] INT-NEG(ative) to calculate the negative of an integer.
+			
+			{\bf Solution:} $$\text{INT-NEG} \equiv \lambda m. \ \PAIR \ (\SND \ m) \ (\FST \ m) $$
+		\end{itemize}
+	
+	\newpage
+	\item Rational numbers are solutions to equations of the form $bx = a$. Use PAIR to represent rational numbers in the $\lambda$-calculus and write $\lambda$-expressions to compute rational number arithmetic. 
+		\begin{itemize}
+			\item[] RAT-SUM to calculate the sum of two rational numbers.
+			\item[] RAT-MULT to calculate the product of two rational numbers.
+			\item[] RAT-REC(iprocal) to calculate the reciprocal of an integer.
+		\end{itemize}
+
+	\item Imaginary numbers can be represented as PAIRs of rational numbers.
+	
+	\item Real numbers are a more complicated issue.
+
+\end{enumerate}
+	
+\end{document}

@@ -118,7 +118,9 @@ Avoid using these as identifiers (names) for terms, types, or variables.
 \vspace{0.5cm}
 
 \section*{4. Tactics for Proofs in \texttt{Prop}}
-Rather than writing proof-terms explicitly, these tactics help authoring proofs about propositions. 
+Rather than writing proof-terms explicitly, these tactics help authoring proofs about propositions. If we think of the term constructors (equiv rules of inference) as the fundamental rules of reasoning, then tactics can be thought of as higher-level, meta, reasoning tools. These metaprograms are instructions for creating proof-terms. 
+
+One can open tactic mode by writing ``by'' at the start of a proof. One then applies a list of tactics in order to prove the goal. These can be written one per line, or separated by semi-colon on the same line.
 
 \begin{itemize}
   \item \texttt{intro \_ \_ \_ \dots}
@@ -130,6 +132,16 @@ Rather than writing proof-terms explicitly, these tactics help authoring proofs 
   It takes care of all the implication introductions behind the scenes.
   
   \item \texttt{apply \_}
+  
+  If our goal is $C$ and we have a theorem ``robertsTheorem'' which proves $C$ based on three hypotheses of type $P,Q,R$, then ``apply robertsTheorem'' will change the proof-state to have three goals corresponding to the three hypotheses $P,Q,R$. 
+  
+  We say, in order to prove $C$ it is sufficient, by robertsTheorem, to prove $P,Q,R$ separately. 
+  
+  Using this in Prop can split a proof of conjunction $P\land Q$ to two proofs; one of $P$ and another of $Q$. We can write ``apply And.intro'' in order to achieve this.  
+  
+  Similarly, one can split a proof into two cases using ``apply Or.elim t'' where $t : P \lor Q$. If the original goal was $C$, then this will split the proof into two proofs: one with goal $P \to C$, the other with $Q \to C$. 
+  
+  
   \item \texttt{exact \_}
   
   {\bf e.g.} If the goal of the current proof-state is $P$ and $t : P$, then exact $t$ completes the proof.

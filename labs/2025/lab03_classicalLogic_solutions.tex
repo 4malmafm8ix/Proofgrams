@@ -1,0 +1,655 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\newcommand{\temp}[2]{{\overline{#2}}^{#1}}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+% Package for presenting proofs in landscape. 
+\usepackage{rotating}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Three [Solutions]}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions with Classical Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write natural deductions using RAA.
+				\item Prove LEM and DNE.
+				\item Use LEM (or DNE) as a derived rule of inference to avoid RAA directly.
+				\item Do a lot of $\lor$ elimination proofs.
+				\item Witness the oddities of classical theorems. 
+			\end{itemize}
+
+		Relevant Topic: Propositional Logic\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapter 5}
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 2a, 2b, 3a, 3b, 3e\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	
+	\item $\lnot (A \land B) \vdash \lnot A \lor \lnot B$
+	
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item \textbf{NOTE!} Make sure you have finished all of the minimal and intuitionistic natural deductions before doing this tutorial. It is more important that you understand those. Make sure you understand $\lor$ elimination before attempting this tutorial. 
+	
+	\item \textbf{LEM and DNE.} Prove each of the following fundamental theorems of classical logic making explicit use of the RAA mode of reasoning: 
+	
+	\begin{enumerate}
+		\item $\vdash A \lor \neg A$
+		
+		\textbf{Solution:}
+
+		This is very similar to the proof of $\lnot \lnot (A \lor \lnot A)$ from Lab Two. However, it has a slightly different ending.
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,2]{A \lor \lnot A}
+						{\infer[\MP]{\bot}
+							{\infer[\lor I]{A \lor \lnot A}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[\MP]{\bot}
+										{\infer[]{A \lor \lnot A}{\infer[1]{\cancel{A}}{}}
+										&
+										\infer[2]{\cancel{\lnot (A \lor \lnot A)}}{}}}}
+							&
+							\infer[2]{\cancel{\lnot(A \lor \lnot A)}}{}}}
+				\end{array}$
+			\end{center}
+
+		\item $\neg\neg A \vdash A$ 
+		
+		\textbf{Solution:}
+
+			In order to use RAA we must assume the negation of the proposition $A$ that we are asked to prove. 
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,1]{A}
+						{\infer[\MP]{\bot}
+							{\lnot \lnot A
+							&
+							\temp{1}{\lnot A}}}
+				\end{array}$
+			\end{center}
+
+			Notice that at the RAA step we discharge the hypotheses $\lnot A$ from the hypotheses of the theorem. Since we proved LEM above, we can call on it for an alternative proof of this sequent that does not make (explicit) use of RAA. Of course, RAA is used in the proof of LEM. 
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{A}
+						{\temp{\text{LEM}}{A \lor \lnot A}
+						&
+						A \to A
+						&
+						\infer[\to I,1]{\lnot A \to A}
+							{\infer[\XF]{A}
+								{\infer[\MP]{\bot}
+									{\infer[1]{\cancel{\lnot A}}{}
+									&
+									\lnot \lnot A}}}}
+				\end{array}$
+			\end{center}
+	\end{enumerate}
+	
+	\newpage
+	\item \textbf{Classical derivations.} Provide natural deduction proofs of the following. All rules \emph{may} be required. Rather than making explicit use of RAA, it can be easier to appeal to LEM or DNE as \emph{derived rules of inference}. 
+	
+	\textbf{Hints}
+
+	Read these hints and suggestions before reading the solutions below. It is important that you try to solve these problems first, before reading a solution. All hints from earlier labs still apply to this lab. 
+
+	In this third lab we are to make use of the reductio ad absurdum (RAA) rule of inference: 
+
+	\begin{center}
+	\begin{tabular}{c}
+		\infer[\RAA]{A}{\begin{array}{c}\Sigma, \lnot A \\ \vdots \\ \bot \end{array}}
+		\\
+		Reductio Ad Absurdum (RAA)
+	\end{tabular}
+	\end{center}
+
+	This takes a proof witnessing the sequent $\Sigma, \lnot A \ \vdash \ \bot$ to a proof witnessing $\Sigma \ \vdash \ A$. Notice that we can conclude $A$ using the assumption $\lnot A$ and we can strike out the assumption $\lnot A$ in the RAA step. It this possibility of striking out of the assumption that makes RAA, and hence classical logic, more powerful than other the previous rules we have studied. 
+
+	RAA itself can be difficult to use in a proof. It can instead be easier to use one these derived rules of inference which, by Question 4 below, have equivalent proof theoretic strength to RAA. 
+	
+		\begin{center}
+		\begin{minipage}{0.45\textwidth}
+		\centering
+
+			\textbf{Double Negation Elimination}
+
+			$\begin{array}{ c }
+			\infer[\text{DNE}]{\alpha}
+			{
+			\begin{array}{c} \  \\ \ \\ \lnot \lnot\alpha \to \alpha \end{array}
+			& 
+			\begin{array}{c} \Sigma  \\ \mathcal{D} \\ \lnot \lnot\alpha \end{array}							 
+			}
+			\end{array}$
+		\end{minipage}%
+	\hfill
+		\begin{minipage}{0.45\textwidth}
+		\centering
+
+			\textbf{Law of Excluded Middle}
+
+			$\begin{array}{ c }
+			\infer[\text{LEM}]{\gamma}
+			{
+			\begin{array}{c} \  \\ \ \\ \alpha\lor\lnot\alpha \end{array}
+			& 
+			\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \alpha\rightarrow\gamma \end{array}				
+			& 
+			\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \lnot\alpha\rightarrow\gamma \end{array}				 
+			}
+			\end{array}$
+		\end{minipage}
+	\end{center}
+	
+	\textbf{Hints and Tips}
+
+	\begin{itemize}
+		\item[] The classical proofs required in this tutorial are all intuitionistic, or even minimal, except for one use of a classical mode of reasoning. 
+		\item[] Many proofs in question three can be done by using an appropriate instance of the law of excluded middle. For most of the problems below that will be assuming $A \lor \lnot A$. 
+		\item[] If you're asked to find a classical proof for a sequent $\Sigma \ \vdash \ P$, for some proposition $P$, then it should be sufficient to find a \emph{minimal/intuitionistic logic} proof for the sequent $\Sigma, \alpha \lor \lnot \alpha \ \vdash \ P$, for some prop $\alpha$. 
+		\item[] Classical logic is minimal logic but with the hidden assumption that one has a proof of $\alpha \lor \lnot \alpha$ to call on for any proposition $\alpha$. In this way, the proofs required for this lab shouldn't be very different to those in the earlier labs... but there will be a lot of $\lor$ elimination!  
+	\end{itemize}
+
+
+	\newpage
+	\begin{enumerate}
+		\item $\neg(A \land  B) \vdash  \neg  A \lor \neg  B$  
+		
+		\textbf{Solution:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{\lnot A \lor \lnot B}
+					{\infer[\LEM]{A \lor \lnot A}{}
+					&
+					\infer[\to I, 1]{A \to (\lnot A \lor \lnot B)}
+						{\infer[\lor I_{L}]{\lnot A \lor \lnot B}
+							{\infer[\to I,2]{\lnot B}
+								{\infer[\MP]{\bot}
+									{\infer[\land I]{A \land B}
+										{\temp{1}{A}&\temp{2}{B}}
+									&
+									\lnot(A \land B)}}}}
+					&
+					\infer[\to I,3]{\lnot A \to (\lnot A \lor \lnot B)}
+						{\infer[\lor I_{R}]{\lnot A \lor \lnot B}
+							{\temp{1}{\lnot A}}}}
+			\end{array}$
+		\end{center}
+
+		Proof which makes explicit use of RAA: 
+
+		\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,3]{\lnot A \lor \lnot B}
+						{\infer[]{\bot}
+							{\infer[\lor I]{\lnot A \lor \lnot B}
+								{\infer[\to I,1]{\lnot A}
+									{\infer[\MP]{\bot}
+										{\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}
+											{}
+										&
+										\infer[\lor I]{\lnot A \lor \lnot B}
+											{\infer[\to I,2]{\lnot B}
+												{\infer[\MP]{\bot}
+													{\lnot(A \land B)
+													&
+													\infer[\land I]{A \land B}
+														{\infer[1]{\cancel{A}}{}
+														&
+														\infer[2]{\cancel{B}}{}}}}}}}}
+							&
+							\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}{}}}
+				\end{array}$
+			\end{center}
+		
+		%\newpage
+		\item $ A \to  B \vdash  \neg  A \lor  B$  
+		
+		\textbf{Solution:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{}
+					{\infer[\LEM]{A \lor \lnot A}{}
+					&
+					\infer[\to I,1]{A \to \lnot A \lor B}
+						{\infer[\lor I_{L}]{\lnot A \lor B}
+							{\infer[\MP]{B}
+								{\temp{1}{A} & A \to B}}}
+					&
+					\infer[\to I,2]{\lnot A \to \lnot A \lor B}
+						{\infer[\lor I_{R}]{\lnot A \lor B}
+							{\temp{2}{\lnot A}}}}
+			\end{array}$
+		\end{center}
+
+		Proof which makes explicit use of RAA: 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\RAA,2]{\lnot A \lor B}
+					{\infer[\MP]{\bot}
+						{\infer[\lor I]{\lnot A \lor B}
+							{\infer[\to I,1]{\lnot A}
+								{\infer[\MP]{\bot}
+									{\infer[2]{\cancel{\lnot(\lnot A \lor B)}}{}
+									&
+									\infer[\lor I]{\lnot A \lor B}
+										{\infer[\MP]{B}
+											{\infer[1]{\cancel{A}}{}
+											&
+											A \to B}}}}}
+						&
+						\infer[2]{\cancel{\lnot(\lnot A \lor B)}}{}}}
+			\end{array}$
+		\end{center}		
+		
+		\newpage
+		\item $\vdash (A \to B) \lor (B \to A)$
+		
+		\textbf{Solution:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{}
+					{\infer[\LEM]{A \lor \lnot A}{}
+					&
+					\infer[\to I,1]{A \to (A \to B) \lor (B \to A)}
+						{\infer[\lor I_{L}]{(A \to B) \lor (B \to A)}
+							{\infer[\to I, B]{B \to A}
+								{\temp{1}{A}}}}
+					&
+					\infer[\to I,3]{\lnot A \to (A \to B) \lor (B \to A)}
+						{\infer[\lor I_{R}]{(A \to B) \lor (B \to A)}
+							{\infer[\to I,2]{A \to B}
+								{\infer[\XF]{B}
+									{\infer[\MP]{\bot}
+										{\temp{2}{A}&\temp{3}{\lnot A}}}}}}}
+			\end{array}$
+		\end{center}
+
+		In fact, this theorem can be made even stranger by noticing that the second $A$ can be any proposition, below denoted $C$ in the proof which makes explicit use of RAA: 
+		\begin{small}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,2]{(A \to B) \lor (B \to C)}
+						{\infer[]{\bot}
+							{\infer[\lor I]{(A \to B) \lor (B \to C)}
+								{\infer[\to I,1]{B \to C}
+									{\infer[\XF]{C}
+										{\infer[\MP]{\bot}
+											{\infer[2]{\cancel{\lnot[(A \to B) \lor (B \to C)]}}{}
+											&
+											\infer[\lor I]{(A \to B) \lor (B \to C)}
+												{\infer[\to I]{A \to B}
+													{\infer[1]{\cancel{B}}{}}}}}}}
+							&
+							\infer[2]{\cancel{\lnot[(A \to B) \lor (B \to C)]}}{}}}				
+				\end{array}$
+			\end{center}
+		\end{small}		
+		
+		%\newpage
+		\item $\vdash A \to B \lor \neg B$  
+		
+		\textbf{Solution:}
+
+		This is the deduction for $B \lor \lnot B$ from earlier in the lab, with a vacuous implication introduction at the end. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, A]{A \to B \lor \lnot B}
+					{\infer[\RAA,2]{B \lor \lnot B}
+						{\infer[\MP]{\bot}
+							{\infer[\lor I]{B \lor \lnot B}
+								{\infer[\to I,1]{\lnot B}
+									{\infer[\MP]{\bot}
+										{\infer[]{B \lor \lnot B}{\infer[1]{\cancel{B}}{}}
+										&
+										\infer[2]{\cancel{\lnot (B \lor \lnot B)}}{}}}}
+							&
+							\infer[2]{\cancel{\lnot(B \lor \lnot B)}}{}}}}
+
+			\end{array}$
+
+		\end{center}
+		
+		\newpage
+		\item $\vdash (\neg A \to A) \to A$  
+		
+		\textbf{Solution:}
+
+		Since the goal is an implication, we can temporarily assume the antecedent. This changes the goal to: 
+
+		$$\temp{1}{(\neg A \to A)} \ \vdash \ A$$
+
+		We can prove this using LEM as follows: 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{(\lnot A \to A) \to A}
+					{\infer[\lor E]{A}
+						{\infer[\LEM]{A \lor \lnot A}{}
+						&
+						\infer[\THM]{A \to A}{}
+						&
+						\infer[1]{\lnot A \to A}{}}}
+			\end{array}$
+		\end{center}
+
+		Proof which makes explicit use of RAA: 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{(\lnot A \to A) \to A}
+					{\infer[\RAA,2]{A}
+						{\infer[\MP]{\bot}
+							{\infer[\MP]{A}
+								{\infer[1]{\cancel{\lnot A \to A}}{} & \infer[2]{\cancel{\lnot A}}{}} 
+							&
+							\infer[2]{\cancel{\lnot A}}{}}}}
+			\end{array}$
+		\end{center}		
+		
+		%\newpage
+		\item $(A \to B)  \vdash (A \rightarrow  D) \lor (C \rightarrow B)$
+		
+		This is another theorem of classical logic that makes a mockery of implication. 
+		
+		\textbf{Solution:}
+
+		\begin{tiny}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{(A \to D) \lor (C \to B)}
+					{\infer[\THM]{A \lor \lnot A}{}
+					&
+					\infer[\to I,1]{A \to (A \to D) \lor (C \to B)}
+						{\infer[\lor I_{L}]{(A \to D) \lor (C \to B)}
+							{\infer[\to I]{C \to B}
+								{\infer[\MP]{B}
+									{\temp{1}{A}
+									&
+									A \to B}}}}
+					&
+					\infer[\to I,2]{\lnot A \to (A \to D) \lor (C \to B)}
+						{\infer[\lor I_{R}]{(A \to D) \lor (C \to B)}
+							{\infer[\to I,3]{A \to D}
+								{\infer[\XF]{D}
+									{\infer[\MP]{\bot}
+										{\temp{2}{\lnot A}
+										&
+										\temp{3}{A}}}}}}}
+			\end{array}$
+		\end{center}
+	\end{tiny}
+
+		Here is a proof which makes explicit use of RAA: 
+
+		\begin{tiny}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\RAA,2]{(A \to D) \lor (C \to B)}
+					{\infer[\MP]{\bot}
+						{\infer[\lor I_{R}]{(A \to D) \lor (C \to B)}
+							{\infer[\to I,1]{A \to D}
+								{\infer[\XF]{D}
+									{\infer[\MP]{\bot}
+										{\infer[\lor I_{L}]{(A \to D) \lor (C \to B)}
+											{\infer[\to I]{C \to B}
+												{\infer[\MP]{B}
+													{\temp{1}{A}
+													&
+													A \to B}}}
+										&
+										\temp{2}{\lnot((A \to D) \lor (C \to B))}}}}}
+						&
+						\temp{2}{\lnot((A \to D) \lor (C \to B))}}}
+			\end{array}$
+		\end{center}
+		\end{tiny}
+		
+		\newpage
+		\item $\lnot (A \to B) \vdash A \land \lnot B$  
+		
+		\textbf{Solution:}
+
+		This goal is a conjunction ($\land$) and as such can be split into two sub-goals: 
+
+		$$\text{Sub-goal one: } \ \lnot (A \to B) \vdash A$$
+
+		This subgoal requires LEM:
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{}
+					{\infer[\LEM]{A \lor \lnot A}{}
+					&
+					\infer[\THM]{A \to A}{}
+					&
+					\infer[\to I,2]{\lnot A \to A}
+						{\infer[\XF]{A}
+							{\infer[\MP]{\bot}
+								{\infer[\to I,2]{A \to B}
+									{\infer[\XF]{B}
+										{\infer[\MP]{\bot}
+											{\temp{1}{A}&\temp{2}{\lnot A}}}}
+								&
+								\lnot(A \to B)}}}}
+			\end{array}$
+		\end{center}
+
+		$$\text{Sub-goal two: } \ \lnot (A \to B) \vdash \lnot B$$
+
+		This subgoal is actually minimal!
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,3]{\lnot B}
+					{\infer[\MP]{\bot}
+						{\infer[\to I, A]{A \to B}{\temp{3}{B}}
+						&
+						\lnot (A \to B)}}
+			\end{array}$
+		\end{center}
+
+		To complete the proof the two sub-goals need to be joined with a conjunction introduction. 
+
+
+
+		Proof which makes explicit use of RAA. It also calls on a proof of $\vdash \ \lnot A \to (A \to B)$ from Lab Two. This is denoted by the label THM in the proof; here we are calling on a THeoreM that we have already proved elsewhere.
+
+		\begin{footnotesize}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{A \land \lnot B}
+					{\infer[\RAA,1]{A}
+						{\infer[\MP]{\bot}
+							{\infer[\MP]{A \to B}
+								{\infer[1]{\cancel{\lnot A}}{}
+								&
+								\infer[\THM]{\lnot A \to (A \to B)}{}}
+							&
+							\lnot(A \to B)}}
+					&
+					\infer[\to I,2]{\lnot B}
+						{\infer[\MP]{\bot}
+							{\infer[\to I]{A \to B}
+								{\infer[2]{\cancel{B}}{}}
+							&
+							\lnot(A \to B)}}}
+			\end{array}$
+		\end{center}
+		\end{footnotesize}		
+		
+		\newpage
+		\item $\vdash \ ((A \to B) \to A) \to A$  
+		
+		\textbf{Solution:}
+
+		This sequent seems, to me, cleaner to prove by making explicit use of RAA. First though, we can apply the deduction theorem to obtain one temporary hypothesis: 
+		
+		$$(A \to B) \to A \ \vdash \ A$$
+
+		In order to prove $A$, we assume $\lnot A$ for a sake of contradiction i.e. looking for a use of RAA. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, 1]{((A \to B) \to A) \to A}
+					{\infer[\RAA,2]{A}
+						{\infer[\MP]{\bot}
+							{\infer[\MT]{\lnot(A \to B)}
+								{\temp{2}{\lnot A}
+								&
+								\temp{1}{(A \to B) \to A}}
+							&
+							\infer[\THM]{A \to B}
+								{\temp{2}{\lnot A}}}}}
+			\end{array}$
+		\end{center}
+
+		This proof calls on proofs of Modus Tollens $A \to B, \lnot B \vdash \lnot A$ and the theorem $\lnot A \vdash (A \to B)$ both given in Lab 2.
+
+	\end{enumerate}
+	
+	\vfill
+	\hfill \textbf{PTO}
+	\newpage
+	
+	\item In class we discussed how classical logic can be obtained from intuitionistic logic by adding the following rule of inference \emph{reductio ad absurdum}: If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
+	
+	\begin{center}		
+		$\begin{array}{c}		
+		\infer[\text{RAA}]{\alpha}
+		{\begin{array}{c} \hline \cancel{\lnot\alpha} \\ \Sigma \\ \mathcal{D} \\ \bot \end{array}}
+		\end{array}$
+	\end{center}
+	
+	is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
+
+	In this question we will explore this extension of logics in more detail. We will see that there are different methods for obtaining classical logic from minimal/intuitionistic logic.	For the purposes of this question we introduce two more rules of inference: 
+
+	\begin{center}
+		\begin{minipage}{0.45\textwidth}
+		\centering
+
+			\textbf{Double Negation Elimination}
+
+			$\begin{array}{ c }
+			\infer[\text{DNE}]{\alpha}
+			{
+			\begin{array}{c} \  \\ \ \\ \lnot \lnot\alpha \to \alpha \end{array}
+			& 
+			\begin{array}{c} \Sigma  \\ \mathcal{D} \\ \lnot \lnot\alpha \end{array}							 
+			}
+			\end{array}$
+		\end{minipage}%
+	\hfill
+		\begin{minipage}{0.45\textwidth}
+		\centering
+
+			\textbf{Law of Excluded Middle}
+
+			$\begin{array}{ c }
+			\infer[\text{LEM}]{\gamma}
+			{
+			\begin{array}{c} \  \\ \ \\ \alpha\lor\lnot\alpha \end{array}
+			& 
+			\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \alpha\rightarrow\gamma \end{array}				
+			& 
+			\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \lnot\alpha\rightarrow\gamma \end{array}				 
+			}
+			\end{array}$
+		\end{minipage}
+	\end{center}
+
+	\textbf{Question:} Suppose you are given a proof witnessing the sequent $\Sigma, \lnot \alpha \ \vdash \ \bot$. 
+
+	\begin{itemize}
+		\item[(a)] Using only minimal logic + DNE extend this proof to a proof witnessing the sequent $ \Sigma \ \vdash \alpha$. 
+		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\DNE]{\alpha}
+					{\lnot\lnot \alpha \to \alpha
+					&
+					\infer[\to I, \lnot \alpha]{\lnot \lnot \alpha}
+						{\begin{array}{c} \Sigma, \lnot \alpha  \\ \mathcal{D} \\ \bot \end{array}}}
+			\end{array}$
+		\end{center}
+
+		Since the hypothesis $\lnot \alpha$ is discharged at the $\to I$ step in the above proof, the final conclusion depends only on the set $\Sigma$ of hypotheses. In this way we see that this DNE rule of inference has the same result as the use of RAA at the same point. We have already shown RAA implies DNE, so we can now say DNE = RAA.
+
+
+		\item[(b)] Using only inituitionistic logic + LEM extend this proof to a proof witnessing the sequent $ \Sigma \ \vdash \alpha$. 
+		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\LEM]{\alpha}
+					{\alpha \lor \lnot \alpha
+					&
+					\alpha \to \alpha
+					&
+					\infer[\to I]{\lnot \alpha \to \alpha}
+						{\infer[\XF]{\alpha}
+							{\begin{array}{c} \Sigma, \lnot \alpha  \\ \mathcal{D} \\ \bot \end{array}}}}
+			\end{array}$
+		\end{center}
+
+		Again, $\lnot \alpha$ is discharged at the $\to I$ step and therefore the conclusion $\alpha$ depends only on $\Sigma$. In this way we see that LEM implies RAA and hence, with the other direction from class, we can say RAA = LEM = DNE.
+
+	\end{itemize}
+
+	Use part (a) to argue that RAA = DNE in the presence of minimal logic. Where as part (b) shows RAA = LEM in the presence of intuitionistic logic. Finally, argue that all three are therefore equivalent modes of reasoning in the presence of intuitionistic logic: RAA = DNE = LEM.		
+
+	\end{enumerate}	
+\end{document}

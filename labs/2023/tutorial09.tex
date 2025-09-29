@@ -1,0 +1,159 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+\begin{document}
+
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Nine}
+\end{center}
+\begin{center}
+	{\bf Introduction to Turing Machines}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas and learning outcomes
+			\begin{itemize}
+				\item Know what is required to specify a Turing machine 
+				\item Give high-level (English) descriptions of Turing machines
+				\item Comment your code 
+				\item Write example Turing machines 
+				\item Learn some ``admin'' tasks to help with other Turing machines
+			\end{itemize}
+
+		{\bf Make sure the Python code works for you before you leave this tutorial.} \\
+
+		Relevant lectures: Turing Machine lecture slides. \\
+		Relevant reading: The Annotated Turing, \emph{Petzold}.
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1, 6, 8 \\ 
+	{\bf Due following Friday @ 5pm submit .txt files online.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+ 
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Turing describes a tape with $E$-squares (for working; ``liable to erasure'') and $F$-squares for holding the content of the calculation. Turing assumes $F$-squares are never blank and contain either a 0 or 1.
+	
+	Assume the input is a binary string with a blank $E$-square between each bit. 
+	
+	\hspace{0.3cm} {\bf Input: } \tmtape{1}{\bcell}{1}{\bcell}{0}{\bcell}{0}{\bcell}{1}	
+
+	Write a Turing machine which has the input binary string next to the home (@) square without the blank $E$-squares between the bits. 
+
+	\hspace{0.3cm} {\bf Output: } \tmtape{1}{1}{0}{0}{1}{\bcell}{\bcell}{\bcell}{\bcell}
+
+	% (q01, q02) Mark the end of the tape. Go Home. 
+	% Initial state (q0) skips over the first bit.
+	% q1 searches for next bit. If q1 finds end marker, then (q6) go home and halt.
+	% 	If q1 finds a one, then go into q2 to take the bit back. q4 a print 1 state.
+	%	If q1 finds a zero, then go into q3 to take the bit back. q5 a print 0 state.
+	%	After printing (q4 or q5) go back into (q1) the right searching state. 
+
+	% 2 states to mark the end and return home. 6 states to do the moving. 
+
+	\vspace{8cm}
+
+	\item Write this Turing machine into a .txt file that can be tested with the script. Make sure you know how this script works by the end of the tutorial.
+
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Print ``Kia Ora, Ao!" on a blank tape. 
+	
+		\begin{itemize}
+			\item[] Input: a blank tape. 
+			\item[] Output: the characters on individual cells followed by blank cells. 
+		\end{itemize}
+	
+	\item Mark the end of a finite binary string.
+	
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty binary block at the start.
+			\item[] Output: Input string with a symbol to mark the first blank cell after it. 
+			\item[] Test input: @,1,1,1,0,1,1,b,b,b Test output: @,1,1,1,0,1,1,x,b,b
+		\end{itemize}
+
+	\item Remove any blank cells at the start of the tape. 
+	
+		\begin{itemize}
+			\item[] Input: Assume tape has some finite binary block of cells. 
+			\item[] Output: Input tape without the blank cells at the start. 
+			\item[] Test input: @,b,b,b,b,b,1,0,1,0,b,b,b,b,b Test output:@,1,0,1,0,b,b,b,b,b
+		\end{itemize}
+	
+	\item Flip all bits i.e. 1s to 0s and 0s to 1s.  
+	
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty finite binary block at the start. 
+			\item[] Output: Binary string with all input bits flipped. 
+			\item[] Test input: @,1,1,1,1,1,0,1 Test output: @,0,0,0,0,0,1,0
+		\end{itemize}
+
+	\item Blank out the tape. 
+	
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty binary block at the start.
+			\item[] Output: Blank tape. 
+			\item[] Test input: @,1,1,1,0,1,1,b,b,b Test output: @,b,b,b,b,b,b,b,b,b
+		\end{itemize}
+
+	\item Reverse a binary string.
+		
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty binary block at the start.
+			\item[] Output: Input string reversed.
+			\item[] Test input: @,1,1,1,0,1,1,0,1 Test output: @,1,0,1,1,0,1,1,1
+		\end{itemize}
+	
+	\item Separate characters with blank cells. 
+	
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty binary block at the start.
+			\item[] Ouput: Input string with all bits spaced by a blank cell. 
+			\item[] Test input: @,1,1,1,0, Test output: @,1,b,1,b,1,b,0,b,
+		\end{itemize}
+	
+	\item Copy a binary string.
+		
+		\begin{itemize}
+			\item[] Input: Assume tape has a non-empty binary block at the start.
+			\item[] Ouput: Two copies of the input string together. 
+			\item[] Test input: @,1,1,1,0,b,b, Test output: @,1,1,1,0,1,1,1,0,b,b,b,
+		\end{itemize} 	
+	 
+\end{enumerate}
+	
+\end{document}

@@ -1,0 +1,893 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\newcommand{\temp}[2]{{\overline{#2}}^{#1}}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+% Package for presenting proofs in landscape. 
+\usepackage{rotating}
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial One [Solutions]}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Natural Deductions with Positive Minimal Logic}
+\end{center}
+
+
+% Box with goals and relevant lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}				
+				\item Write natural deduction proofs using $\land, \lor,$ and $\to$ connectives only. 
+				\item Understand the use of temporary hypotheses when proving implications.
+				\item Avoid common stumbling block of $\lor$-elimination!
+			\end{itemize}
+
+		Relevant Topic: Propositional Logic\\
+		Relevant Reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1} 
+		
+	\vspace{2mm}
+
+	Hand in exercises: 2a, 2c, 2d, 2e, 3a\\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{5mm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Show $A \rightarrow B \vdash A\rightarrow (A \land B)$.
+	% Deduction theorem (implication introduction) means you can move antecedent of implication in conclusions over as hypotheses. 
+	
+	\vspace{50mm}
+	
+	\item Show $( A\land  B) \lor  C \ \vdash \ ( A\lor  C) \land ( B \lor  C)$.
+	% Focus on what it means to prove something from an OR i.e. disjunction elimination. 
+	% Different parts can be worked out separately. Don't assume the whole proof has to come together at once. Once you have the parts, then the whole proof can be pieced together. 
+\end{enumerate}
+
+\newpage
+\textbf{Hints}
+
+Read these hints and suggestions before reading the solutions below. It is important that you try to solve these problems first, before reading a solution. 
+
+First, remember that each move in a natural deduction (for this tutorial) consists of one of the following rules: 
+
+\begin{center}
+	\textbf{Introduction Rules}
+\end{center}
+\begin{scriptsize}
+\begin{center}
+	\begin{tabular}{c c c}
+	$\begin{array}{c}\infer[\land I]{A \land B}		
+		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}
+		&
+		\begin{array}{c} \Sigma \\ \vdots \\ B \end{array}}
+	\end{array}$
+
+		\hspace{5mm}		
+		&	
+		\hspace{5mm}
+
+	$\begin{array}{c}\infer[\to I]{A \to B}
+		{\begin{array}{c} \Sigma \\ \vdots \\ B \end{array}}
+	\end{array}$ 
+
+		\hspace{5mm}
+		&
+		\hspace{5mm}
+
+	\begin{tabular}{c c}
+		$\begin{array}{c}\infer[\lor I_{l}]{B \lor A}
+		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}}\end{array}$
+		&
+		$\begin{array}{c}\infer[\lor I_{r}]{A \lor B}
+		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}}\end{array}$
+	\end{tabular}\\
+	$\land$ introduction & $\to$ introduction & $\lor$ introduction
+	\end{tabular}
+\end{center}
+\end{scriptsize}
+
+\begin{center}
+	\textbf{Elimination Rules}
+\end{center}
+
+\begin{scriptsize}
+\begin{center}
+	\begin{tabular}{c c c}
+		\begin{tabular}{c c}
+			$\begin{array}{c}\infer[\land_{l}]{A}
+			{\begin{array}{c} \Sigma \\ \vdots \\ A \land B \end{array}}\end{array}$
+			&
+			$\begin{array}{c}\infer[\land_{r}]{B}
+			{\begin{array}{c} \Sigma \\ \vdots \\ A \land B \end{array}}\end{array}$
+		\end{tabular}
+
+	&
+
+	$\begin{array}{c}\infer[\to I]{B}
+		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}
+		&
+		\begin{array}{c} \Sigma \\ \vdots \\ A \to B \end{array}
+		}
+	\end{array}$ 
+
+	&
+	
+	$\begin{array}{c}
+		\infer[\lor E]{C}
+			{\begin{array}{c} \ \\ \ \\ A \lor B \end{array}
+			&
+			\begin{array}{c}\Sigma \\ \vdots \\ A \to C \end{array}
+			&
+			\begin{array}{c}\Sigma \\ \vdots \\ B \to C \end{array}}
+
+	\end{array}$
+
+\\
+	$\land$ Elimination & $\to$ Elimination (MP) & $\lor$ Elimination
+	\end{tabular}
+\end{center}
+\end{scriptsize}
+
+\textbf{Which rules should be used?}
+
+In order to determine which rules to use, one must consider the connectives in the sequent. Those connectives on the left of the sequent are the hypotheses in the theorem. These connectives must be eliminated in the process of the proof; we break down the hypotheses using elimination rules. Those connectives on the right of the sequent are to be introduced; we break down the hypotheses with elimination rules to build up the conclusion using introduction rules. 
+
+\textbf{Hints and Tips}
+
+\begin{itemize}
+	\item[] Determine the introduction rules required for conclusion; 
+	\item[] Determine the elimination rules required from hypotheses;
+	\item[] Determine any temporary hypotheses from either implication introduction, or disjunction elimination i.e. proof by cases. 
+	\item[] Rewrite the sequent with the temporary hypotheses. 
+	\item[] Write small subproofs where necessary. 
+	\item[] Convince yourself in plain English why the sequent should be provable before doing any natural deduction steps.
+\end{itemize}
+
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+
+	\item \textbf{Proving an Implication.} This exercise illustrates how we are to prove an implication by the use of \emph{temporary} hypotheses. We use the following example to illustrate this.
+	
+	$$\vdash \ (A \to B) \to ((A \to (B \to C)) \to (A \to C))$$
+
+	This proof technique can be broken down into the following steps to show what's happening when temporary hypotheses are used. 
+
+	\begin{enumerate}
+
+		\item Using the deduction theorem (temporary hypotheses) move as many hypotheses as possible to the left of the turnstile $\vdash$ to get a new sequent. Proof of this new sequent will ultimately lead to the proof of the original sequent.
+		
+		\textbf{Solution:}
+
+		Each application of the deduction theorem moves the antecedent of an implication over to the hypotheses of the sequent. 
+
+		\begin{tabular}{r c l}
+			& $\vdash$ & $(A \to B) \to ((A \to (B \to C)) \to (A \to C))$ \\
+			$A \to B$ & $\vdash$ & $(A \to (B \to C)) \to (A \to C)$ \\
+			$A \to B$, $A \to (B \to C)$ & $\vdash$ & $A \to C$ \\
+			$A \to B$, $A \to (B \to C)$, $A$ & $\vdash$ & $C$ \\
+		\end{tabular}
+
+		The key is to identify (parse) the outermost implication and peel off the antecedent. This process gives you hypotheses to start the proof with. 
+
+		\item Prove the following sequent 
+		
+		$$ A \to B, A \to (B \to C), A \ \vdash \ C$$
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\MP]{C}
+						{\infer[\MP]{B}
+							{A & A \to B} & 
+						\infer[\MP]{B \to C}
+							{A & A \to (B \to C)}}
+				\end{array}$
+			\end{center}
+
+		\item Extend the proof above, through the use of implication introduction, to a proof of the original sequent.
+		
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{(A \to B) \to ((A \to (B \to C)) \to (A \to C))}
+					{\infer[\to I,2]{(A \to (B \to C)) \to (A \to C)}
+						{\infer[\to I,3]{(A \to C)}
+							{\infer[\MP]{C}
+								{\infer[\MP]{B}
+									{\overline{A}^{3} & \temp{1}{A \to B}} & 
+								\infer[\MP]{B \to C}
+									{\temp{3}{A} & \temp{2}{A \to (B \to C)}}}}}}
+			\end{array}$
+		\end{center}
+
+	\end{enumerate}
+	
+	\newpage
+	\item \textbf{Positive Minimal Logic.} Provide natural deduction proofs of the following sequents. These deductions require only the use of positive minimal logic; the introduction and elimination rules for $\land$ conjunction, $\lor$ disjunction, and $\to$ implication. 
+	 
+	\begin{enumerate}
+		\item $A \to (B \to C) \ \vdash \ B \to (A \to C)$ 
+		
+		\vspace{5mm}
+		\textbf{Solution:}
+
+		The goal, or conclusion, of this sequent has nested implications. We can temporarily assume both the antecedents to make the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$A \to (B \to C)$ & $\vdash$ & $B \to (A \to C)$ \\
+				$A \to (B \to C)$, $B$ & $\vdash$ & $A \to C$ \\
+				$A \to (B \to C)$, $B$, $A$ & $\vdash$ & $C$ \\
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introductions to get a proof of the original sequent. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, 1]{B \to (A \to C)}
+					{\infer[\to I, 2]{A \to C}
+						{\infer[\MP]{C}
+							{\infer[\MP]{B \to C}
+								{\temp{2}{A}
+									&
+								 A \to (B \to C)}
+								&
+								\temp{1}{B}}}}
+			\end{array}$
+		\end{center}
+
+		\item $A \land B \ \vdash \ B \land A$
+		
+
+		\textbf{Solution:}
+
+		Direct proofs of a conjunction ($\land$ and) require a proof of both conjuncts. Therefore we are required to provide proofs of both $B$ and $A$ separately and then combine them to obtain the proof of the conjunction. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{B \land A}
+					{\infer[\land E_{r}]{B}
+						{A \land B}
+					&
+					\infer[\land E_{l}]{A}
+						{A \land B}}
+			\end{array}$
+		\end{center}
+			
+		\newpage
+		\item $A \lor B \ \vdash \ B \lor A$
+		
+		\textbf{Solution:}
+
+		Proof of a disjunct is different, we will not be able to prove both disjuncts. In this case, we should notice the only hypothesis is also a disjunction. This is going to split our proof into two cases (i) where we assume we have a proof of $A$, and (ii) where we assume we have a proof $B$. This proof by cases is formalised by the $\lor$ elimination rule. 
+
+		Using $\lor$ elimination amounts to allowing ourselves the separate disjuncts of $A \lor B$ in our proof i.e. we need to provide a proof for the sequent: 
+
+		$$A \lor B, \temp{1}{A}, \temp{2}{B} \ \vdash \ B \lor A $$
+
+		Although, it might be more helpful to consider the two cases as separate sequents which we then combine with the $\lor$ elimination step: 
+
+		\textbf{Case 1:}
+
+		$$\temp{1}{A} \ \vdash \ B \lor A $$
+
+		We prove this by a single use of $\lor$ introduction. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{l}]{B \lor A}
+					{\temp{1}{A}}
+			\end{array}$
+		\end{center}
+
+		\textbf{Case 2:}
+
+		$$\temp{2}{B} \ \vdash \ B \lor A $$
+		
+		This is proved by another $\lor$ introduction step. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{r}]{B \lor A}
+					{\temp{2}{B}}
+			\end{array}$
+		\end{center}
+
+		With these separate cases done we can combine them with $\lor$ elimination to prove the original sequent:
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{B \lor A}
+					{A \lor B
+						&
+						\infer[\to I,1]{A \to (B \lor A)}
+							{\infer[\lor I_{l}]{B \lor A}
+								{\temp{1}{A}}}
+						&
+						\infer[\to I,2]{B \to (B \lor A)}
+							{\infer[\lor I_{r}]{B \lor A}
+								{\temp{2}{B}}}}				
+			\end{array}$
+
+		\end{center}		
+		
+		\newpage
+		\item $(A \land B) \rightarrow C \vdash  A\rightarrow (B \rightarrow C)$
+		
+		\vspace{5mm}
+		\textbf{Solution:}
+		The goal, or conclusion, of this sequent has nested implications. We can temporarily assume both the antecedents to make the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$A \land B \to C$ & $\vdash$ & $A \to (B \to C)$ \\
+				$A \land B \to C$, $\temp{1}{A}$ & $\vdash$ & $B \to C$ \\
+				$A \land B \to C$, $\temp{1}{A}$, $\temp{2}{B}$ & $\vdash$ & $C$ \\
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introductions to get a proof of the original sequent.
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I,1]{A \to (B \to C)}
+					{\infer[\to I,2]{B \to C}
+						{\infer[\MP]{C}
+							{\infer[\land I]{A \land B}
+								{\infer[1]{\cancel{A}}{} & \infer[2]{\cancel{B}}{}}
+							&							
+							(A \land B) \to C}}}
+			\end{array}$
+		\end{center}
+		
+		\item $A \rightarrow ( B \rightarrow  C) \vdash (A \land B) \rightarrow C$
+		
+		\textbf{Solution:}
+		The goal, or conclusion, of this sequent is an implication. We can temporarily assume the antecedent to write the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$A \rightarrow ( B \rightarrow  C)$ & $\vdash$ & $(A \land B) \rightarrow C$ \\
+				$A \rightarrow ( B \rightarrow  C)$, $\temp{1}{A \land B}$ & $\vdash$ & $C$ \\				
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introduction to get a proof of the original sequent.
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{(A \land B) \to C}
+						{\infer[\MP]{C}
+							{\infer[]{B\to C}
+								{\infer[\land E_{l}]{A}{\infer[1]{\cancel{A \land B}}{}} & A \to (B \to C)}
+							&
+							\infer[\land E_{r}]{B}
+								{\infer[1]{\cancel{A \land B}}{}}}}
+				\end{array}$
+			\end{center}
+
+		\item $A \to B \ \vdash A \to (B \lor C)$
+		
+		\textbf{Solution:}
+		
+		The goal, or conclusion, of this sequent is an implication. We can temporarily assume the antecedent to write the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$A \rightarrow  B$ & $\vdash$ & $A \to (B \lor C)$ \\
+				$A \rightarrow  B$, $\temp{1}{A}$ & $\vdash$ & $B \lor C$ \\				
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introduction to get a proof of the original sequent.
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, 1]{A \to (B \lor C)}
+					{\infer[\lor I_{r}]{B \lor C}
+						{\infer[\MP]{B}
+							{\temp{1}{\cancel{A}}
+						&
+						A \to B}}}
+			\end{array}$
+		\end{center}
+
+		\newpage
+		\item $ A\rightarrow  B, \  B \rightarrow  C \vdash  A\rightarrow  C $
+
+		\textbf{Solution:}
+		
+		The goal, or conclusion, of this sequent is an implication. We can temporarily assume the antecedent to write the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$ A\rightarrow  B, \ B \rightarrow  C$ & $\vdash$ & $A \to C$ \\
+				$ A\rightarrow  B, \ B \rightarrow C$, $\temp{1}{A}$ & $\vdash$ & $C$ \\				
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introduction to get a proof of the original sequent.
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, 1]{A \to C}
+					{\infer[\MP]{C}
+						{\infer[\MP]{B}
+							{\temp{1}{A}
+							&
+							A \to B}
+						&
+						B \to C}}
+			\end{array}$
+		\end{center}
+
+		\item $A \lor B, \ A \to C, \ B \to D \vdash C \lor D$		
+		
+		\textbf{Solution:}
+
+		This proof will require $\lor$ elimination on $A \lor B$. Which means it is a proof by cases (i) under the case of $A$, and (ii) under the case of $B$. This means we can break the process down into the following two subproofs: 
+
+		\textbf{Case 1:}
+
+		$$A \to C, \ B \to D, \temp{1}{A} \vdash C \lor D$$
+
+		In this case the $A$ yields a $C$ via $A \to C$, on which we can use $\lor$-introduction to give us $C \lor D$. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{r}]{C \lor D}
+					{\infer[\MP]{C}
+						{\temp{1}{A} & A \to C}}
+			\end{array}$
+		\end{center}
+
+		\textbf{Case 2:}
+		
+		$$A \to C, \ B \to D, \temp{2}{B} \vdash C \lor D$$
+
+		In this case $B$ yields a $D$ via $B \to D$, on which we can use $\lor$-introduction to give us $C \lor D$. 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{l}]{C \lor D}
+					{\infer[\MP]{D}
+						{\temp{2}{B} & B \to D}}
+			\end{array}$
+		\end{center}
+
+		Together the separate cases, with $\lor$ elimination, complete the proof: 
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{C \lor D}
+					{A \lor B					
+						&
+					\infer[\to I,1]{A \to (C \lor D)}
+						{\infer[\lor I_{r}]{C \lor D}
+							{\infer[\MP]{C}
+								{\temp{1}{A} & A \to C}}}
+						&
+					\infer[\to I, 2]{B \to (C \lor D)}
+						{\infer[\lor I_{l}]{C \lor D}
+							{\infer[\MP]{D}
+								{\temp{2}{B} & B \to D}}}
+					}				
+			\end{array}$
+		\end{center}
+		
+
+		\vspace{5mm}		
+		\newpage
+		\item $A \to B \ \vdash \ (C \to A) \to (C \to B)$	
+		
+		\vspace{5mm}
+		\textbf{Solution:}
+
+		The goal, or conclusion, of this sequent has nested implications. We can temporarily assume both the antecedents to make the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$A \to B$ & $\vdash$ & $(C \to A) \to (C \to B)$ \\
+				$A \to B$, $\temp{1}{C \to A}$ & $\vdash$ & $C \to B$ \\
+				$A \to B$, $\temp{1}{C \to A}$, $\temp{2}{C}$ & $\vdash$ & $B$ \\
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introductions to get a proof of the original sequent.
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\to I, 1]{(C \to A) \to (C \to B)}
+					{\infer[\to I, 2]{C \to B}
+						{\infer[\MP]{B}
+							{\infer[\MP]{A}
+								{\temp{2}{C}
+								&
+								\temp{1}{C \to A}}
+							&
+							A \to B}}}
+			\end{array}$
+
+		\end{center}
+	
+		\item $(A \to B) \land (A \to C) \ \vdash \ A \to (B \land C)$
+		
+		\textbf{Solution:}
+
+		The goal, or conclusion, of this sequent is an implication. We can temporarily assume the antecedent to write the proof of this implication. 
+
+		\begin{center}
+			\begin{tabular}{r c l}
+				$(A \to B) \land (A \to C)$ & $\vdash$ & $A \to (B \land C)$ \\
+				$(A \to B) \land (A \to C)$, $\temp{1}{A}$ & $\vdash$ & $B \land C$
+			\end{tabular}
+		\end{center}
+
+		It is sufficient to provide proof of this final sequent before applying implication introduction to get a proof of the original sequent. Furthermore, the conclusion is now a conjunction. This means the proof can be split into two parts (i) a proof of $B$, and (ii) a proof of $C$. 
+
+		\textbf{Proof of left conjunct}
+
+		\begin{center}
+			$\begin{array}{c} 
+				\infer[\MP]{B}
+					{\infer[\land E_{l}]{A \to B}{(A \to B) \land (A \to C)}
+					&
+					\temp{1}{A}}
+			\end{array}$
+		\end{center}
+
+		\textbf{Proof of right conjunct}
+
+		\begin{center}
+			$\begin{array}{c} 
+				\infer[\MP]{C}
+					{\infer[\land E_{r}]{A \to C}{(A \to B) \land (A \to C)}
+					&
+					\temp{1}{A}}
+			\end{array}$
+		\end{center}		
+
+		Combining these with $\land$-introduction is the final piece in the proof. 
+		\begin{center}
+			$\begin{array}{c} 
+				\infer[\to I, 1]{A \to (B \land C)}
+					{\infer[\land I]{B \land C}
+						{\infer[\MP]{B}
+							{\infer[\land E_{l}]{A \to B}{(A \to B) \land (A \to C)}
+							&
+							\temp{1}{A}}
+							&
+						\infer[\MP]{C}
+							{\infer[\land E_{r}]{A \to C}{(A \to B) \land (A \to C)}
+							&
+							\temp{1}{A}}}}
+			\end{array}$
+		\end{center}
+
+
+	\end{enumerate}	
+
+	\newpage
+	\item \textbf{Distributivity of Disjunction and Conjunction.} Each of these sequents can be proved with positive minimal logic alone. However, their proofs are longer than those written above. Some planning and working out of subproofs will help keep these proofs neat and manageable. 
+
+	\begin{enumerate}
+		\item $A \land (B \lor C) \ \vdash \ (A \land B) \lor (A \land C)$
+		
+		\textbf{Solution:}
+
+		As these is a disjunction in the hypotheses, this proof will break into a proof by cases. In one case we will assume $B$ and in the other we will assume $C$. Since $A$ appears as a conjunct, we may assume $A$ in both of those cases. Using this planning we get the two subgoals: 
+
+		$$\textnormal{Left conjunct:} A \land (B \lor C), \temp{1}{B} \ \vdash \ (A \land B) \lor (A \land C)$$
+		$$\textnormal{Right conjunct:} A \land (B \lor C), \temp{2}{C} \ \vdash \ (A \land B) \lor (A \land C)$$
+
+		\textbf{Case of left disjunct:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{r}]{(A \land B) \lor (A \land C)}
+					{\infer[\land I]{A \land B}
+						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+							&
+						\temp{1}{B}}}
+			\end{array}$
+		\end{center}
+
+		\textbf{Case of right disjunct:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{l}]{(A \land B) \lor (A \land C)}
+					{\infer[\land I]{A \land C}
+						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+							&
+						\temp{2}{C}}}
+			\end{array}$
+		\end{center}
+
+		These subproofs come together with $\lor$-elimination to complete the proof: 
+
+	\begin{scriptsize}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{(A \land B) \lor (A \land C)}
+					{\infer[\land E_{r}]{B \lor C}{A \land (B \lor C)}
+						&
+					\infer[\to I, 1]{B \to ((A \land B) \lor (A \land C))}
+						{\infer[\lor I_{r}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land B}
+								{\infer[\land E_{l}]{A}
+									{A \land (B \lor C)}
+							&
+						\temp{1}{B}}}}
+					&
+					\infer[\to I,2]{C \to ((A \land B) \lor (A \land C))}{\infer[\lor I_{l}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land C}
+						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+							&
+						\temp{2}{C}}}}
+						}
+			\end{array}$
+		\end{center}
+	\end{scriptsize}
+		
+		\newpage
+		\item $(A \land B) \lor (A \land C) \ \vdash \ A \land (B \lor C)$
+		
+		\textbf{Solution:}
+
+		Since the hypothesis is a disjunction, we need to use a proof by cases; splitting on $A \land B$ and $A \land C$. Our subgoals are: 
+
+		$$\temp{1}{A \land B} \ \vdash \ A \land (B \lor C) $$
+		$$\temp{2}{A \land C} \ \vdash \ A \land (B \lor C) $$
+
+		\textbf{Case of left disjunct:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{A \land (B \lor C)}
+					{\infer[\land E_{l}]{A}{\temp{1}{A \land B}}
+					&
+					\infer[\lor I]{B \lor C}
+						{\infer[\land E_{r}]{B}
+							{\temp{1}{A \land B}}}}
+			\end{array}$
+		\end{center}
+
+
+		\textbf{Case of right disjunct:}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{A \land (B \lor C)}
+					{\infer[\land E_{l}]{A}{\temp{2}{A \land C}}
+					&
+					\infer[\lor I_{l}]{B \lor C}
+						{\infer[\land E_{r}]{C}
+							{\temp{2}{A \land C}}}}
+			\end{array}$
+		\end{center}
+
+		These subproofs come together with $\lor$-elimination to complete the proof. 
+
+		\begin{scriptsize}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{A \land (B \lor C)}
+						{(A \land B) \lor (A \land C)
+						&
+						\infer[\to I, 1]{(A \land B) \to (A \land (B \lor C))}
+							{\infer[\land I]{A \land (B \lor C)}
+								{\infer[\land E_{l}]{A}{\temp{1}{A \land B}}
+								&
+							\infer[\lor I]{B \lor C}
+								{\infer[\land E_{r}]{B}
+									{\temp{1}{A \land B}}}}}
+						&
+						\infer[\to I, 2]{(A \land C) \to (A \land (B \lor C))}
+							{\infer[\land I]{A \land (B \lor C)}
+								{\infer[\land E_{l}]{A}{\temp{2}{A \land C}}
+								&
+							\infer[\lor I_{l}]{B \lor C}
+								{\infer[\land E_{r}]{C}
+									{\temp{2}{A \land C}}}}}}				
+				\end{array}$
+			\end{center}
+		\end{scriptsize}
+
+		\newpage
+		\item $A \lor (B \land C) \ \vdash \ (A \lor B) \land (A \lor C)$
+		
+		\textbf{Solution:}
+
+		Since the hypothesis is a disjunction, we need to use a proof by cases; splitting on $A$ and $B \land C$. Our subgoals are: 
+
+		$$\temp{1}{A} \ \vdash \ (A \lor B) \land (A \lor C) $$
+		$$\temp{2}{B \land C} \ \vdash \ (A \lor B) \land (A \lor C) $$
+
+		\textbf{Case of left disjunct:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{(A \lor B) \land (A \lor C)}
+					{\infer[\lor I_{r}]{A \lor B}{\temp{1}{A}}
+					&
+					\infer[\lor I_{r}]{A \lor C}{\temp{1}{A}}}
+			\end{array}$
+		\end{center}
+
+
+		\textbf{Case of right disjunct:}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\land I]{(A \lor B) \land (A \lor C)}
+					{\infer[\lor I_{r}]{A \lor B}
+						{\infer[\land E_{l}]{B}{\temp{2}{B \land C}}}
+					&
+					\infer[\lor I_{r}]{A \lor C}
+						{\infer[\land E_{r}]{C}{\temp{2}{B \land C}}}}
+			\end{array}$
+		\end{center}		
+
+		These subproofs come together with $\lor$-elimination to complete the proof.
+
+		\begin{scriptsize}
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{(A \lor B) \land (A \lor C)}
+						{A \lor (B \land C)
+						&
+						\infer[\to I, 1]{A \to (A \lor B) \land (A \lor C)}
+							{\infer[\land I]{(A \lor B) \land (A \lor C)}
+								{\infer[\lor I_{r}]{A \lor B}{\temp{1}{A}}
+								&
+								\infer[\lor I_{r}]{A \lor C}{\temp{1}{A}}}}
+						&
+						\infer[\to I, 2]{(B \land C) \to (A \lor B) \land (A \lor C)}
+							{\infer[\land I]{(A \lor B) \land (A \lor C)}
+								{\infer[\lor I_{r}]{A \lor B}
+									{\infer[\land E_{l}]{B}{\temp{2}{B \land C}}}
+								&
+								\infer[\lor I_{r}]{A \lor C}
+									{\infer[\land E_{r}]{C}{\temp{2}{B \land C}}}}}}
+				\end{array}$
+			\end{center}
+		\end{scriptsize}
+		
+		\newpage
+		\item $(A \lor B) \land (A \lor C) \ \vdash \ A \lor (B \land C)$
+		
+		\textbf{Solution:}
+
+		Since the hypothesis is a disjunction, we need to use a proof by cases; splitting on $A$ and $B$. Our subgoals are: 
+
+		$$A \lor C, \temp{1}{A} \ \vdash \ A \lor (B \land C) $$
+		$$A \lor C, \temp{2}{B} \ \vdash \ A \lor (B \land C) $$
+
+		In the second subgoal, we will need to split again in order to prove the goal i.e. we have nested case analysis. 
+
+		\textbf{Case of left disjunct}
+
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor I_{r}]{A \lor (B \land C)}
+					{\temp{1}{A}}
+			\end{array}$
+		\end{center}
+
+		\textbf{Case of right disjunct}
+
+		In this case we need to split on $A \lor C$ for a (nested) proof by cases. This means we are to provide proofs of the following sequents: 
+
+		$$\temp{2}{B}, \temp{3}{A} \ \vdash \ A \lor (B \land C) $$
+		$$\temp{2}{B}, \temp{4}{C} \ \vdash \ A \lor (B \land C) $$
+
+		\begin{quote}
+			\textbf{Nested case of left disjunct}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lor I_{r}]{A \lor (B \land C)}
+							{\temp{3}{A}}
+					\end{array}$
+				\end{center}
+
+			\textbf{Nested case of right disjunct}
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor I_{l}]{A \lor (B \land C)}
+						{\infer[]{B \land C}
+							{\temp{2}{B}&\temp{4}{C}}}
+				\end{array}$
+			\end{center}
+
+			Together with $\lor$-elimination we obtain the proof of the right disjunct.
+
+			\begin{small}
+				\begin{center}
+					$\begin{array}{c}
+						\infer[\lor E]{A \lor (B \land C)}
+							{A \lor C
+							&
+							\infer[\to I,3]{A \to A \lor (B \land C)}
+								{\infer[\lor I_{r}]{A \lor (B \land C)}
+									{\temp{3}{A}}}
+							&
+							\infer[\to I, 4]{C \to A \lor (B \land C)}
+								{\infer[\lor I_{l}]{A \lor (B \land C)}
+									{\infer[]{B \land C}
+										{\temp{2}{B}&\temp{4}{C}}}}}
+					\end{array}$
+				\end{center}
+			\end{small}
+
+			Notice that $B$ is still ``live'' because it gets discharged at the outer $\lor$-elimination step. 
+		\end{quote}
+
+		Jumping out of the inner cases, we return now to complete the entire proof. See over the page for the final step. 
+
+		\newpage
+		\begin{sidewaysfigure}
+		\begin{center}
+			$\begin{array}{c}
+				\infer[\lor E]{A \lor (B \land C)}
+					{\infer[\land E_{l}]{A \lor B}
+						{(A \lor B) \land (A \lor C)}
+					&
+					\infer[\to I,1]{A \to A \lor (B \land C)}
+						{\infer[\lor I_{r}]{A \lor (B \land C)}
+							{\temp{1}{A}}}
+					&
+					\infer[\to I, 2]{B \to (A \lor (B \land C))}
+						{\infer[\lor E]{A \lor (B \land C)}
+							{\infer[\land E_{r}]{(A \lor C)}
+								{(A \lor B) \land (A \lor C)}
+							&
+							\infer[\to I,3]{A \to A \lor (B \land C)}
+								{\infer[\lor I_{r}]{A \lor (B \land C)}
+									{\temp{3}{A}}}
+							&
+							\infer[\to I, 4]{C \to A \lor (B \land C)}
+								{\infer[\lor I_{l}]{A \lor (B \land C)}
+									{\infer[]{B \land C}
+										{\temp{2}{B}&\temp{4}{C}}}}}}}
+			\end{array}$
+		\end{center}
+	\end{sidewaysfigure}
+
+
+
+
+
+	\end{enumerate}
+
+
+
+\end{enumerate}	
+\end{document}

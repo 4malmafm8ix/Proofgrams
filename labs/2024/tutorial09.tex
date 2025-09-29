@@ -1,0 +1,147 @@
+\documentclass[11pt]{report}
+
+% Socument dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Seduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Nine}
+\end{center}
+\begin{center}
+	{\bf Proofs-as-Programs: Minimal Logic in L$\exists\forall$N}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Learn L$\exists\forall$N syntax.
+				\item Write explicit proof-terms in L$\exists\forall$N.
+				\item Compare syntax across languages. 
+			\end{itemize}
+
+		Relevant lectures: \\
+		Relevant reading: \href{https://lean-lang.org/theorem_proving_in_lean4/propositions_and_proofs.html}{Theorem Proving in L$\exists\forall$N 4} 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1 \\ 
+	{\bf Sue Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Siscussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item In a previous tutorial we wrote a proof-term witnessing the sequent $$ P \rightarrow Q \ \vdash \ P \rightarrow ( P \land  Q)$$
+	Translate this proof-term into the syntax for L$\exists\forall$N 4.
+	% These discussions should be based around the typed lambda terms they wrote in previous tutorials. This tutorial is mainly about translating into LEAN and not about reproving all these theorems.  
+
+	\vspace{3cm}
+
+	\item Write a proof-term in L$\exists\forall$N 4 to prove the following sequent $$ P\vdash \lnot \lnot  P$$
+	 
+
+	\vspace{3cm}
+
+	\item Write a proof-term in L$\exists\forall$N 4 to prove the following sequent $$( P\land  Q) \lor  R \ \vdash \ ( P\lor  R) \land ( Q \lor  R)$$
+	
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item Throughout the course we have introduced rules of inference in logic, type constructors and destructors in the typed $\lambda$-calculus, and now we are to see how they are implemented in L$\exists\forall$N. As you write proof-terms for the sequents in Exercise 2 enter the missing components in the following table: 
+	
+	\begin{table}[htbp]
+		\centering
+		\begin{tabular}{p{2cm} p{2cm} p{2cm}}
+			\textbf{PL} & $\boldsymbol{\lambda}$ & \textbf{L$\exists\forall$N 4} \\
+			\hline
+			$\land I$& & \\ 
+			$\land E_{r}$& & \\
+			$\land E_{l}$& & \\
+			$\to I$& $\lambda$\_ : \_ . & $\lambda \_ : \_ =>$\\
+			$\to E$& & \\
+			$\lor I_{r}$& & \\
+			$\lor I_{l}$& & \\
+			$\lor E$& & 
+		\end{tabular}
+		\caption{Syntax of logic, $\lambda$-calculus, and L$\exists\forall$N 4}
+		\label{tab:your_table_label}
+	\end{table}
+
+	% \begin{table}[htbp]
+	% 	\centering
+	% 	\begin{tabular}{p{2cm} p{2cm} p{2cm}}
+	% 		%\hline
+	% 		\textbf{PL} & $\boldsymbol{\lambda}$ & \textbf{L$\exists\forall$N 4} \\
+	% 		\hline
+	% 		$\land I$& $\times$ & And.intro \\ 
+	% 		$\land E_{l}$& \FST & And.left \\
+	% 		$\land E_{r}$& \SNS & And.right \\
+	% 		$\to I$& $\lambda$ & $\lambda \_ : \_ =>$\\
+	% 		$\to E$& \APP & \\
+	% 		$\lor I_{l}$& \inl & Or.intro\_left \\
+	% 		$\lor I_{r}$& \inr & Or.intro\_right \\
+	% 		$\lor E$& \sumElim & Or.elim
+	% 	\end{tabular}
+	% 	\caption{Syntax of logic, $\lambda$-calculus, and L$\exists\forall$N 4}
+	% 	\label{tab:your_table_label}
+	% \end{table}
+	
+	\item For each of the sequents below, write proof-terms in L$\exists\forall$N 4. You have seen these proofs before, so it is a translating into L$\exists\forall$N exercise, rather than proving anything new. 
+	 
+	\begin{enumerate}
+		\item $P \to Q, \lnot Q \ \vdash \ \lnot P$
+		\item $( P\land  Q) \rightarrow  R \dashv\vdash  P\rightarrow ( Q \rightarrow  R) $
+		\item $\lnot P\lor \lnot Q \vdash \lnot( P\land  Q)$
+		\item $\lnot( P\lor  Q) \dashv\vdash \lnot  P\land \lnot  Q$
+		\item $ P\rightarrow  Q, \  Q \rightarrow  R \vdash  P\rightarrow  R $
+		\item $ P\lor  Q,\ \  P\to  R,\ \  Q \to  S \vdash   R \lor  S$
+		\item $ P\to  R,\ \  Q \to  S,\ \ \neg R \lor \neg  S \vdash  \neg P\lor \neg  Q$
+		\item $ P,\ \ \neg  P\vdash  \neg  Q$
+	   	\item $ P\rightarrow Q, \  P\rightarrow \lnot Q \vdash \lnot  P$
+	\end{enumerate}
+
+	\item For each of the sequents below write proof-terms in L$\exists\forall$N. These exercises have not appeared in earlier tutorials. You could prove these by-hand first and then translate that into L$\exists\forall$N. Or you could write the proof straight into L$\exists\forall$N. Either way, they each have proofs in minimal logic. 
+	
+		\begin{enumerate}
+			\item $P \vdash \lnot\lnot P$
+			\item $\lnot\lnot\lnot P \vdash \lnot P$
+			\item $ \vdash \lnot \lnot (P \lor \lnot P)$
+		\end{enumerate}
+
+\end{enumerate}
+	
+\end{document}

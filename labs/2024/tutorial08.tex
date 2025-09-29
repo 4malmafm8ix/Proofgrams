@@ -1,0 +1,141 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../../proofsPrograms}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Eight}
+\end{center}
+\begin{center}
+	{\bf Curry Howard Correspondence}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Write well-typed programs simple type theory, 
+				\item Interpret programs as proofs of propositions,
+				\item Compare computation and proof-simplification.
+			\end{itemize}
+
+		Relevant lectures: Lectures x,y, and z\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: \\ 
+	{\bf Due Friday @ 5pm to the tutor, or to lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+
+	\item Show the following type is inhabited in the given local context:
+	$$ f : P\rightarrow  Q \vdash  P\rightarrow ( P\times  Q)$$
+	
+	\vspace{3cm}
+
+	\item Show the following type is inhabited in the given local context:
+	$$ P\vdash \lnot \lnot  P$$
+	
+	\vspace{3cm}
+
+	\item Show the following type is inhabited in the given local context:
+	$$( P\times  Q) +  R \ \vdash \ ( P + R) \times (Q + R)$$
+
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+
+\begin{enumerate}
+	
+	\item This exercise breaks the proof that the following type is inhabited
+	
+	$$\vdash \ (P \to Q) \to (\lnot Q \to \lnot P)$$
+
+	into steps to show what's happening when local variables are introduced. 
+
+	\begin{enumerate}
+
+		\item Using local variables (much like temporary hypotheses) introduce as many terms as possible into the local context (left of the turnstile $\vdash$) to get a new sequent. Proof that this type is inhabited in the local context will ultimately lead to a proof that the original type is inhabited. 
+		
+		(!) Remember $\lnot P \equiv P \to \bot$.
+
+		\item Prove the following type is inhabited in the stated syntax 
+		
+		$$ f : P \to Q, \ g : \lnot Q, \ p : P \ \vdash \ \bot$$
+
+		\item Extend the typing derivation above, through the use of $\lambda$ abstraction, to a proof that the original type is inhabited.
+
+	\end{enumerate}
+	
+	\item Each sequent below defines a local context (terms to the left of the $\vdash$ turnstile) and a goal (the type on the right of the $\vdash$ turnstile) - Using the terms of the local context, show that the goal is inhabited.
+
+	\begin{enumerate}
+		\item $f : ( P\times Q) \rightarrow  R \vdash  P \rightarrow (Q \rightarrow  R)$
+		\item $f : P \rightarrow (Q \rightarrow  R) \ \vdash \ (P\times Q) \rightarrow R$
+		\item $t : \lnot P + \lnot Q \ \vdash \ \lnot(P\times  Q)$
+		\item $f : \lnot(P + Q) \ \vdash \ \lnot P \times \lnot Q$
+		\item $t : \lnot P \times \lnot Q \ \vdash \ \lnot(P + Q) $
+		\item $f : P\rightarrow  Q, \  g : Q \rightarrow  R \ \vdash \ P \rightarrow R$
+		\item $t : P + Q,\ \ f : P \to  R,\ \  g : Q \to S \vdash \ R + S$
+		\item $f : P \to  R,\ \ g : Q \to  S,\ \ t : \neg R + \neg S \ \vdash \ \neg P + \neg Q$
+		\item $p : P,\ \ f : \neg P \ \vdash \ \neg Q$
+	   	\item $f : P \rightarrow Q, \  g : P\rightarrow \lnot Q \ \vdash \ \lnot P$
+	\end{enumerate}		
+
+	\item This exercise shows you an example of a general observation first made by William Tait, relating the simplifications of proofs and the process of computation in the $\lambda$-calculus. 
+	
+	Consider the following proof of the theorem $$\vdash \ A \land B \to B$$
+	
+	\begin{center}
+		$\begin{array}{c}		
+		  \infer[\to, 1]{A \land B \to B}
+		  	{\infer[\land E_{L}]{B}
+				{\infer[\land I]{B \land A}
+					{\infer[\land E_{R}]{B}{\infer[1]{A \land B}{}} 
+					\hspace{0.5cm}	&	\hspace{0.5cm}
+					\infer[\land_{L}]{A}{\infer[1]{A \land B}{}}}}}
+		\end{array}$
+	  \end{center}
+
+	  	\begin{enumerate}
+			\item Determine the corresponding proof-object for this proof. 
+			\item Why does the proof-object have a redex in it? 
+			\item Perform the $\beta$-reduction on the proof object from (a).
+			\item What proof does the reduced proof-object correspond to?
+		\end{enumerate} 
+
+\end{enumerate}	
+\end{document}

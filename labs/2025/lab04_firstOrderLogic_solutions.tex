@@ -1,0 +1,411 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+\newcommand{\temp}[2]{{\overline{#2}}^{#1}}
+
+% Import the necessary preamble for the document. 
+\usepackage{../../proofsPrograms}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Four [Solutions]}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions in First Order Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Read and interpret formulae of first-order logic.
+				\item Write formulae of first-order logic.
+				\item Natural deductions with $\forall$ $\exists$ rules.
+			\end{itemize}
+
+		Relevant Topic: First-Order Logic.\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{Logic and Proof} Sections 7,8, and 9.
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1i, 1j, 1n \\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Prove the following in the predicate calculus. You will need only the minimal logic rules of inference along with the introduction and elimination rules for the quantifiers.  
+
+		\begin{enumerate}
+			\item $\forall x (Fx \to Gx) \vdash  \forall x Fx \to \forall x Gx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I, 1]{\forall x \ Fx \to \forall x \ Gx}
+						{\infer[\forall I]{\forall x \ Gx}
+						{\infer[\MP]{Gt}
+							{\infer[\forall E]{Ft \to Gt}
+								{\forall x \ Fx \to Gx}
+							&
+							\infer[\forall E]{Ft}
+								{\temp{1}{\forall x \ Fx}}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\forall x ((Fx \lor Gx) \to Hx),\quad \forall x \neg Hx \vdash  \forall x \neg Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ \lnot Fx}
+						{\infer[\to I,1]{\lnot Ft}
+							{\infer[\MP]{\bot}
+								{\infer[\MP]{Ht}
+									{\infer[\forall E]{Ft \lor Gt \to Ht}
+										{\forall x \ (Fx \lor Gx \to Hx)}
+									&
+									\infer[\lor I_{R}]{Ft \lor Gt}
+										{\temp{1}{Ft}}}
+								&
+								\infer[\forall E]{\lnot Ht}
+									{\forall x \ \lnot Hx}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\forall x (Fx\land Gx) \vdash  \forall x Fx\land \forall x Gx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\land I]{(\forall x \ Fx) \land (\forall x \ Gx)}
+						{\infer[\forall I]{\forall x \ Fx}
+							{\infer[\land E_{L}]{Ft}
+								{\infer[\forall E]{Ft \land Gt}
+									{\forall x \ (Fx \land Gx)}}}
+						&
+						\infer[\forall I]{\forall x \ Gx}
+							{\infer[\land E_{R}]{Gt}
+								{\infer[\forall E]{Ft \land Gt}
+									{\forall x \ (Fx \land Gx)}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\forall x Fx\land \forall x Gx \vdash \forall x (Fx\land Gx)$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ (Fx \land Gx)}
+						{\infer[\land I]{Ft \land Gt}
+							{\infer[\forall E]{Ft}
+								{\infer[\land E_{L}]{\forall x \ Fx}
+									{(\forall x \ Fx) \land (\forall x \ Gx)}}
+							&
+							\infer[\forall E]{Gt}
+								{\infer[\land E_{R}]{\forall x \ Gx}
+									{(\forall x \ Fx) \land (\forall x \ Gx)}}}}
+				\end{array}$
+			\end{center}
+			\newpage
+			\item $\forall x (P \to Fx) \vdash  P \to \forall x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[]{}
+						{}					
+				\end{array}$
+			\end{center}
+
+			%\newpage
+			\item $P \to \forall x Fx \vdash \forall x (P \to Fx)$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[]{}
+						{}					
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\exists x (P \to Fx) \vdash  P \to \exists x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[]{}
+						{}					
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\exists x \neg Fx \vdash  \neg  \forall x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,2]{\lnot \forall x \ Fx}
+						{\infer[\MP]{\bot}
+							{\exists x \ Fx
+							&
+							\infer[\to I,1]{\lnot Ft \to \bot}
+								{\infer[\MP]{\bot}
+									{\temp{1}{\lnot Ft}
+									&
+									\infer[\forall E]{Ft}
+										{\temp{2}{\forall x \ Fx}}}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\forall x \neg Fx  \vdash  \neg \exists x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,2]{\lnot \exists x \ Fx}
+						{\infer[\MP]{\bot}
+							{\temp{2}{\exists x \ Fx}
+							&
+							\infer[\to I,1]{Ft \to \bot}
+								{\infer[\MP]{\bot}
+									{\temp{1}{Ft}
+									&
+									\infer[\forall E]{\lnot Ft}
+										{\forall x \ \lnot Fx}}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\neg \exists x Fx \vdash \forall x \neg Fx $
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ \lnot Fx}
+						{\infer[\to I,1]{\lnot Ft}
+							{\infer[\MP]{\bot}
+								{\infer[\exists I]{\exists x \ Fx}
+									{\temp{1}{Ft}}
+								&
+								\lnot \exists x \ Fx}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $ \exists x Fx \to P \vdash \forall x (Fx \to P)$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[]{}
+						{}					
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\exists x (Fx \to Gx)  \vdash  \forall x Fx \to \exists x Gx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\forall x \ Fx \to \exists x \ Gx}
+						{\infer[\exists E]{\exists x \ Gx}
+							{\exists x \ (Fx \to Gx)
+							&
+							\infer[\to I,2]{(Ft \to Gt) \to \exists x \ Gx}
+								{\infer[\exists I]{\exists x \ Gx}
+									{\infer[]{Gt}
+										{\infer[\forall E]{Ft}
+											{\temp{1}{\forall x \ Fx}}
+										&
+										\temp{2}{Ft \to Gt}}}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\forall x Fx \vdash \lnot \exists x \ \lnot Fx$ 
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot \exists x \ \lnot Fx}
+						{\infer[\MP]{\bot}
+							{\temp{1}{\exists x \ \lnot Fx}
+							&
+							\infer[\to I,2]{\lnot Ft \to \bot}
+								{\infer[\MP]{\bot}
+									{\temp{2}{\lnot Ft}
+									&
+									\infer[\forall E]{Ft}
+										{\forall x \ Fx}}}}}
+				\end{array}$
+			\end{center}
+			
+			\newpage
+			\item $\exists x Fx \vdash \lnot \forall x \ \lnot Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot \forall x \ \lnot Fx}
+						{\infer[\MP]{\bot}
+							{\exists x \ Fx
+							&
+							\infer[\to I,2]{Ft \to \bot}
+								{\infer[\MP]{\bot}
+									{\temp{2}{Ft}
+									&
+									\infer[\forall E]{\lnot Ft}
+										{\temp{1}{\forall x \ \lnot Fx}}}}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage			
+			\item $\forall x \ (Fx \to \lnot Gx) \ \vdash \ \lnot \exists x \ (Fx \land Gx)$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\to I,1]{\lnot \exists x \ (Fx \land Gx)}
+						{\infer[\exists E]{\bot}
+							{\temp{1}{\exists x \ (Fx \land Gx)}
+							&
+							\infer[\to I,2]{Ft \land Gt \to \bot}
+								{\infer[\MP]{\bot}
+									{\infer[\MP]{\lnot Gt}
+										{\infer[\forall E]{Ft \to \lnot Gt}
+											{\forall x \ (Fx \to \lnot Gx)}
+										&
+										\infer[\land E_{L}]{Ft}
+											{\temp{2}{Ft \land Gt}}}
+									&
+									\infer[\land E_{R}]{Gt}
+										{\temp{2}{Ft \land Gt}}}}}}
+				\end{array}$
+			\end{center}
+
+			%\newpage
+			\item $\vdash \ \exists x \ (Fx \lor Gx) \leftrightarrow \exists x \ Fx \ \lor \ \exists x \ Gx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[]{}
+						{}
+				\end{array}$
+			\end{center}
+		\end{enumerate}	
+
+	\newpage
+	\item Prove the following in the predicate calculus. Ex falso or classical modes of reasoning (RAA, LEM, DNE) will be helpful for proving these theorems. Each of these are challenging!
+
+		\begin{enumerate}
+			\item $\forall x \ (Fx \lor Gx), \ \forall x \ \lnot Gx \ \vdash \ \forall x \ Fx$
+			
+			This is the universally quantified version of the ``disjunctive syllogism'' from the Lab on intuitionistic logic. Once the quantifiers have been eliminated, then we can simply call on this theorem from propositional logic - that is what the rule DS is denoting. 
+
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ Fx}
+						{\infer[\DS]{Ft}
+							{\infer[\forall E]{Ft \lor Gt}
+								{\forall x \ (Fx \lor Gx)}
+							&
+							\infer[\forall E]{\lnot Gt}
+								{\forall x \ \lnot Gx}}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $ \neg \forall x Fx \vdash \exists x \neg Fx$
+			
+			We will use RAA to prove this. Which means we can prove the following sequent instead, before using RAA to prove the original sequent:
+			
+			$$ \neg \forall x Fx, \lnot\exists x \neg Fx \vdash \bot $$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,2]{\exists x \ \lnot Fx}
+						{\infer[\MP]{\bot}
+							{\infer[\forall I]{\forall x \ Fx}
+								{\infer[\DNE]{Fa}
+									{\infer[\to I,1]{\lnot\lnot Fa}
+										{\infer[\MP]{\bot}
+											{\infer[\exists I]{\exists x \ \lnot Fx}
+												{\temp{1}{\lnot Fa}}
+											&
+											\temp{2}{\lnot \exists x \ \lnot Fx}}}}}
+							&
+							\lnot \forall x \ Fx}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $\lnot \forall x \ \lnot Fx \vdash \exists x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\RAA,2]{\exists x \ Fx}
+						{\infer[\MP]{\bot}
+							{\infer[\forall I]{\forall x \lnot Fx}
+								{\infer[\to I,1]{\lnot Ft}
+									{\infer[\MP]{\bot}
+										{\infer[\exists I]{\exists x \ Fx}
+											{\temp{1}{Ft}}
+										&
+										\temp{2}{\lnot \exists x \ Fx}}}}
+							&
+							\lnot \forall x \ \lnot Fx}}
+				\end{array}$
+			\end{center}
+			
+			%\newpage
+			\item $ \lnot \exists x \ \lnot Fx \vdash \forall x Fx$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\forall I]{\forall x \ Fx}
+						{\infer[\RAA,1]{Ft}
+							{\infer[\MP]{\bot}
+								{\infer[\exists I]{\exists x \ \lnot Fx}
+									{\temp{1}{\lnot Ft}}
+								&
+								\lnot \exists x \ \lnot Fx}}}
+				\end{array}$
+			\end{center}
+
+			The final $\forall I$ is valid as $t$ has been discharged in the previous step.
+
+			%\item $ \forall x Fx \to \exists x Gx \vdash \exists x (Fx \to Gx)$ \hfill[Challenge!!!]
+			%\item $P \to \exists x Fx \vdash \exists x (P \to Fx)$
+			%\item $\forall x (Fx \lor Gx) \vdash  \forall x Fx \lor \exists x Gx$
+		\end{enumerate}
+\end{enumerate}
+	
+\textbf{Note:} The exercises above show that in the presence of classical modes of reasoning it is sufficient to introduce only one of the quantifiers, as the other can be deduced from it. Sequents above show that we could define $\forall = \lnot \exists \lnot$ and $\exists = \lnot \forall \lnot$ in classical logic. Following the BHK, however, one needs to define both independently. 
+
+\end{document}

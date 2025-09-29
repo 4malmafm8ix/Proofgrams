@@ -1,0 +1,719 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+
+% Logic gates 
+\usepackage{tikz}
+\usepackage{circuitikz}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial One (Solutions)}
+\end{center}
+\begin{center}
+	{\bf Propositional Logic: Some Antics}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Identify the propositional structure of an argument, 
+				\item Translate natural language to propositional logic,
+				\item Write truth tables, 
+				\item Determine whether an argument is semantically valid,
+				\item Use valuations to determine validity.
+			\end{itemize}
+
+		Relevant lectures: Lectures 1,2, and 3\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 1,2,6} 
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1b,3b,4,5a,6,8c\\ 
+	{\bf Due following Friday @ 5pm to the tutor, or lecturer.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item Translate the following English argument into the formal language for propositional logic. Clearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+	
+	\vspace{0.5cm}
+
+	I will either go to Matukituki or Rakiura. If I go to Matukituki, then I will go hiking. If I go to Rakiura, then I will go hiking. Therefore, I will go hiking. 
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	Atomic propositions: 
+
+	\begin{itemize}
+		\item[] M : I will go to Matukituki.
+		\item[] R : I will go to Rakiura.
+		\item[] H : I will go hiking. 
+	\end{itemize}
+
+	Hypotheses: $M \lor R$, $M \to H$, and $R \to H$. 
+
+	Conclusion: $H$.
+
+	\newpage
+	\item Show $\{A \lor B, A\rightarrow C, B \rightarrow C\} \models C.$ 
+	% Focus on the why this is valid, then go into the truth table.
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	The claim here is, if each of the hypotheses are true, then the conclusion must be true. This can be shown by considering every combination of cases of the atomic propositions i.e. with a truth table. 
+
+	\begin{center}
+		$\begin{array}{c c c c c c c}
+			A & B & C & A \lor B & A \to C & B \to C & \ \\
+			1 & 1 & 1 & 1 & 1 & 1 & * \\
+			1 & 1 & 0 & 1 & 0 & 0 & \ \\
+			1 & 0 & 1 & 1 & 1 & 1 & * \\
+			1 & 0 & 0 & 1 & 0 & 1 & \ \\
+			0 & 1 & 1 & 1 & 1 & 1 & * \\
+			0 & 1 & 0 & 1 & 1 & 0 & \ \\
+			0 & 0 & 1 & 0 & 1 & 1 & \ \\
+			0 & 0 & 0 & 0 & 1 & 1
+		\end{array}$
+	\end{center}
+
+	The hypotheses are the final three columns and the conclusion $C$ is the third column. There are three rows (*) in which all of the hypotheses are true. Since the conclusion is true in each of these rows, we may conclude that the conclusion is a semantic consequence of the hypotheses. 
+	
+	\item Show $\models A \lor \lnot A$.
+	% What does this even mean? There are no hypotheses! Since the set of hypotheses is empty, every single case satisfies all hypotheses. So, in order for this to be true, the conclusion has to be true in every case. That is to say, the conclusion must be a tautology. 
+
+	\hspace{0.2cm}{\bf Solution}
+
+	In this case there are no hypotheses. Therefore all hypotheses are true in every case, so the conclusion must be true in every case. This can be shown with a truth table: 
+
+	\begin{center}
+		$\begin{array}{c c c c}
+			A & \lnot A & A \lor \lnot A & \ \\
+			1 & 0 & 1 & * \\
+			0 & 1 & 1 & * 
+		\end{array}$
+	\end{center}
+
+	As the conclusion is true in every case, we conclude this claim of semantic consequence holds. We call formulae that are true in every case tautologies. 
+
+	Alternatively, this can be shown using valuations. This is a claim that $A \lor \lnot A$ is true for every valuation. So it suffices to show that $v(A \lor \lnot A) = 1$ for each valuation. 
+
+	\begin{equation*}
+		\begin{split}
+			v(A \lor \lnot A) &= v(A) + v(\lnot A) - v(A \land \lnot A) \\ 
+			&= v(A) + 1 - v(A) - v(A)v(\lnot A)\\
+			&= v(A) + 1 - v(A) - v(A)(1 - v(A))\\
+			&= v(A) + 1 - v(A) - v(A) + v(A)^{2}\\
+			&= v(A) + 1 - v(A) - v(A) + v(A)\\
+			&= 1	
+		\end{split}
+	\end{equation*}
+
+	Since $v$ was arbitrary, we see that the valuation of $A \lor \lnot A$ is always 1. 
+
+	Note: $v(A)^{2} = v(A)$ since the output of valuations are either $0,1$.
+	
+	
+	% \item Is the formula $(A \lor \lnot E \lor \lnot C) \land (D) \land (\lnot D \lor E \lor F)$ satisfiable?
+	% % If the formula is in this form - conjunctive normal - then it's easier to determine satisifiability. Each of the terms in the conjunction have to be satisifiable. 
+	
+	% % If someone asks, then you might like to tell them that every formula can be put into this form. That is, every formula is logically equivalent to a formula in CNF. But the number of terms in the conjunction can explode exponentially. 
+	
+\end{enumerate} 
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	
+	\item Translate the following English arguments into the formal language for propositional logic. Clearly state the atomic propositions, hypotheses, and the conclusion of the argument. 
+	
+	\begin{enumerate}
+		\item Moriarty knows Irene is either at work, or at home. He has heard from others that she is not at home. Therefore, he concludes she must be at work.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Atomic propositions: 
+
+		\begin{itemize}
+			\item[] W : Irene is at work.
+			\item[] H : Irene is at home.
+		\end{itemize}
+	
+		Hypotheses: $W \lor H$ and $\lnot H$. 
+	
+		Conclusion: $W$.
+		
+		\item  If Lestrade observes, then he will solve the crime. If Lestrade does not observe, then he calls for Holmes. As ever, Lestrade sees, but does not observe. Therefore he must call Holmes. 
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Atomic propositions: 
+
+		\begin{itemize}
+			\item[] O : Lestrade observes. 
+			\item[] C : Lestrade solves the crime. 
+			\item[] H : Lestrade calls for Holmes. 
+			\item[] S : Lestrade sees. 
+		\end{itemize}
+	
+		Hypotheses: $O \to C$, $\lnot O \to H$, and $S \land \lnot O$. 
+	
+		Conclusion: $H$.
+
+		\item If Robert rushes, then he will blunder his queen. If Robert does not rush, then he will blunder his queen. Therefore, Robert will blunder his queen.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Atomic propositions: 
+
+		\begin{itemize}
+			\item[] R : Robert rushes.
+			\item[] B : Robert blunders his queen. 
+		\end{itemize}
+	
+		Hypotheses: $R \to B$, $\lnot R \to B$. 
+	
+		Conclusion: $B$.
+		
+		\item Either the vicar is a liar ($L$), or he shot the earl ($V$). For, either the vicar shot the earl or the butler did ($B$). And unless the vicar is a liar, the butler was drunk at nine o'clock ($D$). And if the butler shot the earl, then the butler wasn't drunk at nine o'clock.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Atomic propositions: 
+
+		\begin{itemize}
+			\item[] L : The Vicar is a liar.
+			\item[] V : The Vicar shot the Earl. 
+			\item[] B : The Butler shot the Earl. 
+			\item[] D : The Butler was drunk at nine o'clock.
+		\end{itemize}
+	
+		Hypotheses: $V \lor B$, $\lnot L \to D$, and $B \to \lnot D$. 
+	
+		Conclusion: $L \lor V$.
+
+		Note: $\lnot L \to D \equiv L \lor D$ are logically equivalent. The sentence can be translated into either of these forms. 
+
+		\item We will win, for if they attack if we advance, then we will win, and we won't advance. 
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		Atomic propositions: 
+
+		\begin{itemize}
+			\item[] W : We will win.
+			\item[] A : They attack. 
+			\item[] F : We advance.
+		\end{itemize}
+	
+		Hypotheses: $(F \to A) \to W$ and $\lnot F$. 
+	
+		Conclusion: $W$.
+	\end{enumerate}	
+	 
+	
+	\item Make a truth table for each of the following statements.
+
+	\begin{enumerate}
+		\item $P \land \lnot Q$
+		\item $(R \lor S) \wedge \neg R$
+		\item $(A \lor B) \land (A \lor C)$
+		\item $X \rightarrow \lnot Y$
+		\item $(P \rightarrow R) \vee (Q \leftrightarrow S)$
+	\end{enumerate}
+
+	\newpage
+	\item {\bf Logical Fallacies} Write truth tables for each of the following arguments. Identify a counterexample in each truth table. What does this say about the validity of each argument?  
+	
+	\begin{enumerate}
+		\item $A \lor B$, \ $A$. Therefore, $\lnot B$.
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{center}
+			$\begin{array}{c c c c c}
+				A & B & \lnot B & A \lor B & \ \\
+				1 & 1 & 0 & 1 & ! \\
+				1 & 0 & 1 & 1 & * \\
+				0 & 1 & 0 & 1 & \ \\
+				0 & 0 & 1 & 0 & \ \\
+			\end{array}$
+		\end{center}
+
+		The first two rows are the cases where the hypotheses are true. The first (!) row corresponds to a counterexample i.e. the hypotheses are true, but the conclusion ($\lnot B$) is false. Therefore the argument is not valid. 
+
+		\item $P \rightarrow Q$, \ $Q$. Therefore, $P$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{center}
+			$\begin{array}{c c c c}
+				P & Q & P \to Q & \ \\
+				1 & 1 & 1 & * \\
+				1 & 0 & 0 & \ \\
+				0 & 1 & 1 & ! \\
+				0 & 0 & 1 & \
+			\end{array}$
+		\end{center}
+
+		Third row is a counterexample. Therefore the argument is not valid.
+
+		\item $P \rightarrow Q$. Therefore, $\lnot P \rightarrow \lnot Q$. 
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		\begin{center}
+			$\begin{array}{c c c c c c c}
+				P & Q & \lnot P & \lnot Q & P \to Q & \lnot P \to \lnot Q & \ \\
+				1 & 1 & 0 & 0 & 1 & 1 & * \\
+				1 & 0 & 0 & 1 & 0 & 1 & \ \\
+				0 & 1 & 1 & 0 & 1 & 0 & ! \\
+				0 & 0 & 1 & 1 & 1 & 1 & * 
+			\end{array}$
+		\end{center}
+
+		There are three rows in which the hypothesis is true. Row three (!) however has the conclusion false. This means the third row is a counterexample. Therefore the argument is not valid. 
+
+	\end{enumerate}
+
+	\newpage
+	\item {\bf Truth Valuations} 
+	
+	Valuations are functions which take in propositional formulae and return 0 or 1 according to whether the formula is true or false. Assigning valuations to the atomic propositions in the formulae is enough to determine the valuation of compound formulae. 
+
+	\vspace{0.2cm}
+
+	For example, if we know the truth value $v(P)$ of a proposition $P$, then we can calculate the truth value of the negation $v(\lnot P) = 1 - v(P)$. 
+
+	\vspace{0.2cm}
+
+	Determine similar arithmetic formulae for computing the truth valuations of compound formulae consisting of $\lnot, \lor, \land,$ and $\rightarrow$.
+
+	\hspace{0.2cm}{\bf Solution}
+
+	\begin{equation*}
+		\begin{split}
+			v(\lnot A) &= 1 - v(A)\\
+			v(A \land B) &= v(A)v(B)\\
+			v(A \lor B) &= v(A) + v(B) - v(A)v(B)\\
+			v(A \to B) &= 1 - v(A) + v(A)V(B)
+		\end{split}
+	\end{equation*}
+	
+	\newpage
+	\item Verify the following claims of semantic consequence.
+	
+	\begin{enumerate}
+		\item $ A \models \lnot\lnot A$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		This can be answered with a truth table, or using valuations. 
+
+		\begin{center}
+			$\begin{array}{c c c c}
+				A & \lnot A & \lnot \lnot A & \ \\
+				1 & 0 & 1 & * \\
+				0 & 1 & 0 & \ 
+			\end{array}$
+		\end{center}
+
+		This truth table has one row (case) in which each of the hypotheses are true. Furthermore, in this case the conclusion is also true. Therefore $\lnot \lnot A$ is a semantic consequence of $A$. 
+
+		Alternatively, we approach the problem using valuations. Consider a valuation $v$ that satisfies each of the hypotheses i.e. $v(A) = 1$. We need to show such a valuation also satisfies the conclusion. 
+
+		\begin{equation*}
+			\begin{split}
+				v(\lnot \lnot A) &= 1 - v(\lnot A)\\
+				&= 1 - (1 - v(A))\\
+				& = 1 - 1 + v(A)\\ 
+				&= v(A)\\ 
+				&= 1
+			\end{split}
+		\end{equation*}
+
+		Therefore every valuation that satisfies the hypotheses also satisfies the conclusion. In this way we see that $\lnot \lnot A$ is a semantic consequence of $A$. 
+
+		\item $( A \land  B) \rightarrow  C \models  A \rightarrow ( B \rightarrow  C)$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		For the remainder of these solutions we will just present the argument by valuations.
+
+		Let $v$ be a valuation that satisfies the hypothesis $( A \land  B) \rightarrow  C$. Let's unpack this first. 
+
+		\begin{equation*}
+			\begin{split}
+				1 &= v((A \land B) \rightarrow C)\\
+				&= 1 - v(A \land B) + v(A \land B)v(C)\\
+				&= 1 - v(A)v(B) + v(A)v(B)v(C)\\
+			\end{split}
+		\end{equation*}
+
+		Therefore such a $v$ satisfies the equation: $v(A)v(B) = v(A)v(B)v(C)$. It remains to show that all such valuations must satisfy the conclusion. 
+
+		\begin{equation*}
+			\begin{split}
+				v(A \to (B \to C)) &= 1 - v(A) + v(A)v(B \to C)\\
+				&= 1 - v(A) + v(A)(1 - v(B) + v(B)v(C))\\
+				&= 1 - v(A) + v(A) - v(A)v(B) + v(A)v(B)v(C)\\
+				&= 1 - v(A)v(B) + v(A)v(B)\\
+				&= 1
+			\end{split}
+		\end{equation*}
+
+		Therefore we see that every valuation which satisfies the hypotheses necessarily satisfies the conclusion. This shows $( A \land  B) \rightarrow  C \models  A \rightarrow ( B \rightarrow  C)$ as required. 
+
+		\newpage
+		\item $ A \rightarrow  B \models  A \rightarrow ( A \land  B)$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		If $v$ is valuation that satisfies the hypotheses, then it follows that 
+		$$v(A) = v(A)v(B)$$ 
+		
+		Now evaluate such a valuation at the conclusion. 
+
+		\begin{equation*}
+			\begin{split}
+				v(A \to (A \land B)) &= 1 - v(A) + v(A)v(A \land B)\\ 
+				&= 1 - v(A) + v(A)^{2}v(B)\\
+				&= 1 - v(A) + v(A)v(B)\\
+				&= 1 - v(A) + v(A)\\
+				&= 1
+			\end{split}
+		\end{equation*}
+		Therefore we may conclude $ A \rightarrow  B \models  A \rightarrow ( A \land  B)$ as required. 
+		\item $ A \rightarrow  B,  A \rightarrow \lnot  B \models \lnot  A$
+		
+		\hspace{0.2cm}{\bf Solution}
+
+		In this example there are two hypotheses, this means we will get a system of equations that $v$ must satisfy. 
+
+		Suppose $v$ is a valuation that satisfies \emph{all} hypotheses. This implies $v(A \to B) = 1$ and $v(A \to \lnot B) = 1$. The first of these equations forces $v(A) = v(A)v(B)$ while the second forces $0 = v(A)v(B)$. Together they imply $v(A) = 0$. 
+
+		Now consider evaluating such a valuation at the conclusion $v(\lnot A) = 1 - v(A) = 1 - 0 = 1$. Therefore we may conclude that the conclusion is a semantic consequence of these hypotheses. 
+
+	\end{enumerate}	
+
+	
+	\item {\bf Principle of Explosion} Use a truth table to show $P \land \lnot P \models Q$
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	Consider an arbitrary valuation $v$ and evaluate it at the hypothesis. 
+
+	$v(A \land \lnot A) = v(A)(\lnot A) = v(A)(1 - v(A)) = 0$. This shows that no valuation can satisfy the hypothesis. Put another way, every valuation that satisfies the hypothesis also satisfies the conclusion. This verifies the claim of semantic consequence. 
+	
+	\newpage
+	\item Determine whether the following are tautologies, satisfiable, or contradictions.
+	
+	\hspace{0.2cm}{\bf Solution}
+
+	These can be determined using truth tables or valuations. 
+	
+		\begin{enumerate}
+			\item $P \lor (\lnot P \land Q)$ SATISFIABLE
+			\item $(X \lor Y) \leftrightarrow (\lnot X \rightarrow Y)$ TAUTOLOGY
+			\item $(A \land \lnot B) \land (\lnot A \lor B)$ CONTRADICTION
+			\item $\lnot (A\rightarrow A)$ CONTRADICTION
+			\item $(Z \lor (\lnot Z \lor W)) \land \lnot (W \land U)$ SATISFIABLE
+			\item $(L \rightarrow (M \rightarrow N)) \rightarrow (L \rightarrow (M \rightarrow N))$ TAUTOLOGY
+		\end{enumerate}
+
+	\item Using the expressions determined from Question Four, calculate the valuations of the following propositional formulae and determine whether they are tautologies or contradictions. 
+
+		\begin{enumerate}
+			\item $v(P \lor \lnot P)$
+			
+			\hspace{0.2cm}{\bf Solution}
+
+			\begin{equation*}
+				\begin{split}
+					v(A \lor \lnot A) &= v(A) + v(\lnot A) - v(A \land \lnot A) \\ 
+					&= v(A) + 1 - v(A) - v(A)v(\lnot A)\\
+					&= v(A) + 1 - v(A) - v(A)(1 - v(A))\\
+					&= v(A) + 1 - v(A) - v(A) + v(A)^{2}\\
+					&= v(A) + 1 - v(A) - v(A) + v(A)\\
+					&= 1	
+				\end{split}
+			\end{equation*}
+
+			Therefore every valuation satisfies this formula. This means it is a tautology. 
+
+			\item $v(P \land \lnot P)$
+			
+			\hspace{0.2cm}{\bf Solution}
+
+			In the solution to Question Six we saw $v(P \land \lnot P)= 0$ for every valuation. This means $P \land \lnot P$ is a contradiction. 
+
+			\item $v(P \to (Q \to P))$
+			
+			\hspace{0.2cm}{\bf Solution}
+						
+			\begin{equation*}
+				\begin{split}
+					v(P \to (Q \to P)) &= 1 - v(P) + v(P)v(Q \to P)\\
+					&= 1 - v(P) + v(P)(1 - v(Q) + v(Q)v(P))\\
+					&= 1 - v(P) + v(P) - v(P)v(Q) + v(Q)v(P)^{2}\\
+					&= 1 - v(P) + v(P) - v(P)v(Q) + v(Q)v(P)\\
+					&= 1
+				\end{split}
+			\end{equation*}
+
+			Therefore, since $v$ is arbitrary, $P \to (Q \to P)$ is a tautology.
+			
+			\newpage
+			\item $v((P \to Q) \lor (Q \to P))$
+			
+			\hspace{0.2cm}{\bf Solution}
+
+			\begin{equation*}
+				\begin{split}
+					&v((P \to Q) \lor (Q \to P))\\
+					&= v(P \to Q) + v(Q \to P) - v((P \to Q)\land (Q \to P))\\
+					&= 1 - v(P) + v(P)v(Q) + 1 - v(Q) + v(Q)v(P) - v((P \to Q)\land (Q \to P))\\
+					&= 2 - v(P) - v(Q) + 2v(P)v(Q) - v((P \to Q)\land (Q \to P))\\
+					&= 2 - v(P) - v(Q) + 2v(P)v(Q) - v(P \to Q)v(Q \to P)\\
+					& \ \vdots\\
+					&= 1
+				\end{split}
+			\end{equation*}
+
+		\end{enumerate}
+	
+	\item In class, we introduced propositional logic with each of the logical connectives $\lnot, \lor, \land, \rightarrow,$ and $\leftrightarrow$. 
+	
+	\vspace{0.2cm}
+	
+	We commented that $\leftrightarrow$ could be \emph{defined} in terms of $\land$ and $\rightarrow$. This question will explore further simplifications to the language of propositional logic.
+
+	\vspace{0.2cm}
+	
+	In fact, it is sufficient to introduce the truth tables of $\lnot$ and $\lor$ alone. Determine well-formed formulae in $\lnot, \lor$ that are logically equivalent to the following formulae: 
+	
+	\hspace{0.2cm}{\bf Solution}
+
+		\begin{enumerate}
+			\item $A \land B \equiv \lnot(\lnot A \lor \lnot B)$
+			\item $A \to B \equiv \lnot A \lor B$
+		\end{enumerate} 
+
+	
+	\item {\bf Universal Connectives} Actually, one connective is sufficient. Let us define the logical connective NAND, denoted $\otimes$, with the following truth table:
+	
+	\begin{center}
+		$\begin{array}{ l | c | c }			
+		A & B & A \otimes B\\
+		\cline{1 - 3}
+		1 & 1 & 0 \\ 
+		1 & 0 & 1 \\
+		0 & 1 & 1 \\
+		0 & 0 & 1 	
+		\end{array}$
+	\end{center}
+	
+	We can think of this as not-and.
+	
+	\begin{enumerate}
+		\item Write the $\lnot$ connective in terms of NANDs alone. 
+		\item Write the $\lor$ connective in terms of NANDs alone. 		
+	\end{enumerate}
+
+	NOR, not-or, is another universal connective. 
+				
+	\hspace{0.2cm}{\bf Solution}
+	\begin{enumerate}
+		\item $\lnot A \equiv A \otimes A$
+		\item $A \lor B \equiv \lnot (\lnot A \land \lnot B) \equiv \lnot A \otimes \lnot B \equiv (A \otimes A) \otimes (B \otimes B)$
+	\end{enumerate}
+
+\end{enumerate}
+	
+	\newpage
+	{\bf OPTIONAL EXTRAS}
+
+	\vspace{0.2cm}
+
+	Logic and computation are connected in a number of ways. In class, we are exploring how logicians and mathematicians provided a lot of the original work towards understanding computation. In this tutorial you will see how propositional logic plays an important role in the design of modern CPUs. 
+	
+	\vspace{0.2cm}
+
+	\emph{Binary functions} are functions which have binary number inputs and outputs. We can use truth-tables to specify the output of a Boolean function for the different values of its input bits. For example: 
+
+	\vspace{0.1cm}
+		
+		\begin{tabular}{c c}
+	
+			$\text{ZERO}(b_{1})$ is defined by the table &		
+			$\text{AND}(b_{1},b_{2})$ is defined by the table \\
+	
+				\begin{tabular}{c || c }
+					$b_{1}$ & ZERO \\
+					\hline
+					0 & 0   \\
+					1 & 0   \\
+				\end{tabular} 
+				
+				& 
+	
+				\begin{tabular}{c c || c }
+					$b_{1}$ & $b_{2}$ & AND \\
+					\hline
+					0 & 0 & 0  \\
+					1 & 0 & 0  \\
+					0 & 1 & 0  \\
+					1 & 1 & 1 
+					
+				\end{tabular}
+	
+		\end{tabular}
+
+
+	One can think of these functions as \emph{gates} with input/output pins. Circuits can be created by connecting output pins of one gate, to input pins of other gates; that is, by composing binary functions. These circuits represent new binary functions. 
+
+	The propositional connectives can be thought of as binary functions and we represent them using the following \emph{logic gates}.
+			
+		\begin{center}
+			\begin{tabular}{c c c}
+				
+				\begin{circuitikz}
+					\draw (0,0) node[or port] (myor) {}
+						(myor.in 1) node[anchor=east] {$b_{1}$}
+						(myor.in 2) node[anchor=east] {$b_{2}$}
+						(myor.out) node[anchor=west] {OR($b_{1}, b_{1})$};
+				\end{circuitikz} \hspace{0.2cm} & 
+	
+				\begin{circuitikz}
+					\draw (0,0) node[and port] (myand) {}
+						(myand.in 1) node[anchor=east] {$b_{1}$}
+						(myand.in 2) node[anchor=east] {$b_{2}$}
+						(myand.out) node[anchor=west] {AND($b_{1}, b_{1})$};
+				\end{circuitikz} \hspace{0.2cm} & 
+	
+				\begin{circuitikz}
+					\draw (0,0) node[not port] (mynot) {}
+						(mynot.in 1) node[anchor=east] {$b_{1}$}
+						%(mynot.in 2) node[anchor=east] {$b_{2}$}
+						(mynot.out) node[anchor=west] {NOT($b_{1})$};
+				\end{circuitikz} \\
+	
+				OR-gate \hspace{0.2cm} & AND-gate \hspace{0.2cm} & NOT-gate
+		
+			\end{tabular}
+		\end{center}
+	
+		Each logic gate has input pins and output pins. When combined in the right way, they can be used to design circuits to mimic binary functions. In fact, the \emph{arithmetic logic unit} in modern cpu design uses networks of such gates to achieve all the arithmetic and logical calculations it needs.
+
+\begin{enumerate}	
+	\item Using the three logic gates defined above, design circuits that mimic the following binary functions.
+	
+		\begin{enumerate}
+			
+			\item (Half Adder) Give a circuit diagram to calculate the following binary function.
+				
+				\begin{center}
+					\begin{tabular}{c c || c c }
+						$b_{1}$ & $b_{2}$ & sum & carry \\
+						\hline
+						0 & 0 & 0 & 0 \\
+						1 & 0 & 1 & 0 \\
+						0 & 1 & 1 & 0 \\
+						1 & 1 & 0 & 1
+						
+					\end{tabular}
+				\end{center}
+		
+				This mimics the addition of two bits and keeping track of the carry. 
+		
+			\item (Full Adder) Give a circuit diagram to calculate the following binary function.
+				
+				\begin{center}
+					\begin{tabular}{c c c || c c }
+						$b_{1}$ & $b_{2}$ & $c$ & sum & carry \\
+						\hline
+						0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 1 & 1 & 0 \\
+						0 & 1 & 0 & 1 & 0 \\
+						0 & 1 & 1 & 0 & 1 \\
+						1 & 0 & 0 & 1 & 0 \\
+						1 & 0 & 1 & 0 & 1 \\
+						1 & 1 & 0 & 0 & 1 \\
+						1 & 1 & 1 & 1 & 1 
+						
+					\end{tabular}
+				\end{center}
+		
+			This mimics adding two-bits together with a carry bit. 
+		
+			\item $2$-bit Adder. Design a circuit that takes two 2-bit inputs and outputs their 2-bit sum. Ignore any carry at the end.
+			
+			\item $4$-bit Adder. Design a circuit that takes two 4-bit inputs and outputs their 4-bit sum. Ignore any carry at the end. 
+		\end{enumerate}
+
+		\item The NAND-gate is universal.
+		
+		\begin{center}
+			\begin{tabular}{c c}
+	
+				\begin{circuitikz}
+					\node [nand port](O1) at (0,0) {};
+				\end{circuitikz} \hspace{2cm} 
+	
+				&
+	
+				\begin{tabular}{c c || c }
+					$b_{1}$ & $b_{2}$ & NAND \\
+					\hline
+					0 & 0 & 1  \\
+					1 & 0 & 1  \\
+					0 & 1 & 1  \\
+					1 & 1 & 0 				
+				\end{tabular} \\
+	
+				{\bf NAND}-gate \hspace{2cm} & \ \\
+	
+	
+			\end{tabular}
+		\end{center}
+		
+		Write each of the following gates with a circuit containing only NAND-gates. 
+	
+		\begin{enumerate}
+			\item NOT-gate
+			\item OR-gate 
+			\item AND-gate
+	 
+		\end{enumerate}
+
+
+\end{enumerate}
+	
+\end{document}

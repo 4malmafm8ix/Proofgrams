@@ -1,0 +1,102 @@
+\documentclass[11pt]{report}
+
+% Document dimensions
+\usepackage{geometry}
+\geometry{top=1.5cm, bottom=1.5cm, textwidth=15cm}
+
+% Math related packges.
+\usepackage{amsmath}
+\usepackage{cancel}
+
+% Natural Deduction package
+\usepackage{proof}
+\usepackage{mdframed}
+
+% Fix the header space: start at the top of the page.
+\usepackage{hyperref}
+
+
+\begin{document}
+	
+	
+% Heading for the tutorial	
+\begin{center}
+	{\bf MATH230: Tutorial Four}
+\end{center}
+\begin{center}
+	{\bf Natural Deductions in First Order Logic}
+\end{center}
+
+
+% Box with goals and relevent lecture notes.
+\noindent\fbox{
+	\parbox{\textwidth}{
+
+		Key ideas
+			\begin{itemize}
+				\item Read and interpret formulae of first-order logic.
+				\item Write formulae of first-order logic.
+				\item Natural deductions with $\forall$ $\exists$ rules.
+			\end{itemize}
+
+		Relevant Topic: First-Order Logic.\\
+		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{Logic and Proof} Sections 7,8, and 9.
+		
+	\vspace{0.2cm}
+
+	Hand in exercises: 1a, 1b, 1i, 1j, 1n \\ 
+	{\bf Due Friday @ 5pm to the submission box on Learn.}
+	}
+}
+% Discussion questions for tutor.
+\newline
+\vspace{0.5cm}
+
+\noindent {\bf Discussion Questions}
+
+\begin{enumerate}
+	\item $\forall x \neg Fx \dashv \vdash  \neg \exists x Fx$
+\end{enumerate}
+
+% New page for tutorial exercises.
+\newpage
+{\bf Tutorial Exercises}
+\begin{enumerate}
+	
+	\item Prove the following in the predicate calculus. You will need only the minimal logic rules of inference along with the introduction and elimination rules for the quantifiers.  
+
+		\begin{enumerate}
+			\item $\forall x (Fx \to Gx) \vdash  \forall x Fx \to \forall x Gx$
+			\item $\forall x ((Fx \lor Gx) \to Hx),\quad \forall x \neg Hx \vdash  \forall x \neg Fx$
+			\item $\forall x (Fx\land Gx) \vdash  \forall x Fx\land \forall x Gx$
+			\item $  \forall x Fx\land \forall x Gx \vdash \forall x (Fx\land Gx)$
+			\item $\forall x (P \to Fx) \vdash  P \to \forall x Fx$
+			\item $P \to \forall x Fx \vdash \forall x (P \to Fx)$
+			\item $\exists x (P \to Fx) \vdash  P \to \exists x Fx$
+			\item $\exists x \neg Fx \vdash  \neg  \forall x Fx$
+			\item $\forall x \neg Fx  \vdash  \neg \exists x Fx$
+			\item $\neg \exists x Fx \vdash \forall x \neg Fx $
+			\item $ \exists x Fx \to P \vdash \forall x (Fx \to P)$
+			\item $\exists x (Fx \to Gx)  \vdash  \forall x Fx \to \exists x Gx$
+			\item $\forall x Fx \vdash \lnot \exists x \ \lnot Fx$ 
+			\item $\exists x Fx \vdash \lnot \forall x \ \lnot Fx$
+			\item $\forall x \ (Fx \to \lnot Gx) \ \vdash \ \lnot \exists x \ (Fx \land Gx)$
+			\item $\vdash \ \exists x \ (Fx \lor Gx) \leftrightarrow \exists x \ Fx \ \lor \ \exists x \ Gx$
+		\end{enumerate}	
+
+	\item Prove the following in the predicate calculus. Ex falso or classical modes of reasoning (RAA, LEM, DNE) will be helpful for proving these theorems. Each of these are challenging!
+
+		\begin{enumerate}
+			%\item $P \to \exists x Fx \vdash \exists x (P \to Fx)$
+			\item $\forall x \ (Fx \lor Gx), \ \forall x \ \lnot Gx \ \vdash \ \forall x \ Fx$
+			\item $ \neg  \forall x Fx \vdash \exists x \neg Fx$
+			%\item $\forall x (Fx \lor Gx) \vdash  \forall x Fx \lor \exists x Gx$
+			\item $\lnot \forall x \ \lnot Fx \vdash \exists x Fx$
+			\item $ \lnot \exists x \ \lnot Fx \vdash \forall x Fx$ 			
+			%\item $ \forall x Fx \to \exists x Gx \vdash \exists x (Fx \to Gx)$ \hfill[Challenge!!!]
+		\end{enumerate}
+\end{enumerate}
+	
+\textbf{Note:} The exercises above show that in the presence of classical modes of reasoning it is sufficient to introduce only one of the quantifiers, as the other can be deduced from it. Sequents above show that we could define $\forall = \lnot \exists \lnot$ and $\exists = \lnot \forall \lnot$ in classical logic. Following the BHK, however, one needs to define both independently. 
+
+\end{document}

@@ -1,0 +1,69 @@
+#####################################
+#   Tutorial 09 :: Question 06      #
+#####################################
+# Procedure idea: 
+# Mark the end of the binary string with *. 
+# Move string, from the end, over the *.
+# Shift the reversed string to @ home.
+# Beginning of instructions.
+# Mark the end:
+q0,@,@,R,q0;
+q0,0,0,R,q0;
+q0,1,1,R,q0;
+q0,b,*,L,qnextBit;
+# Find the next bit to shift:
+qnextBit,b,b,L,qnextBit;
+qnextBit,@,@,N,qshift;
+qnextBit,1,b,R,qmoveOne;
+qnextBit,0,b,R,qmoveZero;
+# Shift one to end: 
+qmoveOne,b,b,R,qmoveOne;
+qmoveOne,*,*,R,qprintOne;
+qprintOne,1,1,R,qprintOne;
+qprintOne,0,0,R,qprintOne;
+qprintOne,b,1,L,qfindStar;
+# Shift zero to end:
+qmoveZero,b,b,R,qmoveZero;
+qmoveZero,*,*,R,qprintZero;
+qprintZero,1,1,R,qprintZero;
+qprintZero,0,0,R,qprintZero;
+qprintZero,b,0,L,qfindStar;
+# Find star marker:
+qfindStar,0,0,L,qfindStar;
+qfindStar,1,1,L,qfindStar;
+qfindStar,*,*,L,qnextBit;
+# Once string reversed, shift back to @ home.
+# Do some setup first:
+qshift,@,@,R,qshift;
+qshift,b,b,R,qshift;
+qshift,*,*,R,qmarkEnd;
+qmarkEnd,0,0,R,qmarkEnd;
+qmarkEnd,1,1,R,qmarkEnd;
+qmarkEnd,b,$,L,qtoStar;
+qtoStar,0,0,L,qtoStar;
+qtoStar,1,1,L,qtoStar;
+qtoStar,*,b,R,qreturnNext;
+# Start moving the reversed string back: 
+qreturnNext,b,b,R,qreturnNext;
+qreturnNext,$,b,L,qDone;
+qreturnNext,0,b,L,qshiftZero;
+qreturnNext,1,b,L,qshiftOne;
+# Shifting Zero back to home:
+qshiftZero,b,b,L,qshiftZero;
+qshiftZero,1,1,R,qsetZero;
+qshiftZero,0,0,R,qsetZero;
+qshiftZero,@,@,R,qsetZero;
+qsetZero,b,0,R,qreturnNext;
+# Shifting One back to home:
+qshiftOne,b,b,L,qshiftOne;
+qshiftOne,1,1,R,qsetOne;
+qshiftOne,0,0,R,qsetOne;
+qshiftOne,@,@,R,qsetOne;
+qsetOne,b,1,R,qreturnNext;
+# Done return home to HALT:
+qDone,b,b,L,qDone;
+qDone,0,0,L,qDone;
+qDone,1,1,L,qDone;
+qDone,*,b,L,qDone;
+qDone,@,@,N,HALT;
+# End of instructions.

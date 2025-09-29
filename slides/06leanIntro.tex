@@ -286,20 +286,36 @@ We will work through the following examples to get a taste of theorem proving in
 \end{frame}
 
 \begin{frame}
+	\frametitle{Sufficient Condition}
+	
+	Suppose our proof-state has goal $C$ i.e. $\Sigma \vdash C$. 
+	
+	If we have a theorem ``robertsTheorem'' which has conclusion $C$ and depends on hypotheses $P,Q,R$, then we say that $P,Q,R$ are sufficient conditions for $C$. In otherwords, proving them is enough, because of ``robertsTheorem'', to prove $C$. 
+	
+	Our next tactic allows us to use this mode of reasoning. In this illustrative example one would update the goal $\Sigma \vdash C$ to the three goals: 
+	$$\Sigma \vdash P \hspace{2cm} \Sigma \vdash Q \hspace{2cm} \Sigma \vdash R$$
+	using the tactic ``apply robertsTheorem''.
+\end{frame}
+
+\begin{frame}
 	\frametitle{Tactic: apply}
 	
 	The ``apply'' tactic takes a theorem or constructor of the form $\Sigma \vdash \alpha$ and matches the current goal with the conclusion $\alpha$ in the theorem applied. This tactic updates the goal to a (list of) new goal(s) depending on the hypotheses used in the theorem. 
 	
-	For example, And.intro has two arguments $a : A$ and $b : B$ and the conclusion $A \land B$. If the goal of the current proof-state is a conjunction $P \land Q$, then using ``apply And.intro'' will update the proof-state to have two goals: one asking for a proof of $P$ and another asking for a proof of $Q$. All of the $\land$ introduction details are taken care of behind the scenes.
+	{\bf Example:} And.intro has two arguments $a : A$ and $b : B$ and the conclusion $A \land B$. If the goal of the current proof-state is a conjunction $P \land Q$, then using ``apply And.intro'' will update the proof-state to have two goals: one asking for a proof of $P$ and another asking for a proof of $Q$. All of the $\land$ introduction details are taken care of behind the scenes.
 
 \end{frame}
 
 \begin{frame}
 	\frametitle{Tactic: apply}
 
-	We can make use of apply with a hypothesis of the form $t : P \lor Q$. If the current proof-state is of the form $\Sigma, t : P \lor Q \ \vdash \gamma$, then we can use ``apply Or.elim t'' to split the proof into two cases: $\Sigma \vdash P \to \gamma$ and $\Sigma \vdash Q \to \gamma$.
+	We can make use of apply with a hypothesis of the form $t : P \lor Q$. 
+	
+	If the current proof-state is of the form $\Sigma, t : P \lor Q \ \vdash \gamma$, then we can use ``apply Or.elim t'' to split the proof into two cases: $\Sigma \vdash P \to \gamma$ and $\Sigma \vdash Q \to \gamma$.
 	
 	Or.elim takes three arguments (i) $t : P \lor Q$ (ii) $f : P \to \gamma$, and (iii) $g: Q \to \gamma$. Using apply with Or.elim $t$ then reduces the problem to determining the other two arguments $f, g$ respectively. 
+	
+	{\bf Note:} We have partially applied Or.elim in this use of apply. We supplied only the proof of the disjunction. Lean then gives us space to provide proofs for the other two parts. 
 
 \end{frame}
 
