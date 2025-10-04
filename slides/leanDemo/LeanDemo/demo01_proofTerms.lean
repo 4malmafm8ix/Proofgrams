@@ -42,18 +42,20 @@ theorem modusTollens (f : P → Q) (n : ¬Q) : ¬P :=
 -- Example 08 [Intuitionistic Contrapositive]
 -- P → Q ⊢ ¬Q → ¬P
 theorem icontra (f : P → Q) : ¬Q → ¬P :=
-    λ robert =>
-        λ p => robert (f p)
+    λ nq => λ p => nq (f p)
 
 -- Example 09 [∧ssociative]
 -- (P ∧ Q) ∧ R ⊢ P ∧ (Q ∧ R)
 theorem conj_assoc (t : (P ∧ Q) ∧ R) : P ∧ (Q ∧ R) :=
-    And.intro (t.left.left)
-              (And.intro (t.left.right)
-                         (t.right))
+    _
 
 -- Example 10 [∨ssociative]
 -- (P ∨ Q) ∨ R ⊢ P ∨ (Q ∨ R)
 
 -- Example 11 [Currying]
 -- ⊢ (P ∧ Q → R) ↔ (P → Q → R)
+theorem curry : (P ∧ Q → R) ↔ (P → Q → R) :=
+    Iff.intro (λ f =>
+                λ p =>
+                    λ q => f ⟨p,q⟩)
+              (λ f => λ t => (f t.left) t.right)

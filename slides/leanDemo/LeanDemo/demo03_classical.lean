@@ -39,15 +39,27 @@ example (nnp : ¬¬P) : P :=
 -- Example 02
 -- P → Q ⊢ ¬P ∨ Q [Material Implication]
 theorem materialImplication (f : P → Q) : ¬P ∨ Q :=
-  Or.elim (em P)
+  Or.elim (em P) -- P ∨ ¬P
           (λ p => Or.intro_right (¬P) (f p))
           (λ np => Or.intro_left Q np)
 
 -- Example 03 [DeMorgan's Law]
 -- ¬(P ∧ Q) ⊢ ¬P ∨ ¬Q
+theorem deMorgan (f : ¬(P ∧ Q)) : ¬P ∨ ¬Q :=
+  Or.elim (em P)
+          (λ p => Or.intro_right (¬P)
+                                 (λ q => f (And.intro p q)))
+          (λ np => Or.intro_left (¬Q) np)
 
 -- Example 04
 -- ¬(P → Q) ⊢ P ∧ ¬Q
+example (f : ¬(P → Q)) : P ∧ ¬Q := by
+  apply And.intro
+  apply byContradiction
+  intro np
+  exact f (λ p => False.elim (np p))
+  intro q
+  exact f (λ p => q)
 
 -- Example 05 [ClassicalContrapositive]
 -- ¬Q → ¬P ⊢ P → Q
@@ -56,16 +68,14 @@ theorem classicalContra (f : ¬Q → ¬P) : P → Q :=
 
 -- Example 06 [Pierce's Law]
 -- ⊢ ((P → Q) → P) → P
-theorem pierceHelper (f : ¬P) : P → Q :=
-  λ p => False.elim (f p)
+theorem pierceHelper {A B : Prop} (f : ¬A) : A → B :=
+  λ a => False.elim (f a)
 
 theorem pierce : ((P → Q) → P) → P :=
   λ f =>
     Or.elim (em P)
             (λ p => p)
-            (λ np => f (pierceHelper P Q np))
-
-
+            (λ np => f (pierceHelper np))
 
 -- To a mathematician/logician trained in the Classical
 -- truth value point-of-view, any Prop is either true or false.
@@ -87,7 +97,7 @@ theorem proofIrrel : ∀ A B : Prop,
 -- If A : Prop, and a : A and b : A, then a = b **by definition**
 
 
--- However, this is only true for the level Prop.
+-- However, this is only true for the level Prop of the Universe.
 -- As illustrated by the following not being solved by rfl.
 -- Indeed, this is not a theorem as the functions are
 -- different i.e. extensionally different!

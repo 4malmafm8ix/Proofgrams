@@ -23,19 +23,32 @@ variable (F G H : α → Prop) -- Predicates on that type.
 --        any object t : α returns a proof of Pt
 -- In other words we use ∀x :α, Fx as a function on α
 -- to return proofs that terms in α satisfy F.
-theorem ex1 (f : ∀ x : α, F x → G x) (t : F a) : G a := sorry
+theorem ex1 (f : ∀ x : α, F x → G x) (t : F a) : G a :=
+  by
+    have t₁ := f a
+    exact t₁ t
 
 -- ∀x (Fx → Gx), ∀x Fx ⊢ ∀x Gx
 -- We can use the function interpretation to construct
 -- a proof of ∀x Gx as well. Now we are writing a function.
 -- This means we need to show an arbitrary element of a:α
 -- must satisfy the predicate G.
-theorem ex2 (f : ∀ x : α, F x → G x) (g : ∀ x: α, G x) :
-  ∀ x : α, G x := sorry
+theorem ex2 (f : ∀ x : α, F x → G x) (g : ∀ x: α, F x) :
+  ∀ x : α, G x :=
+    by
+      intro a
+      have i := f a
+      have j := g a
+      exact i j
 
 -- ∀x(Fx → Gx), ∀x(Gx → Hx) ⊢ ∀x(Fx → Hx)
 theorem ex3 (f: ∀ x : α, F x → G x) (g : ∀ x : α, G x → H x) :
-  ∀ x : α, F x → H x := sorry
+  ∀ x : α, F x → H x :=
+  by
+    intro a t
+    have i := f a t
+    have j := g a i
+    assumption
 
 -- ∀x (F x → G x), ¬G t ⊢ ∃x ¬F x
 -- How are we to prove a statement ∃x : α, F x?
@@ -46,8 +59,14 @@ theorem ex3 (f: ∀ x : α, F x → G x) (g : ∀ x : α, G x → H x) :
 -- Exists.intro thus takes two inputs:
 --    The first is a term of type α
 --    The second is a proof that term satisfies the predicate.
-theorem ex4 (f: ∀x : α, F x → G x) (w : ¬G t) :
-  ∃x : α, ¬F x := sorry
+theorem ex4 (f: ∀x : α, F x → G x) (w : ¬G a) :
+  ∃x : α, ¬F x :=
+    by
+      apply Exists.intro a
+      intro t
+      have i := f a
+      have j:= i t
+      exact w j
 
 -- ∀x(F x → G x), ∃ x F x ⊢ ∃ x : G x
 -- If we want to use a hypotheses with an ∃ claim; then
@@ -57,10 +76,37 @@ theorem ex4 (f: ∀x : α, F x → G x) (w : ¬G t) :
 -- (2) We can use "rcases t with ⟨t₁,p₁⟩" where t₁ and p₁ are
 -- names of the term and proof respectively.
 theorem ex5 (f : ∀x : α, F x → G x) (t : ∃ x, F x) :
-  ∃ x, G x := sorry
+  ∃ x, G x :=
+    by
+      apply Exists.elim t
+      intro a t₁
+      apply Exists.intro a
+      have t₂ := f a
+      exact t₂ t₁
+
 
 theorem ex6 (t : (∃x : α, F x) ∨ (∃ x : α, G x)) :
-  ∃ x : α, (F x ∨ G x) := sorry
+  ∃ x : α, (F x ∨ G x) :=
+    by
+      apply Or.elim t
+      -- First disjunct
+      intro s
+      apply Exists.elim s
+      intro a s₁
+      apply Exists.intro a
+      apply Or.intro_left
+      assumption
+      -- Second disjunct
+      intro w
+      apply Exists.elim w
+      intro a w₁
+      apply Exists.intro a
+      apply Or.intro_right
+      assumption
 
 theorem ex7 (t : ¬∃x :α, F x) :
-  ∀x:α, ¬(F x) := sorry
+  ∀x:α, ¬(F x) :=
+    by
+      intro a p
+      have w := Exists.intro a p
+      exact t w

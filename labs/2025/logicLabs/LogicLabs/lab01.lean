@@ -42,8 +42,8 @@ theorem Q11 (t : A ∧ (B ∨ C)) : (A ∧ B) ∨ (A ∧ C) :=
 theorem Q12 (t : (A ∧ B) ∨ (A ∧ C)) : A ∧ (B ∨ C) :=
   sorry
 
-theorem Q13 (t : A ∨ (B ∧ C)) : (A ∨ B) ∧ (B ∨ C) :=
+theorem Q13 (t : A ∨ (B ∧ C)) : (A ∨ B) ∧ (A ∨ C) :=
   sorry
 
-theorem Q14 (t : (A ∨ B) ∧ (B ∨ C)) : A ∨ (B ∧ C) :=
+theorem Q14 (t : (A ∨ B) ∧ (A ∨ C)) : A ∨ (B ∧ C) :=
   sorry

@@ -142,8 +142,8 @@ def divides (m n : ℕ) := (m ≠ zero) ∧ (∃ x : ℕ, n = m * x)
 -- Don't use the | from the keyboard as this is a
 -- special character in Lean used e.g. in pattern matching.
 
--- This is typed "\ mid" without the space.
-infix:50 " ∣ " => divides
+instance : Dvd ℕ where
+  dvd := divides
 
 -- Things are getting complicated enough now that it is
 -- best to write an informal pencil-and-paper proof and

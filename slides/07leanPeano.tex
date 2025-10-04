@@ -1,0 +1,373 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+\usepackage{listings}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Bibliography
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+% Definition format options. 
+\newtheoremstyle{indentDefn}
+{\topsep} % Space above
+{\topsep} % Space below
+{\it} % Body font
+{2cm} % Indent amount
+{\bf} % Theorem head font
+{:} % Punctuation after theorem head
+{0.5em} % Space after theorem head
+{} % Theorem head spec
+
+\theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
+
+\lstset{
+  basicstyle=\ttfamily,
+  mathescape=true
+}
+
+\title{Introduction to Lean 4}
+\subtitle{Natural Numbers}
+\author{MATH230}
+\institute{School of Mathematics and Statistics \\ University of Canterbury}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Formal Mathematics in Lean}
+
+\begin{frame}
+	\frametitle{Mathematics in Lean}
+	
+	If we want extend Curry-Howard to mathematics, then we need a type system that allows us to express the mathematical objects we're interested in. For us, this will mean $\mathbb{N}$ the natural numbers and their arithmetic. 
+	
+	\begin{center}
+		\begin{tabular}{l || l}
+			Type of natural numbers & Inductive types \\
+			Addition & functions on inductive types \\
+			Multiplication & functions on inductive types 	
+		\end{tabular}
+	\end{center}
+	
+	Inductive types are enough to express a lot of basic mathematical (and logical) constructions. However, more would be required of the type system to encapsulate all of mathematics.
+\end{frame}
+
+\section{Natural Numbers: Arithmetic}
+
+\begin{frame}[fragile]
+	\frametitle{Type of Natural Numbers}
+	
+	Defining the type of natural numbers $\mathbb{N}$ is done similarly to the definition by Peano Arithmetic. We say zero is a natural number, and then we have a function which generates new natural numbers from old. 
+	
+	\begin{lstlisting}
+inductive N where
+	| zero : N      
+	| succ : N -> N	
+	\end{lstlisting}
+	
+	As part of this definition we get the first two axioms of PA; that no successor is equal to zero and that the successor function is injective. These are still theorems in Lean, but there proof is straightforward - simply stating, they are so ``by definition''.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Addition by Pattern Matching}
+	
+	Again, the arithmetic operations are definined in the same manner as Peano Arithmetic. For example, we use pattern matching on the second argument to define addition: 
+	
+	\begin{lstlisting}
+def natadd (m n : N) : N :=
+  match n with
+  | zero   => m
+  | succ k => succ (add m k)
+
+instance : Add N where
+  add := natadd		
+	\end{lstlisting}
+	
+	Pattern matching works on the idea that the second input can only be in one of two forms: either zero, or the successor of k some other natural number. Therefore, in order to define addition it is sufficient to define it in both of these cases.
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Multiplication by Pattern Matching}
+	
+	Similarly, we use pattern matching on the second argument to define multiplication: 
+	
+	\begin{lstlisting}
+def natmul (m n : N) : N :=
+  match n with
+  | zero    => zero
+  | succ k  => (mul m k) + m
+
+instance : Mul N where
+  mul := natmul	
+	\end{lstlisting}
+	
+	Pattern matching works on the idea that the second input can only be in one of two forms: either zero, or the successor of k some other natural number. Therefore, in order to define multiplication it is sufficient to define it in both of these cases.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Peano Axioms}
+	
+	Axioms PA3 - PA6 now follow by definition. That is to say, they simply state the properties we have defined addition and multiplication with.	
+	\begin{lstlisting}
+def PA3 (m : N) : m + zero = m 
+	:= by rfl
+def PA4 (m n : N) : m + (succ n) = succ (m + n) 
+	:= by rfl
+def PA5 (m : N) : m * zero = zero 
+	:= by rfl
+def PA6 (m n : N) : m * (succ n) = (m * n) + m 
+	:= by rfl	
+	\end{lstlisting}	
+	Lean can verify these equations by using the definitions of + and * given above. We use the tactic ``rfl'' which instructs Lean to perform the computation and then verify that the two sides of the equation are indeed = by definition. 	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Mere Computation}
+	
+	Each of the theorems on the previous page - axioms of Peano arithmetic - hardly needed any proving. This is because they are simply stating the definitions of addition and multiplication. 
+	
+	In this way it is said that each of them are true up to computation. They are ``merely computation''. If both sides of the equation can be normalised (computed) to the same value, then Lean can use computation to close the goal.
+	
+	Any proof which is in a state that can be closed by mere computation can be closed with ``rfl'' tactic.
+
+\end{frame}
+
+\section{Natural Numbers: Induction}
+
+\begin{frame}[fragile]
+	\frametitle{Induction}
+	
+	Anything more interesting will not be mere computation. Recall we used induction to prove many of the basic properties of addition and multiplication. The code below shows the basic induction pattern:	
+	\begin{lstlisting}
+theorem zero_add : $\forall$ x : N, zero + x = x := 
+  by
+    intro a
+    induction a with
+    | zero      => _
+    | succ k ih => _	
+	\end{lstlisting}	
+	This is saying we are to do induction on a. This means we need to consider two cases (i) a = zero, and (ii) a = succ k. In the second case we assume we have a proof of the theorem at k. 	
+	$$\text{ih} : \text{zero} + k = k$$
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Induction: Base Case}
+	
+	Often the base cases are mere computation and can therefore can be closed by rfl.
+	\begin{lstlisting}
+theorem zero_add : $\forall$ x : N, zero + x = x := 
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ k ih => _	
+	\end{lstlisting}	
+	In this theorem the base case is asking us to prove 
+	$$\text{zero} + \text{zero} = \text{zero}$$
+	We can compute the value of zero + zero and find that both sides are equal.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Induction: Induction Step}
+	In this case the induction step is the following:
+	$$\text{ih} : \text{zero} + k = k \ \vdash \ \text{zero } + \text{succ } k = \text{succ } k$$	
+	We can show this to be the case with PA4 and the induction hypothesis.
+	
+		\begin{tabular}{r c l c l}
+		 zero + \text{succ} k & = & succ (zero + k)  & & by [PA4] \\
+		      & = & succ k & & by [ih] 
+	\end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: Calc}
+	
+	We can write the proof in this style with the ``calc'' tactic.
+{\footnotesize \begin{lstlisting}
+theorem zero_add : $\forall$ x : N, zero + x = x := 
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ k ih =>
+      calc
+        zero + succ k = succ (zero + k) := by rw [PA4]
+                    _ = succ k          := by rw [ih]                    
+\end{lstlisting}}
+This makes for a very clear and readable proof.
+\end{frame}
+
+\section{Tactic: rEwRITE}
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: rw}
+	
+	We can write a more compact proof using the ``rw'' tactic.
+{\footnotesize \begin{lstlisting}
+theorem zero_add : $\forall$ x : N, zero + x = x := 
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ k ih => rw [PA4,ih]                   
+\end{lstlisting}}
+This makes for a more succinct proof. 
+
+Used in this way rw works on the goal by recognising a pattern in a theorem and fitting it to the goal. It collects the $\forall$ elimination and $=$E steps we made on paper into one neat step.
+
+We apply rewrites to the goal until it is in a form that can be closed by the rfl tactic.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: rw}
+
+Let's focus on the proofstate before and after the first rw:
+\begin{lstlisting}
+1 goal
+k : N
+ih : zero + k = k
+$\vdash$ zero + k.succ = k.succ
+\end{lstlisting}
+Using the tactic rw[PA4] updates the goal of the proofstate.
+\begin{lstlisting}
+1 goal
+k : N
+ih : zero + k = k
+$\vdash$ (zero + k).succ = k.succ
+\end{lstlisting}
+
+Recall the statement of PA4.
+	{\footnotesize\begin{lstlisting}
+def PA4 (m n : N) : m + (succ n) = succ (m + n) := by rfl
+	\end{lstlisting}}
+	rw instantiates (chooses m n) PA4 in such away that it can match the RHS of PA4 with a term in the goal.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: rw}
+	
+	In general rw uses an equational theorem $a = b$. It rewrites all instances of $a$ with $b$ in the goal.	
+	
+	\textbf{Example:}
+	{\footnotesize\begin{lstlisting}
+1 goal
+k : N
+ih : k * zero.succ = k
+$\vdash$ k.succ * zero.succ = k.succ
+	\end{lstlisting}}	
+	At this point we notice the pattern: k.succ * zero.succ. 
+	
+	This appears in the left hand side of PA6.
+{\footnotesize\begin{lstlisting}
+def PA6 (m n : N) : m * (succ n) = (m * n) + m := by rfl
+\end{lstlisting}}
+When we instantiate m = k.succ and n = zero. 
+
+For this reason rw[PA6] will make progress on this goal.
+\end{frame}
+
+%%% Use succ_mul to illustrate these features of rw.
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: rw}
+	
+	\textbf{Specifying rw Pattern}	
+
+	If there are multiple instances of a pattern in the goal, then you will need to specify which instance of the theorem you want to use in the rewrite. This can be done by specifying the terms to instantiate the theorem at. As we did on paper, we must be explicit about the choice of terms made when doing $\forall$ elimination.
+	
+{\bf Example: Multiple Additions}
+	
+{\footnotesize\begin{lstlisting}
+1 goal
+a n : N
+ih : a.succ * n = a * n + n
+$\vdash$ (a * n + (n + a)).succ = (a * n + a + n).succ	
+\end{lstlisting}}
+
+rw [add\_comm n a] will commute the second addition $(n + a)$. 
+
+rw [add\_comm] will commute the addition $(a*n + (n + a).\text{succ})$
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Tactic: rw}
+	
+	\textbf{Backwards rewrites}
+	
+	Lean uses rw by reading an equation theorem-name$ : a=b$ and replacing $a$ with $b$ in the goal. 
+	
+	If one wishes to use the equation $a=b$ to replace $b$ with $a$ in the goal, then one can write rw[<-theorem-name]. That is, the use of arrow ``<-'' tells Lean to read the equation right-to-left in the rewrite.
+	
+\end{frame}
+
+
+
+%	Equality/Identity
+% Mathematics in Lean
+%	Inductive types
+%	Peano arithmetic (Natural Numbers)
+%		Arithmetic
+%		Order
+%		Divisbility
+%	Showcase other work in formalisation.
+%		mathlib
+%		stdlib (Agda)
+%		Major milestones (100 Theorems List)
+% Software Verification 
+%	Lists
+%		Pen-and-paper proofs.
+%		Formal proofs in Lean.
+%	Showcase other work in formalisation.
+%	
+\begin{frame}
+	\frametitle{Further Reading}
+	
+    These slides were prepared with the aid of the following references. These should be consulted for further detail on the topics. 
+    
+    \href{https://www.cs.kent.ac.uk/people/staff/sjt/TTFP/}{Type Theory and Functional Programming, Simon Thompson}
+    
+    \href{https://leanprover.github.io/theorem_proving_in_lean4/}{Theorem Proving in Lean 4}
+    
+    Each of these are freely available on the world wide web.
+    
+    \vspace{50mm}  
+	
+\end{frame}
+\end{document}

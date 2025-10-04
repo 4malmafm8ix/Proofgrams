@@ -58,184 +58,150 @@ theorem PA4 (m n : ℕ) : m + (succ n) = succ (m + n) := by rfl
 theorem PA5 (m : ℕ) : m * zero = zero := by rfl
 theorem PA6 (m n : ℕ) : m * (succ n) = (m * n) + m := by rfl
 
-def ZERO : ℕ := zero
-def ONE : ℕ := succ ZERO
-def TWO : ℕ := succ ONE
-def THREE : ℕ := succ TWO
-def FOUR : ℕ := succ THREE
-def FIVE :ℕ := succ FOUR
+theorem zero_add : ∀ x : ℕ, zero + x = x := sorry
 
+theorem zero_mul : ∀ x : ℕ, zero * x = zero := sorry
 
+theorem mul_one : ∀ x : ℕ, x * (succ zero) = x := sorry
 
--- Question 1
-theorem zero_add : ∀ x : ℕ, zero + x = x :=
-  by
-    intro a
-    induction a with
-    | zero      => rfl
-    | succ n ih => rw [PA4, ih]
+theorem succ_add : ∀ x y : ℕ, (succ x) + y = succ (x + y) := sorry
 
--- Question 2
-theorem zero_mul : ∀ x : ℕ, zero * x = zero :=
-  by
-    intro a
-    induction a with
-    | zero      => rfl
-    | succ n ih => rw [PA6,PA3,ih]
+theorem add_assoc : ∀ x y z : ℕ, (x + y) + z = x + (y + z) := sorry
 
--- Question 3
-theorem mul_one : ∀ x : ℕ, x * (succ zero) = x :=
-  by
-    intro a
-    induction a with
-    | zero      => rfl
-    | succ n ih => rw [PA6,PA4,PA5,zero_add]
+theorem add_comm : ∀ x y : ℕ, x + y = y + x := sorry
 
--- Question 4
-theorem succ_add : ∀ x y : ℕ, (succ x) + y = succ (x + y) :=
-  by
-    intro a b
-    induction b with
-    | zero      => repeat rw [PA3]
-    | succ n ih => rw [PA4,ih,PA4]
+theorem succ_mul : ∀ x y : ℕ, (succ x) * y = x * y + y := sorry
 
--- Question 5
-theorem add_assoc : ∀ x y z : ℕ, (x + y) + z = x + (y + z) :=
+theorem mul_comm : ∀ x y : ℕ, x * y = y * x := sorry
+
+theorem add_mul : ∀ x y z : ℕ, (y + z) * x = y * x + z * x := sorry
+
+theorem mul_assoc : ∀ x y z : ℕ, (x * y) * z = x * (y * z) := sorry
+
+theorem mul_add : ∀ x y z : ℕ, x * (y + z) = x * y + x * z :=
   by
     intro a b c
     induction a with
-    | zero      => rw [zero_add,zero_add]
-    | succ n ih => rw [succ_add,succ_add,succ_add,ih]
+    | zero      => rw [zero_mul,zero_mul,zero_mul,zero_add]
+    | succ n ih =>
+        calc
+        (succ n) * (b + c)
+            = n * (b + c) + (b + c)       := by rw [succ_mul]
+        _   = (n * b + n * c) + (b + c)   := by rw [ih]
+        _   = n * b + (n * c + (b + c))   := by rw [add_assoc]
+        _   = n*b + (((n*c) + b) + c)     := by rw [<-add_assoc (n*c)]
+        _   = n*b + ((b + (n*c)) + c)     := by rw [add_comm b]
+        _   = n*b + (b + ((n*c) + c))     := by rw [add_assoc]
+        _   = n*b + (b + (succ n * c))    := by rw [<-succ_mul]
+        _   = n*b + b + (succ n * c)      := by rw [<-add_assoc]
+        _   = (succ n * b) + (succ n * c) := by rw [<-succ_mul]
 
--- Question 6
-theorem add_comm : ∀ x y : ℕ, x + y = y + x :=
-  by
-    intro a b
-    induction a with
-    | zero      => rw [zero_add, PA3]
-    | succ n ih => rw [succ_add,PA4,ih]
-
--- Question 7
-theorem succ_mul : ∀ x y : ℕ, (succ x) * y = x * y + y :=
-  by
-    intro a b
-    induction b with
-    | zero      => rfl
-    | succ n ih => rw [PA4,PA6 a n,PA6,ih,PA4]
-                   rw [add_assoc,add_comm n a,<-add_assoc]
-
--- Question 8
-theorem mul_comm : ∀ x y : ℕ, x * y = y * x :=
-  by
-    intro a b
-    induction a with
-    | zero      => rw [zero_mul,PA5]
-    | succ n ih => rw [succ_mul,PA6,ih]
-
--- Question 9
-theorem add_mul : ∀ x y z : ℕ, (y + z) * x = y * x + z * x :=
-  by
-    intro a b c
-    induction a with
-    | zero      => rfl
-    | succ n ih => rw [PA6,ih,PA6,PA6,
-                      add_assoc, add_comm (c*n),
-                      add_assoc, add_comm c,
-                      <-add_assoc,<-add_assoc]
-
--- Question 10
-theorem mul_assoc : ∀ x y z : ℕ, (x * y) * z = x * (y * z) :=
-  by
-    intro a b c
-    induction a with
-    | zero      => rw [zero_mul,zero_mul,zero_mul]
-    | succ n ih => rw [succ_mul,succ_mul,add_mul,ih]
-
--- We now add ≤ predicate to our formal description of ℕ
-def leq (m n : ℕ) := (∃ x : ℕ, n = m + x)
--- Since it's defined using the ∃ quantifier, you will need
+-- We can define < relation using the following
+-- existential ∃ statement.
+def strictLT (m n : ℕ) := ∃ k : ℕ, n = m + (succ k)
+-- Declaring an instance of LT gives us the infix < symbol
+-- for stating the relation strictlt.
+instance : LT ℕ where
+  lt := strictLT
+-- Since < defined using the ∃ quantifier, you will need
 -- to use the corresponding ∃ terms/tactics in Lean.
---
+
 -- apply Exists.intro a
 -- ... This reduces the goal to a proof that a has the required
 -- property.
 
--- To use an hypothesis of the form  t : a ≤ b
--- One can write "apply Exists.elim t"
--- Then introduce the term and proof with intro.
+-- To use an hypothesis of the form  t : a ≤ b we can access
+-- the two pieces of information using the following methods:
+-- (i) obtain ⟨k,p⟩ := t
+--    This introduces the k: b = a + succ k
+--    and the proof, p, of this equation.
+-- (ii) rcases t with ⟨k,p⟩ does the same thing.
 
-instance : LE ℕ where
-  le := leq
-
--- Question 11
-theorem leq_refl : ∀ x : ℕ, x ≤ x :=
-  by
-    intro a
-    apply Exists.intro zero
-    rw [PA3]
-
--- Question 12
-theorem zero_leq : ∀ x : ℕ, zero ≤ x :=
+theorem zero_lt_succ : ∀ x : ℕ, zero < succ x :=
   by
     intro a
     apply Exists.intro a
     rw [zero_add]
 
--- Question 13
-theorem leq_succ : ∀ x : ℕ, x ≤ succ x :=
+theorem lt_succ : ∀ x : ℕ, x < succ x :=
   by
     intro a
-    apply Exists.intro zero.succ
+    apply Exists.intro zero
     rw [PA4,PA3]
 
--- Question 14
-theorem leq_trans : ∀ x y z : ℕ, (x ≤ y) ∧ (y ≤ z) → x ≤ z :=
+theorem succ_lt : ∀ x y : ℕ, x < y → succ x < succ y :=
+  by
+    intro a b t
+    obtain ⟨x, p⟩ := t
+    apply Exists.intro x
+    rw [succ_add,p]
+
+theorem lt_trans : ∀ x y z : ℕ, x < y ∧ y < z → x < z :=
   by
     intro a b c
     intro t
-    apply Exists.elim t.left
-    intro u hu
-    apply Exists.elim t.right
-    intro v hv
-    apply Exists.intro (u + v)
-    rw [<-add_assoc,<-hu,hv]
+    --obtain ⟨u, p⟩ := t.left
+    rcases t.left with ⟨u,p⟩
+    obtain ⟨v, q⟩ := t.right
+    apply Exists.intro (u + succ v)
+    rw [<-succ_add,<-add_assoc,<-p,q]
+theorem zero_or_gtzero : ∀ x : ℕ, x = zero ∨ zero < x :=
+ by
+  intro a
+  match a with
+  | zero   => apply Or.intro_left (zero < zero)
+              rfl
+  | succ k => apply Or.intro_right (k.succ = zero)
+              exact zero_lt_succ k
 
--- You may require the following two theorems to write
--- a proof of Question 15. These theorems: add_eq_self
--- and add_eq_zero have already been proved.
--- You may use them, or not, as is.
+-- We say a divides b if there is some other natural number
+-- k such that b = ak. However, we also need the divisor
+-- to be non-zero!
+def divide (m n : ℕ) := (∃ k : ℕ, n = m*k) ∧ (m ≠ zero)
 
-theorem add_eq_self : ∀ x y : ℕ, x + y = x → y = zero :=
+-- Again, declaring the type class instance gives us the
+-- syntactic sugar we're used to for the divides relation.
+-- You can type \ | to get the divides symbol a ∣ b
+instance : Dvd ℕ where
+  dvd := divide
+
+theorem divide_reflexive : ∀ x : ℕ, x ≠ zero → x ∣ x :=
   by
-    intro a b
-    intro h₁
-    induction a with
-    | zero      => rw [zero_add] at h₁
-                   exact h₁
-    | succ n ih => rw [succ_add] at h₁
-                   have h₂ := PA2 (n+b) n h₁
-                   exact ih h₂
+    intro a t
+    apply And.intro
+    apply Exists.intro (succ zero)
+    rw [PA6,PA5,zero_add]
+    exact t
 
-theorem add_eq_zero : ∀ x y : ℕ, x + y = zero -> x = zero :=
+theorem divide_transitive : ∀ x y z : ℕ, x ∣ y → y ∣ z → x ∣ z :=
   by
-    intro a b
-    intro h₁
-    induction a with
-    | zero      => rfl
-    | succ n ih => rw [succ_add] at h₁
-                   injection h₁
+    intro a b c
+    intro p₁ p₂
+    obtain ⟨ek,x⟩ := p₁
+    obtain ⟨el,y⟩ := p₂
+    obtain ⟨k,pk⟩ := ek
+    obtain ⟨l,pl⟩ := el
+    apply And.intro
+    apply Exists.intro (k*l)
+    rw [<-mul_assoc,<-pk,pl]
+    exact x
 
--- Question 15
-theorem leq_antisymm : ∀ x y : ℕ, (x ≤ y) ∧ (y ≤ x) → x = y :=
+-- To prove the anti-symmetry of divides we state
+-- the following helper theorems.
+theorem helper : ∀ a b : ℕ, a ≠ zero → a = a*b → b = succ zero := sorry
+theorem helper2 : ∀ a b : ℕ, a * b = succ zero → a = succ zero := sorry
+
+theorem divide_antisymm : ∀ x y : ℕ, x ∣ y ∧ y ∣ x → x = y :=
   by
-    intro a b
-    intro t
-    apply Exists.elim t.left
-    intro u wu
-    apply Exists.elim t.right
-    intro v wv
-    rw [wv,add_assoc] at wu
-    have h₁ := add_eq_self b (v + u) (Eq.symm wu)
-    have h₂ := add_eq_zero v u h₁
-    rw [h₂,PA3] at wv
-    assumption
+    intro a b t
+    obtain ⟨p,anz⟩ := t.left
+    obtain ⟨k,pk⟩ := p
+    obtain ⟨q,bnz⟩ := t.right
+    obtain ⟨l,pl⟩ := q
+    rw [pk]
+    rw [pk,mul_assoc] at pl
+    have t1 := helper a (k*l) anz pl
+    have t2 := helper2 k l t1
+    rw [t2,PA6,PA5,zero_add]
+
+#print divide_antisymm

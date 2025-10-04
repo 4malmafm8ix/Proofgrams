@@ -85,7 +85,7 @@ theorem succ_mul : ∀ x y : ℕ, (succ x) * y = x * y + y :=
     intro a b
     induction b with
     | zero      => rfl
-    | succ n ih => rw [PA4,PA6 a n,PA6,ih,PA4]
+    | succ n ih => rw [PA4,PA6,PA6,ih,PA4]
                    rw [add_assoc,add_comm n a,<-add_assoc]
 
 -- Question 8
