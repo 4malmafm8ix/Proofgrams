@@ -326,7 +326,7 @@ rw [add\_comm] will commute the addition $(a*n + (n + a).\text{succ})$
 
 \end{frame}
 
-\begin{frame}
+\begin{frame}[fragile]
 	\frametitle{Tactic: rw}
 	
 	\textbf{Backwards rewrites}
@@ -335,16 +335,103 @@ rw [add\_comm] will commute the addition $(a*n + (n + a).\text{succ})$
 	
 	If one wishes to use the equation $a=b$ to replace $b$ with $a$ in the goal, then one can write rw[<-theorem-name]. That is, the use of arrow ``<-'' tells Lean to read the equation right-to-left in the rewrite.
 	
+	\begin{lstlisting}
+1 goal
+a b c u v : N
+hu : b = a + u
+hv : c = b + v
+$\vdash$ c = a + u + v		
+	\end{lstlisting}
+In order to close this goal, we need to sub $b$ for $a+u$.
+	
 \end{frame}
 
+\begin{frame}[fragile]
+	\frametitle{Tactic: rw}
+	
+	{\bf Backwards Rewrites}
+	
+	Consider the following proof state from before:	
+	\begin{lstlisting}
+1 goal
+a n : N
+ih : a.succ * n = a * n + n
+$\vdash$ (a * n + (a + n)).succ = (a * n + a + n).succ		
+	\end{lstlisting}
+It looks like the two are equal. However, the parentheses don't match. We need to use add\_assoc to rebracket: 
+{\footnotesize\begin{lstlisting}
+def add_assoc : $\forall$ x y z : N, 
+	(x + y) + z = x + (y + z) := by ...
+\end{lstlisting}}
+There are two paths to close the goal from here: 
 
+rw [add\_assoc] will rebracket (a*n + a) + n
 
-%	Equality/Identity
-% Mathematics in Lean
-%	Inductive types
-%	Peano arithmetic (Natural Numbers)
-%		Arithmetic
-%		Order
+rw [<-add\_assoc] will rebracket a*n + (a + n)
+\end{frame}
+
+\section{Arithmetic Prediates}
+
+\begin{frame}[fragile]
+	\frametitle{Arithmetic Predicates}
+	
+	On top of the arithmetic of the natural numbers we can begin to prove things about higher and higher properties. 	
+	$$\text{Including the relations: } <,\leq, |, \dots$$
+	These three are statements about the existence of solutions to certain equations.	
+	{\footnotesize\begin{lstlisting}
+def LT  (m n : N) := $\exists$ k : N, n = m + (succ k)
+def LTE (m n : N) := $\exists$ k : N, n = m + k
+def DIV (m n : N) := ($\exists$ k : N, n = m*k) $\land$ (m $\neq$ zero)	
+	\end{lstlisting}}
+	Recall that terms of the type $\exists x: \mathbb{N}, P x$ are pairs $(k, t)$ where $k : \mathbb{N}$ and $t : P t$. In order to make use of hypotheses like $a \leq b$ requires us to be able to access the elements of these pairs.
+	
+	Proving them will require Exists.intro \_ \_
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Tactic: obtain}	
+	{\footnotesize\begin{lstlisting}
+1 goal
+a b : N
+$t_{1}$ : a < b
+$\vdash$ a.succ < b.succ	
+	\end{lstlisting}}	
+To make use of the hypothesis $t_{1}$ we need to access the terms in the underlying pair 
+	{\footnotesize\begin{lstlisting}
+obtain $\langle$k,pk$\rangle$ := $t_{1}$
+	\end{lstlisting}}
+This introduces the natural number $k$ and a proof that $k$ satifies the equation defining the relation: $k$ is the witness to $a < b$.
+	{\footnotesize\begin{lstlisting}
+1 goal
+a b k : N
+pk : b = a + k.succ
+$\vdash$ a.succ < b.succ
+	\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Exists Introduction}
+	{\footnotesize\begin{lstlisting}
+1 goal
+a b k : N
+pk : b = a + k.succ
+$\vdash$ a.succ < b.succ
+	\end{lstlisting}}
+	We need to provide an $x$ such that succ $b$ = succ $a$ + succ $x$.
+	This same $x = k$ is the natural number we are after!
+	{\footnotesize\begin{lstlisting}
+apply Exists.intro k
+	\end{lstlisting}}	
+	{\footnotesize\begin{lstlisting}
+1 goal
+case intro
+a b k : N
+pk : b = a + k.succ
+$\vdash$ b.succ = a.succ + k.succ
+	\end{lstlisting}}	
+	Two rewrites will close this goal; succ\_add and pk.
+\end{frame}
+
 %		Divisbility
 %	Showcase other work in formalisation.
 %		mathlib

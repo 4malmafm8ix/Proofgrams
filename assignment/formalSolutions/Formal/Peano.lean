@@ -157,12 +157,10 @@ theorem leq_trans : ∀ x y z : ℕ, (x ≤ y) ∧ (y ≤ z) → x ≤ z :=
   by
     intro a b c
     intro t
-    apply Exists.elim t.left
-    intro u hu
-    apply Exists.elim t.right
-    intro v hv
-    apply Exists.intro (u + v)
-    rw [<-add_assoc,<-hu,hv]
+    obtain ⟨k,pk⟩ := t.left
+    obtain ⟨l,pl⟩ := t.right
+    apply Exists.intro (k+l)
+    rw[<-add_assoc,<-pk,pl]
 
 -- You may require the following two theorems to write
 -- a proof of Question 15. These theorems: add_eq_self
