@@ -71,7 +71,11 @@ theorem zero_add : ∀ x : ℕ, zero + x = x :=
     intro a
     induction a with
     | zero      => rfl
-    | succ k ih => rw [PA4,ih]
+    | succ k ih =>
+      calc
+        zero + succ k
+        = succ (zero + k) := by rw [PA4]
+        _ = succ k        := by rw [ih]
 
 @[simp]
 theorem zero_mul : ∀ x : ℕ, zero * x = zero := sorry
@@ -94,13 +98,15 @@ theorem succ_mul : ∀ x y : ℕ, (succ x) * y = x * y + y :=
     intro a b
     induction b with
     | zero      => rfl
-    | succ k ih => _ -- Start here Wednesday
+    | succ k ih => rw [PA6,PA4,PA4,PA6,ih]
+                    -- (ak + k) + a = (ak + a) + k
+                    -- ak + (k + a) = (ak + a) + k
+                   rw [add_assoc,add_comm k a]
+                   -- ak + (a + k) = (ak + a) + k
+                   rw [<-add_assoc]
 
 @[simp]
 theorem mul_comm : ∀ x y : ℕ, x * y = y * x := sorry
-
-@[simp]
-theorem add_mul : ∀ x y z : ℕ, (y + z) * x = y * x + z * x := sorry
 
 @[simp]
 theorem mul_assoc : ∀ x y z : ℕ, (x * y) * z = x * (y * z) := sorry
@@ -124,6 +130,12 @@ theorem mul_add : ∀ x y z : ℕ, x * (y + z) = x * y + x * z :=
         _   = n*b + b + (succ n * c)      := by rw [<-add_assoc]
         _   = (succ n * b) + (succ n * c) := by rw [<-succ_mul]
 
+@[simp]
+theorem add_mul : ∀ x y z : ℕ, (y + z) * x = y * x + z * x :=
+  by
+    intro a b c
+    rw [mul_comm, mul_comm b, mul_comm c,mul_add]
+
 -- We can define < relation using the following
 -- existential ∃ statement.
 def strictLT (m n : ℕ) := ∃ k : ℕ, n = m + (succ k)
@@ -146,13 +158,29 @@ instance : LT ℕ where
 -- (ii) rcases t with ⟨k,p⟩ does the same thing.
 
 theorem zero_lt_succ : ∀ x : ℕ, zero < succ x :=
-  sorry
+  by
+    intro a
+    -- succ a = zero + succ ? ; a solves this.
+    apply Exists.intro a
+    --rw [PA4,zero_add]
+    simp
 
 theorem lt_succ : ∀ x : ℕ, x < succ x :=
-  sorry
+  by
+    intro a
+    -- succ a = a + succ ? ; zero solves this.
+    apply Exists.intro zero
+    rfl
 
 theorem succ_lt : ∀ x y : ℕ, x < y → succ x < succ y :=
-  sorry
+  by
+    intro a b t
+    obtain ⟨k,pk⟩ := t
+    -- b      = a + succ k
+    -- succ b = succ a + succ ? ; solves this
+    apply Exists.intro k
+    --simp [pk]
+    rw [succ_add,<-pk]
 
 theorem lt_trans : ∀ x y z : ℕ, x < y → y < z → x < z :=
   sorry
@@ -184,7 +212,7 @@ theorem divide_transitive : ∀ x y z : ℕ, x ∣ y → y ∣ z → x ∣ z :=
   sorry
 
 -- To prove the anti-symmetry of divides we state
--- the following helper theorems.
+-- the following helper theorems without proof.
 theorem helper : ∀ a b : ℕ, a ≠ zero → a = a*b → b = succ zero := sorry
 theorem helper2 : ∀ a b : ℕ, a * b = succ zero → a = succ zero := sorry
 

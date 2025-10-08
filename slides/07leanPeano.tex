@@ -432,11 +432,100 @@ $\vdash$ b.succ = a.succ + k.succ
 	Two rewrites will close this goal; succ\_add and pk.
 \end{frame}
 
-%		Divisbility
-%	Showcase other work in formalisation.
-%		mathlib
-%		stdlib (Agda)
-%		Major milestones (100 Theorems List)
+
+\section{Curry Howard in Practice}
+\begin{frame}
+	\frametitle{Recap}
+	
+	We have studied the work of logicians and computer scientists. Their work has shown us that our most fundamental modes of reasoning can be encoded (really, are the same thing) as programs. 
+	
+	Computer scientists and software engineers have built programming languages (and related tooling) that enable the modern mathematician to take advantange of this correspondence between reasoning and programming. Now we are able to write our proofs in programming languages - with the benefit of having our work checked for us.
+	
+	We have now had some experience of this with the language Lean4. There are a number of other languages in which one could choose to apply these methods. Some built on the Curry Howard correspondence, as well as other languages with different means of certifying the correctness of a proof.
+	
+	{\bf Question:} to what extent is this practiced by mathematicians today?	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Languages}
+	
+	These are just a few examples of languages with a ``dependent type system'' rich enough to be used as both a programming language and an interactive theorem prover.
+	
+	\begin{itemize}
+		\item[] Lean
+		\item[] Agda 
+		\item[] Rocq	
+		\item[] Idris
+	\end{itemize}
+	
+	Type checking in these languages allows for proof verification.
+\end{frame}
+
+\begin{frame}
+	\frametitle{mathlib}
+	
+	a community of mathematicians and computer scientists are using Lean to develop a library of theorems called mathlib. This started as a project of undergrads from University College London, under the Professor Kevin Buzzard with the aim of: formalising all ``undergrad mathamatics'' in Lean. It has since branched out to have contributors from all over the globe.
+	
+	As of October 2025 mathlib has: 
+	
+	\begin{itemize}
+		\item[] 116258 definitions 
+		\item[] 234718 theorems 
+		\item[] 653 contributors (many of whom were undergrads!)
+	\end{itemize}
+	
+	At this point they have all but achieved their goal of formalising undergrad math. With thousands of theorems about algebra, calculus, geometry, and probability theory.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Formal Mathematics Milestones}
+	
+	As well as the mountain of work building mathlib. Others have built on this and are starting to use these tools to write formal proofs of novel, cutting edge, mathematics.
+	
+	\begin{tabular}{r | l l l}
+		2004 & Four Colour Theorem & Georges Gonthier & Rocq \\
+		2012 & Feit-Thompson Theorem & Georges Gonthier & Rocq \\
+		2016 & HoTT Library & Many authors & Rocq \\
+		2020 & Perfectoid Spaces & Peter Scholze & Lean \\ 
+		2023 & PFR conjecture & Terence Tao & Lean
+	\end{tabular}
+	
+	In some cases formalisation was reported as being faster than the peer-review process. Those involved report that the process was enlightening for them and even, fun! 
+\end{frame}
+
+\begin{frame}
+	\frametitle{Freek Wiedijk's 100 Theorems}
+	
+	Freek Wiedijk keeps a list of 100 theorems that are used as a benchmark of sorts for particular theorem provers, but also for theorem proving generally. This includes theorems like; 
+	
+	\begin{itemize}
+		\item[] The irrationality of $\sqrt{2}$
+		\item[] The fundamental theorem of algebra 
+		\item[] Prime number theorem 
+		\item[] Four Squares Theorem 
+		\item[] Dirichelt's Theorem 
+		\item[] Fundamental Theorem of Arithmetic	
+	\end{itemize}
+	
+	Isabelle has the most at 92/100 of the theorems formalized. HOL Light is second at 89/100. While Lean is third with 82. Collectively, across all the theorem provers, 99/100 have been formalised. Fermat's Last Theorem is the remaining theorem on the list.
+\end{frame}
+
+\begin{frame}
+	\frametitle{Metaprograms and Tactics}
+	
+	At first we studied reasoning at the minute level. Typically, one does not reason at this level. Mathematicians write papers using other modes of reasoning well understood by the community; modes of reasoning particular to that branch of mathematics. 
+	
+	Rather than the granular level of reasoning studied above, one might invoke a particular theorem or method to justify a proof. In order for broader adoption one might try to write tactics that allow for this higher level of expression, and keep more of the fine details in the background. We can't get rid of the finer details altogether, as these are the certificates for our proofs, however we can hope to generate better DSL to help in the authoring of proofs and to better reflect mathematical thinking. 
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Evolution of Human Science}
+	
+	The short story ``Evolution of Human Science'' by Ted Chiang was published in a collection of short stories called Stories of Your Life and Others. In this story humanity has been split into two classes; one with a far greater intelligence than the other. This short story is well worth your time to read! Indeed, all of his short stories are wonderful and thought provoking.
+
+\end{frame}
+
 % Software Verification 
 %	Lists
 %		Pen-and-paper proofs.

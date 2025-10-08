@@ -2,9 +2,40 @@
 \usepackage{amsmath,amssymb}
 \usepackage{enumitem}
 \usepackage{geometry}
+
+
+
+
 \geometry{margin=1in}
 \usepackage{multicol}
 \setlength{\columnsep}{1cm}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinelanguage{Lean}{
+  morekeywords={
+    theorem,def,example,inductive,structure,namespace,end,open,import, calc,
+    variable,variables,section,context,axiom,axioms,lemma,corollary,constant,intro,
+    constants,universe,universes,attribute,instance,noncomputable,meta,mutual,
+    with,do,match,if,then,else,by,have,assume,show,from,begin,end,fun,λ,let,in,induction,
+    forall,Π,Type,Prop,where,deriving,macro,syntax,elab,command,term,notation,rfl,rw
+  },
+  sensitive=true,
+  morecomment=[l]--,
+  morecomment=[s]{/-}{-/},
+  morestring=[b]",
+  morestring=[b]',
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{orange},
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  mathescape=true
+}
+
 
 \title{Lean 4 Summary Sheet}
 \author{}
@@ -152,6 +183,69 @@ One can open tactic mode by writing ``by'' at the start of a proof. One then app
   
   If the proof is particularly long, then using have can break the proof up into manageable steps.
   
+\section*{Tactics for Proofs on Peano Arithmetic}
+
+Each of the tactics in the previous section remain important when writing proofs about any area of mathematics. On top of those are the following new tactics that you will find useful when proving theorems about the natural numbers.
+
+\begin{itemize}
+\item \texttt{rfl}
+
+If the goal can be closed by computing two sides of an equation down to the same value, then rfl will close the goal. That is, rfl will determine whether to expressions are equal up to computation. Such proofs are said to be ``mere computation''. 
+
+\item \texttt{rw [\_, \_, \_,\dots]}
+
+Interesting theorems require more than mere computation to prove them. In this case, one can make progress proving an equation by manually calling rewrites by other theorems and hypothesis in the local context. The idea here is that in order to prove an equation, we can apply previous results to terms in the equation in order to get it down to a trivial statement like $a=a$ that Eq.refl can close. 
+
+This tactic will take a comma separated list of theorems and apply them in succession. See the induction section below for an example.
+
+
+\item \texttt{simp}
+
+This tactic is similar to rfl in that it applies equational theorems to the goal. However, the database of theorems and lemmas that simp has access to can be added to be the programmer. The @[simp] attribute tag can be added to a theorem to add it to the simp tactic. Therefore simp is, in a sense, a more powerful rfl as it can rewrite with theorems and lemma, not just definitions. 
+
+
+\item \texttt{induction \_ with \_ }
+
+This is one of the key tactics when working with inductive types like the natural numbers. Here is an example of the pattern used on a theorem about natural numbers. 
+
+\begin{lstlisting}[language=Lean]
+theorem zero_add :$\forall x : \mathbb{N}$, zero + x = x :=
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ k ih => rw [add_succ,ih]
+\end{lstlisting}
+
+This requires the proof of the base cases i.e. the case $a = $ zero and the induction step where $a = $ succ $k$ for some natural number $k$. In the induction step we have access to the proof of the theorem at $a = k$; here we have called that proof ih - induction hypothesis.
+
+\newpage
+\item \texttt{obtain <\_,\_> := \_}
+
+If we want to unpack hypotheses defined by inductive types like $\exists x, P \ x$ or $P \land Q$, then we can use the obtain tactic. If $t : P \land Q$, then obtain $\langle p,q\rangle := t$ returns the proof $p : P$ and the proof $q : Q$ from inside the conjunction.
+
+Similarly, the witness and proof inside $t : \exists x : \alpha, \ P \ x$ can be extracted using the obtain tactic. For example, obtain $\langle a,pa\rangle := t$ takes the proof $t$ from the context and returns a term $a : \alpha$ and the proof $pa$ that $a$ satifies the predicate $P$.
+
+\item \texttt{calc}
+
+The calc tactic provides a different way to present a proof using a succession of rw rewrites. Here is the same proof of zero\_add above, but this time presented using the calc tactic. 
+
+\begin{lstlisting}[language=Lean]
+theorem zero_add : $\forall x : \mathbb{N}$, zero + x = x :=
+  by
+    intro a
+    induction a with
+    | zero      => rfl
+    | succ k ih =>
+      calc
+        zero + succ k
+          = succ (zero + k) := by rw [PA4]
+        _ = succ k          := by rw [ih]
+\end{lstlisting}
+
+This allows for the presentation of the calculation in a manner closer to how we might write it on paper. In this way the proof is clearer to the reader, but more cumbersome to write. Note that one can use more than one rw on a single line. 
+
+\end{itemize}  
 \end{itemize}
 
-\end{document}
+\end{document}/
