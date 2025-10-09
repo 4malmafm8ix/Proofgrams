@@ -1,0 +1,281 @@
+% Load required themes and packages.
+\documentclass{beamer}
+\usepackage{mdframed}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinelanguage{Lean}{
+  morekeywords={
+    theorem,def,example,inductive,structure,namespace,end,open,import, calc,
+    variable,variables,section,context,axiom,axioms,lemma,corollary,constant,intro,
+    constants,universe,universes,attribute,instance,noncomputable,meta,mutual,
+    with,do,match,if,then,else,by,have,assume,show,from,begin,end,fun,λ,let,in,induction,
+    forall,Π,Type,Prop,where,deriving,macro,syntax,elab,command,term,notation,rfl,rw
+  },
+  sensitive=true,
+  morecomment=[l]--,
+  morecomment=[s]{/-}{-/},
+  morestring=[b]",
+  morestring=[b]',
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{orange},
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  columns=fullflexible,
+  keepspaces=true,
+  mathescape=true
+}
+
+\usetheme{Pittsburgh}
+\usecolortheme{default}
+\useinnertheme{default}
+\useoutertheme{default}
+\usefonttheme{structurebold}
+
+% Import the necessary preamble for the document. 
+\usepackage{../proofsPrograms}
+
+% Bibliography
+\usepackage[style=alphabetic]{biblatex}
+\addbibresource{../proofsPrograms.bib} 
+% In case of error: check the file path!
+% the ../../ acts to jump back to files in path.
+% Command line sequence:
+%   pdflatex *filename* without .tex
+%   biber *filename* without .bib
+%   pdflatex *filename* without .tex
+
+% Remove navigation bar
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}[frame number]
+
+% Definition format options. 
+\newtheoremstyle{indentDefn}
+{\topsep} % Space above
+{\topsep} % Space below
+{\it} % Body font
+{2cm} % Indent amount
+{\bf} % Theorem head font
+{:} % Punctuation after theorem head
+{0.5em} % Space after theorem head
+{} % Theorem head spec
+
+\theoremstyle{indentDefn} \newtheorem{defn}[]{Definition}
+
+\lstset{
+  basicstyle=\ttfamily,
+  mathescape=true
+}
+
+\title{An Introduction to Lean4}
+\subtitle{Software Verification}
+\author{MATH230}
+\institute{School of Mathematics and Statistics \\ University of Canterbury}
+\date{}
+
+% Document body starts here.
+\begin{document}
+
+
+% Title frame
+\begin{frame}
+
+  \titlepage
+
+\end{frame}
+
+% Table of contents page
+\begin{frame}
+  \frametitle{Outline}
+
+  \tableofcontents
+
+\end{frame}
+
+\section{Software Verification}
+
+\begin{frame}
+	\frametitle{Software Specifications}
+	
+	Lean is first and foremost a programming language. Which means we can write the programs we would normally write; as well as programs that are being used as proofs. 
+	
+	In fact, we can write programs as we normally would and then, all within Lean, prove that they meet the specifications we expect. 
+	
+	Previously we proved theorems about addition and multiplication on the natural numbers. These are just claims about how functions on the data type $\mathbb{N}$ interact. There is no reason why we can't write different programs on different data types and prove properties about those programs. 
+	
+	First order logic (aka dependent types) can be used to write specifications for software!
+	
+	{\bf This is not unit testing with cases.}
+\end{frame}
+
+\section{List}
+\begin{frame}[fragile]
+	\frametitle{List}
+	
+	Lists can be created in two ways; stating the emtpy list, or cons-ing an element to the beginning of another list.
+	
+	\begin{lstlisting}[language=Lean]
+inductive List ($\alpha$ : Type) where
+  | null : List $\alpha$
+  | cons : (a : $\alpha$) $\to$  (as : List $\alpha$) $\to$ List $\alpha$
+	\end{lstlisting}
+	
+	\vspace{40mm}
+	
+	This type has a very similar structure to the type of natural numbers. Writing functions out of this type will also be done by pattern matching; accounting for the null case, and the cons case.
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{append $++$}
+	
+	Append is a function which takes two lists and concatenates them into a single list; the first onto the beginning of the second. Here is a recursive definition of append using pattern matching on the first argument: 
+	
+	\begin{lstlisting}[language=Lean]
+def append {$\alpha$ : Type} (as bs : List $\alpha$) : List $\alpha$ :=
+  match as with
+  | null      => bs
+  | cons a as => cons a (append as bs)	
+	\end{lstlisting}
+	
+\vspace{30mm}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Specifications for Append}
+	
+	This program should have each of the following properties:
+	
+	\begin{lstlisting}[language=Lean]
+def null_append {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (null ++ xs) = xs 
+
+def cons_append {$\alpha$ : Type} :
+  $\forall$ x : $\alpha$, $\forall$ xs ys : List $\alpha$,
+    ((cons x xs) ++ ys) = (cons x (xs ++ ys))
+
+theorem append_null {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (xs ++ null) = xs
+
+theorem append_cons {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (xs ++ null) = xs 
+
+theorem append_assoc {$\alpha$ : Type} :
+  $\forall$ xs ys zs : List $\alpha$, (xs ++ ys) ++ zs = xs ++ (ys ++ zs)
+
+	\end{lstlisting}
+\end{frame}
+	
+\begin{frame}[fragile]
+	\frametitle{Definitionally Equal}
+	
+	These are definitionally equal!
+	
+	\begin{lstlisting}[language=Lean]
+def null_append {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (null ++ xs) = xs 
+
+def cons_append {$\alpha$ : Type} :
+  $\forall$ x : $\alpha$, $\forall$ xs ys : List $\alpha$,
+    ((cons x xs) ++ ys) = (cons x (xs ++ ys))
+	\end{lstlisting}
+	
+	\vspace{40mm}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Pen-and-Paper Proof}
+	
+	What would a proof of a statement like this even look like? 	
+	\begin{lstlisting}[language=Lean]
+theorem append_null {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (xs ++ null) = xs
+	\end{lstlisting}
+	
+	\vspace{50mm}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Induction on Lists}
+	
+	This suggests that we can do induction on lists; which shouldn't be too suprising given that the type List $\alpha$ is very similar to $\mathbb{N}$ the type of natural numbers.
+	
+	\begin{lstlisting}[language=Lean]
+theorem append_null {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (xs ++ null) = xs :=
+    by
+      intro as
+      induction as with
+      | null         => _
+      | cons k ks ih => _
+	\end{lstlisting}
+
+\vspace{30mm}	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Pen-and-Paper Proof}
+	
+	\begin{lstlisting}[language=Lean]
+theorem append_cons {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, (xs ++ null) = xs 
+	\end{lstlisting}
+	
+	\vspace{60mm}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Pen-and-Paper Proof}
+		
+	\begin{lstlisting}[language=Lean]
+theorem append_assoc {$\alpha$ : Type} :
+  $\forall$ xs ys zs : List $\alpha$, (xs ++ ys) ++ zs = xs ++ (ys ++ zs)
+	\end{lstlisting}
+	
+	\vspace{60mm}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Pen-and-Paper Proof}
+		
+	\begin{lstlisting}[language=Lean]
+def length {$\alpha$ : Type} : List $\alpha$ $\to$ Nat
+  | null      => 0
+  | cons _ as => 1 + length as
+
+theorem length_append {$\alpha$ : Type} :
+  $\forall$ xs ys : List $\alpha$, length (xs ++ ys) = length xs + length ys
+	\end{lstlisting}
+	
+	\vspace{60mm}
+	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Software Verification}
+	
+	With these examples we begin to see how properties of programs can be expressed in the dependent type system of Lean4. Moreover, we can write programs that inhabit these properties/propositions in order to prove them. In this way we are able to verify programs meet certain specifications \emph{for all possible inputs}.
+	
+	{\bf Example:} One can implement merge\_sort in Lean4 and also write a specification to say what it means for a list to be sorted. This would be a unary predicate, Sorted, on List. Finally, one could prove the theorem: 
+\begin{lstlisting}[language=Lean]	
+theorem merge_sorted {$\alpha$ : Type} :
+  $\forall$ xs : List $\alpha$, Sorted (merge_sort xs)
+\end{lstlisting}
+
+\vspace{15mm}
+
+Programming and verification all happen in the same environment.
+	
+\end{frame}
+
+\section{Software Verification in Practice}
+
+
+
+\end{document}

@@ -13,7 +13,9 @@ def append {α : Type} (as bs : List α) : List α :=
   | null      => bs
   | cons a as => cons a (append as bs)
 
-notation xs " ++ " ys => append xs ys
+-- This type class allows for the infix ++
+instance {α : Type} : Append (List α) where
+  append := append
 
 -- The following two theorems are mere computations
 -- from the definition of append.
@@ -32,7 +34,11 @@ def cons_append {α : Type} :
 -- Question 1
 theorem append_null {α : Type} :
   ∀ xs : List α, (xs ++ null) = xs :=
-    sorry
+    by
+      intro as
+      induction as with
+      | null         => rfl
+      | cons a as ih => rw [cons_append,ih]
 
 -- We cons an element to the head of a list.
 -- We snoc an element to the end of a list.
@@ -44,7 +50,13 @@ def snoc {α : Type} : List α → α → List α
 theorem snoc_append {α : Type} :
   ∀ a : α, ∀ (as bs : List α),
     ((snoc as a) ++ bs) = (as ++ (cons a bs)) :=
-      sorry
+  by
+    intro a as bs
+    induction as with
+    | null         => --rw [snoc,null_append,cons_append,null_append]
+                      --simp [snoc,null_append,cons_append]
+                      rfl
+    | cons x xs ih => simp [snoc,cons_append,ih]
 
 def reverse {α : Type} : List α -> List α
 | null      => null
@@ -54,19 +66,32 @@ def reverse {α : Type} : List α -> List α
 theorem reverse_snoc {α : Type} :
   ∀ a : α, ∀ as : List α,
     reverse (snoc as a) = cons a (reverse as) :=
-    sorry
+    by
+      intro a as
+      induction as with
+      | null         => --rw [snoc,reverse,reverse,reverse,snoc]
+                        --simp [snoc,reverse]
+                        rfl
+      | cons k ks ih => --rw [snoc,reverse,ih,snoc,reverse]
+                        simp [snoc,reverse,ih]
 
 -- Question 4
 theorem snoc_reverse {α : Type} :
   ∀ a : α, ∀ as : List α,
     snoc (reverse as) a = reverse (cons a as) :=
-    sorry
+    by
+      intro a as
+      rfl
 
 -- Question 5
 theorem rev_rev {α : Type} :
   ∀ xs : List α,
   reverse (reverse xs) = xs :=
-    sorry
+    by
+      intro as
+      induction as with
+      | null         => rw [reverse,reverse]
+      | cons x xs ih => rw [reverse,snoc_reverse,reverse,reverse_snoc,ih]
 
 
 -- Don't write any code after this end Formal.list line.

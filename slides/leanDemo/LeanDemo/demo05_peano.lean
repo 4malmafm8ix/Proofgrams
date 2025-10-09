@@ -30,8 +30,8 @@ open ℕ
 -- ⋮
 -- In fact the inductive type constructor ensures these are the only
 -- natural numbers and that they're all distinct.
-theorem PA1 (m : ℕ) : ¬(succ m = zero) := by intro f;injection f
-theorem PA2 (m n : ℕ) : succ m = succ n → m = n := by intro h;injection h
+theorem PA1 (m : ℕ) : ¬(succ m = zero) := by intro f<;>injection f
+theorem PA2 (m n : ℕ) : succ m = succ n → m = n := by intro h<;>injection h
 
 -- This leaves some of the signature PA : (0,s,+,×,=) to be defined.
 -- Rather than thinking of +,× as term builders, we think of them
@@ -182,8 +182,20 @@ theorem succ_lt : ∀ x y : ℕ, x < y → succ x < succ y :=
     --simp [pk]
     rw [succ_add,<-pk]
 
+--                              x < y ∧ y < z → x < z
 theorem lt_trans : ∀ x y z : ℕ, x < y → y < z → x < z :=
-  sorry
+  by
+    intro a b c alb blc
+    obtain ⟨k,pk⟩ := alb
+    obtain ⟨l,pl⟩ := blc
+    -- Goal: c = a + succ ?
+    -- c = b + succ l
+    --   = (a + succ k) + succ l
+    --   = a + (succ k + succ l)
+    --   = a + succ (k + succ l)
+    apply Exists.intro (k + succ l)
+    simp [pk, pl]
+    rw [add_comm,add_assoc]
 
 theorem zero_or_gtzero : ∀ x : ℕ, x = zero ∨ zero < x :=
  by
@@ -206,10 +218,31 @@ instance : Dvd ℕ where
   dvd := natDivideNat
 
 theorem divide_reflexive : ∀ x : ℕ, x ≠ zero → x ∣ x :=
-  sorry
+  by
+    intro a anz
+    apply And.intro
+    -- a = a * ?
+    apply Exists.intro (succ zero)
+    simp
+    exact anz
+
 
 theorem divide_transitive : ∀ x y z : ℕ, x ∣ y → y ∣ z → x ∣ z :=
-  sorry
+  by
+    intro a b c
+    intro adb bdc
+    obtain ⟨p,anz⟩ := adb
+    obtain ⟨k,pk⟩ := p
+    obtain ⟨q,bnz⟩ := bdc
+    obtain ⟨l,pl⟩ := q
+    -- c = a * ?
+    -- c = b * l
+    --   = (a * k) * l
+    --   = a * (k * l)
+    apply And.intro
+    apply Exists.intro (k*l)
+    rw [<-mul_assoc,<-pk,pl]
+    exact anz
 
 -- To prove the anti-symmetry of divides we state
 -- the following helper theorems without proof.
