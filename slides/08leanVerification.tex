@@ -102,9 +102,9 @@
 	
 	In fact, we can write programs as we normally would and then, all within Lean, prove that they meet the specifications we expect. 
 	
-	Previously we proved theorems about addition and multiplication on the natural numbers. These are just claims about how functions on the data type $\mathbb{N}$ interact. There is no reason why we can't write different programs on different data types and prove properties about those programs. 
+	Previously we proved theorems about addition and multiplication on the natural numbers. These are just statements about how programs on the data type $\mathbb{N}$ interact. There is no reason why we can't write different programs on different data types and prove properties about those programs. 
 	
-	First order logic (aka dependent types) can be used to write specifications for software!
+	First order logic (aka dependent types) can be used to write formal specifications for software!
 	
 	{\bf This is not unit testing with cases.}
 \end{frame}
@@ -276,6 +276,22 @@ Programming and verification all happen in the same environment.
 
 \section{Software Verification in Practice}
 
+
+\begin{frame}
+	\frametitle{Verification Examples}	
+	
+As we have seen, formally verifying that proofs/programs meet specifications can be a lot of work. For this reason the security pay-off has to be important enough to invest time (and money) into the process. Here are just a few examples where formal verification of the type we've studied has been used in practice.
+	
+	\begin{itemize}
+		\item[] \href{https://github.com/AbsInt/CompCert}{CompCert C Compiler} (Rocq)
+		\item[] \href{https://leios.cardano-scaling.org/formal-spec/}{Cardano proof-of-stake protocol} (Agda and HOL)
+		\item[] \href{https://sel4.systems/}{sel4 OS kernel verification project} (HOL)
+		\item[] \href{https://github.com/hacl-star/hacl-star}{HACL verified Cryptography Library} (F*)
+	\end{itemize}
+	
+	You can click on each of these to find more information about the projects.
+
+\end{frame}
 
 
 \end{document}
