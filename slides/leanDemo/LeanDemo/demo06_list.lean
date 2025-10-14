@@ -11,7 +11,7 @@ open List
 def append {α : Type} (as bs : List α) : List α :=
   match as with
   | null      => bs
-  | cons a as =>  cons a (append as bs)
+  | cons a as => cons a (append as bs)
 
 notation xs " ++ " ys => append xs ys
 
@@ -36,18 +36,23 @@ def cons_append {α : Type} :
 -- addition required proof.
 theorem append_null {α : Type} :
   ∀ xs : List α, (xs ++ null) = xs :=
-    sorry
-
-theorem append_cons {α : Type} :
-  ∀ xs : List α, (xs ++ null) = xs :=
-    sorry
+    by
+      intro as
+      induction as with
+      | null         => rw [null_append]
+      | cons k ks ih => rw [cons_append,ih]
 
 -- If we are appending three lists together, then it
 -- shouldn't matter how we bracket the lists.
 theorem append_assoc {α : Type} :
   ∀ xs ys zs : List α,
     ((xs ++ ys) ++ zs) = xs ++ (ys ++ zs) :=
-      sorry
+      by
+        intro as bs cs
+        induction as with
+        | null         => rfl
+        | cons k ks ih => rw [cons_append,cons_append,
+                              ih,cons_append]
 
 def length {α : Type} : List α → Nat
   | null      => 0
@@ -60,9 +65,18 @@ theorem length_cons {α : Type} : ∀ a : α, ∀ xs : List α,
   length (cons a xs) = 1 + length xs :=
     by intro a as; rfl
 
+#check Nat.zero_add
+#check Nat.add_assoc
+
 theorem length_append {α : Type} :
   ∀ xs ys : List α, length (xs ++ ys) = length xs + length ys :=
-    sorry
+    by
+      intro as bs
+      induction as with
+      | null         => rw [null_append,length_null,Nat.zero_add]
+      | cons k ks ih => rw [cons_append,length_cons,
+                            length_cons,ih,
+                            Nat.add_assoc]
 
 -- We cons an element to the head of a list.
 -- We snoc an element to the end of a list.
@@ -87,14 +101,19 @@ def reverse {α : Type} : List α -> List α
 def length_reverse_eq {α : Type} :
   ∀ as : List α,
     length (reverse as) = length as :=
-      sorry
+      by
+        intro as
+        induction as with
+        | null         => rw [reverse]
+        | cons k ks ih => rw [reverse,length_snoc,ih,
+                              length]
 
 -- The following two theorems help prove the final theorem
 -- that reverse is its own inverse i.e. rev ∘ rev = id
 theorem reverse_snoc {α : Type} :
   ∀ a : α, ∀ as : List α,
     reverse (snoc as a) = cons a (reverse as) :=
-    sorry
+      sorry
 
 theorem snoc_reverse {α : Type} :
   ∀ a : α, ∀ as : List α,

@@ -158,11 +158,11 @@ def cons_append {$\alpha$ : Type} :
 theorem append_null {$\alpha$ : Type} :
   $\forall$ xs : List $\alpha$, (xs ++ null) = xs
 
-theorem append_cons {$\alpha$ : Type} :
-  $\forall$ xs : List $\alpha$, (xs ++ null) = xs 
-
 theorem append_assoc {$\alpha$ : Type} :
   $\forall$ xs ys zs : List $\alpha$, (xs ++ ys) ++ zs = xs ++ (ys ++ zs)
+  
+theorem length_append {$\alpha$ : Type} :
+  $\forall$ xs ys : List $\alpha$, length (xs ++ ys) = length xs + length ys
 
 	\end{lstlisting}
 \end{frame}
@@ -215,18 +215,6 @@ theorem append_null {$\alpha$ : Type} :
 	\end{lstlisting}
 
 \vspace{30mm}	
-\end{frame}
-
-\begin{frame}[fragile]
-	\frametitle{Pen-and-Paper Proof}
-	
-	\begin{lstlisting}[language=Lean]
-theorem append_cons {$\alpha$ : Type} :
-  $\forall$ xs : List $\alpha$, (xs ++ null) = xs 
-	\end{lstlisting}
-	
-	\vspace{60mm}
-	
 \end{frame}
 
 \begin{frame}[fragile]
