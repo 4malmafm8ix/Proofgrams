@@ -47,7 +47,7 @@ theorem icontra (f : P → Q) : ¬Q → ¬P :=
 -- Example 09 [∧ssociative]
 -- (P ∧ Q) ∧ R ⊢ P ∧ (Q ∧ R)
 theorem conj_assoc (t : (P ∧ Q) ∧ R) : P ∧ (Q ∧ R) :=
-    _
+    ⟨t.left.left,⟨t.left.right,t.right⟩⟩
 
 -- Example 10 [∨ssociative]
 -- (P ∨ Q) ∨ R ⊢ P ∨ (Q ∨ R)

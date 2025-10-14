@@ -87,12 +87,20 @@ def snoc {α : Type} : List α → α → List α
 theorem snoc_append {α : Type} :
   ∀ a : α, ∀ (as bs : List α),
     ((snoc as a) ++ bs) = (as ++ (cons a bs)) :=
-      sorry
+      by
+        intro a as bs
+        induction as with
+        | null         => rfl
+        | cons k ks ih => rw [snoc,cons_append,ih,cons_append]
 
 theorem length_snoc {α : Type} :
   ∀ a : α, ∀ as : List α,
     length (snoc as a) = 1 + length as :=
-      sorry
+      by
+        intro a as
+        induction as with
+        | null         => rfl
+        | cons k ks ih => rw [snoc,length,length,ih]
 
 def reverse {α : Type} : List α -> List α
 | null      => null
