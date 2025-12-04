@@ -36,6 +36,7 @@
 *.eps
 *.svg
 *.log.gz
+formalSolutions/
 
 # Output folders
 _build/
