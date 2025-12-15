@@ -71,7 +71,7 @@
   
   \vspace{5mm}
   
-	In defining propositional logic we suppressed a lot of detail into a single propositional variable $P$. It's time now to look at each proposition in more detail and parse out different components. 
+	In defining propositional logic we suppressed a lot of detail into a single propositional variable $P$. It's time now to look at each proposition in more detail and parse out different components. \emph{Like physicists finding parts (particles) within their ``atoms''.}
   
   \vspace{5mm} 
   
@@ -206,7 +206,7 @@
 \begin{frame}
 	\frametitle{Alphabet of FoL}
 	
-	We use the following standard language of \emph{first-order predicate logic} to build terms and well-formed formula.
+	We use the following standard language of \emph{first-order predicate logic} to build terms, well-formed formulae, and propositions.
 	
 	\begin{itemize}
 		\item Type variables $P, Q, R, S, T, ...$
@@ -257,21 +257,23 @@
 
 	\vspace{2mm}
 
-	Propositions are defined inductively as follows: 
+	Well-Formed Formulae (WFF) are defined inductively as follows: 
 	
 	\begin{itemize}
-		\item $\bot$ : Prop
-		\item An $n$-ary predicate applied to $n$-terms $R(t_{1}, ... , t_{n})$ is a Prop.
-		\item If $\alpha, \beta$ is a Prop, then $\lnot \alpha$, $(\alpha \lor \beta)$, $(\alpha \land \beta)$, and $(\alpha \rightarrow \beta)$ are Prop.
-		\item If $\alpha$ is a Prop and x is a variable, then $(\forall x : T, \ \alpha)$ and $(\exists x :T, \ \alpha)$ are Prop. 
+		\item $\bot$ is a WFF.
+		\item An $n$-ary predicate applied to $n$-terms $R(t_{1}, ... , t_{n})$ is a WFF.
+		\item If $\alpha, \beta$ are WFF, then $\lnot \alpha$, $(\alpha \lor \beta)$, $(\alpha \land \beta)$, and $(\alpha \rightarrow \beta)$ are WFF.
+		\item If $\alpha$ is a WFF and x is a variable, then $(\forall x : T, \ \alpha)$ and $(\exists x :T, \ \alpha)$ are WFF. 
 	\end{itemize}
-	% WFF are the strings that will have truth values.
+	
+	\textbf{These are the syntactic rules for building correct strings of symbols.}
+	
 \end{frame}
 
 \begin{frame}
 	\frametitle{Examples}
 	
-	Let $T$ be a type, $R$ be a two-place (binary) predicate, $P$ a one-place (unary) predicate, $f$ a binary function, and $a,b$ be constants.	Determine which of the following are wff and which are not. 
+	Let $T$ be a type, $R$ be a two-place (binary) predicate, $P$ a one-place (unary) predicate, $f$ a binary function, and $a,b$ be constants.	Determine which of the following are WFF and which are not. 
 	
 	\begin{enumerate}
 		\item $Pa$
@@ -314,8 +316,11 @@
 	The last few slides have said how we can build strings that are part of the language of first order logic. So far, these are just strings of symbols that fit together into terms and wff with the grammar defined. 
 	
 	\vspace{5mm}
-	
-	They have no meaning, \emph{yet}. We don't work this abstractly. Instead we choose construct specific base types with constants, functions, and predicates to express ideas and data precisely. It's this choice of ``signature'' that determines the meaning of the strings in this language. 
+	% I think the following paragraph is probably philosophically dubious... 
+	% Meaning is a loaded word...
+	% Defining a signature provides some meaning. But, some would say, if it doesn't specify a unique model then... 
+	% What are we doing? Defining strings to interpret in ``models''? Or are we defining the very objects of mathematics? 
+	They have no meaning, \emph{yet}. We don't work this abstractly. Instead we choose to construct specific base types with constants, functions, and predicates to express ideas and data precisely. It's this choice of ``signature'' that determines the meaning of the strings in this language. 
 	
 \end{frame}
 
@@ -474,7 +479,7 @@
 		\infer[\forall E]{\hspace{0.3cm} ? \hspace{0.3cm}}{\begin{array}{c} 
 			\Sigma \\
 			\mathcal{D} \\ 
-			\forall x \ \alpha			
+			\forall x \ \alpha[x]			
 			\end{array}}
 	\end{array}$
 	\end{center}
@@ -503,7 +508,7 @@
 
 	\vspace{0.5cm} 
 	
-	Bound and free variables act differently when interpreted; they play different roles. 
+	Bound and free variables act differently when interpreted; they play different roles. They distinguish between the propositions we want to prove and the merely syntactically correct formulae used to build those propositions.
 	
 	% Lecture: Technically a variable can be both in the same formula. But, in that case, it's better to rename the bound variable. So you should never have a variable that is both.	
 \end{frame}
@@ -511,7 +516,7 @@
 \begin{frame}
 	\frametitle{Free vs. Bound Variables}
 	
-	We can translate the first-order expression: $\forall x (x < y)$ as ``every $x$ is less than \_\_\_\_". The interpretation of this statement depends on the interpretation of $y$; because $y$ is free. It's truth will depend on the interpretation of $y$.
+	We can translate the first-order expression: $\forall x (x < y)$ as ``every $x$ is less than \_\_\_\_''. The interpretation of this statement depends on the interpretation of $y$; because $y$ is free. It's truth will depend on the interpretation of $y$.
 	
 	\vspace{0.5cm} 
 	
@@ -570,12 +575,28 @@
 	
 \end{frame}
 
+\begin{frame}
+	\frametitle{Terms, WFF, and Prop}
+	
+	We have so far distinguished two sorts of syntactically correct strings: terms and WFF. We are interested in \emph{proofs} and \emph{proving theorems.} With the notion of free/bounded variables we can now pick out those WFF which are propositions; Prop $\subset$ WFF. 
+	
+	\vspace{2mm}
+	
+	We say a WFF is closed if there are no free variables. Propositions are closed WFF. 
+	
+	\vspace{2mm}
+	
+	The distinction between free and bound variables is thus the distinction between propositions and the otherwise syntactically correct WFF. 
+	
+	\vspace{50mm}
+
+\end{frame}
 
 
 \begin{frame}
 	\frametitle{Universal Elimination}
 	
-	If $^{\Sigma}_{\forall x \alpha}\mathcal{D}$ is a derivation of $\forall x \ \alpha$ from hypotheses $\Sigma$, where $y$ is free for $x$ in $\alpha$, then
+	If $^{\Sigma}_{\forall x \alpha}\mathcal{D}$ is a derivation of $\forall x \ \alpha[x]$ from hypotheses $\Sigma$, where $y$ is free for $x$ in $\alpha$, then
 	
 	\vspace{0.5cm}
 	
@@ -584,7 +605,7 @@
 		\infer[\forall E]{\alpha[x/y]}{\begin{array}{c} 
 			\Sigma \\
 			\mathcal{D} \\ 
-			\forall x \ \alpha			
+			\forall x \ \alpha[x]			
 			\end{array}}
 		\end{array}$
 	\end{center}
@@ -623,8 +644,10 @@
 	\frametitle{Example}
 	
 	Every human is mortal. Sherlock is Human. Therefore, Sherlock is mortal. 
+	% Note that careless way we are forced to deal with the domain when quantifiers are naked.
+	% What is the domain? What is in it? At least Sherlock... but what else? 
 	
-	\vspace{6cm}
+	\vspace{60mm}
 	
 \end{frame}
 
@@ -658,7 +681,7 @@
 	
 	\begin{center}
 		$\begin{array}{c}
-		\infer[\forall I]{\forall x \alpha}{\begin{array}{c} 
+		\infer[\forall I]{\forall x \ \alpha}{\begin{array}{c} 
 			\Sigma \\
 			\mathcal{D} \\ 
 			\alpha[x/y]
@@ -679,7 +702,7 @@
 \begin{frame}
 	\frametitle{Example}
 	
-	$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x Px \hspace{0.5em} \vdash \hspace{0.5em} \forall x Qx$
+	Provide a proof to show $$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x Px \hspace{0.5em} \vdash \hspace{0.5em} \forall x Qx$$
 	
 	\vspace{7cm}
 	
@@ -688,7 +711,7 @@
 \begin{frame}
 	\frametitle{Example}
 	
-	$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x (Qx \rightarrow Rx) \hspace{0.5em} \vdash \hspace{0.5em} \forall x (Px \rightarrow Rx)$
+	Provide a proof to show $$\forall x (Px \rightarrow Qx), \hspace{0.5em} \forall x (Qx \rightarrow Rx) \hspace{0.5em} \vdash \hspace{0.5em} \forall x (Px \rightarrow Rx)$$
 	
 	% Make a point about the $a$ being part of the assumptions, but by the time the \forall comes in we have already discharged it from the assumption list. 
 	
@@ -763,7 +786,7 @@
 \begin{frame}
 	\frametitle{Example(!!!)}
 	
-	$\forall x \ Px \ \vdash \ \exists x \ Px$
+	Provide a proof to show $$\forall x \ Px \ \vdash \ \exists x \ Px$$
 	% Could revisit the discussion of the empty type. 
 	
 	\vspace{60mm}
@@ -774,7 +797,7 @@
 \begin{frame}
 	\frametitle{Example}
 	
-	$\forall x (Px \rightarrow Qx), \lnot Qa \ \vdash \ \exists x \ \lnot Px$
+	Provide a proof to show $$\forall x (Px \rightarrow Qx), \lnot Qa \ \vdash \ \exists x \ \lnot Px$$
 	
 	\vspace{60mm}	
 \end{frame}
@@ -804,7 +827,7 @@
 	
 	\infer[\exists E]{\gamma}
 	{
-		\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \exists x \alpha \end{array}
+		\begin{array}{c} \Sigma_{1}  \\ \mathcal{D}_{1} \\ \exists x \ \alpha \end{array}
 		& 
 		\begin{array}{c} \Sigma_{2}  \\ \mathcal{D}_{2} \\ \alpha[x/y]\rightarrow\gamma \end{array}				
 	}	
