@@ -16,7 +16,7 @@
 \usepackage{hyperref}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../proofsPrograms}
+\usepackage{proofsPrograms}
 
 % Package for presenting proofs in landscape. 
 \usepackage{rotating}
@@ -48,7 +48,7 @@
 			\end{itemize}
 
 		Relevant Topic: Propositional Logic\\
-		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapter 5}
+		Relevant reading: \href{https://leanprover-community.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapter 5}
 		
 	\vspace{0.2cm}
 
@@ -88,10 +88,10 @@
 				$\begin{array}{c}
 					\infer[\RAA,2]{A \lor \lnot A}
 						{\infer[\MP]{\bot}
-							{\infer[\lor I]{A \lor \lnot A}
+							{\infer[\lor I_{R}]{A \lor \lnot A}
 								{\infer[\to I,1]{\lnot A}
 									{\infer[\MP]{\bot}
-										{\infer[]{A \lor \lnot A}{\infer[1]{\cancel{A}}{}}
+										{\infer[\lor I_{R}]{A \lor \lnot A}{\infer[1]{\cancel{A}}{}}
 										&
 										\infer[2]{\cancel{\lnot (A \lor \lnot A)}}{}}}}
 							&
@@ -151,7 +151,7 @@
 	\end{tabular}
 	\end{center}
 
-	This takes a proof witnessing the sequent $\Sigma, \lnot A \ \vdash \ \bot$ to a proof witnessing $\Sigma \ \vdash \ A$. Notice that we can conclude $A$ using the assumption $\lnot A$ and we can strike out the assumption $\lnot A$ in the RAA step. It this possibility of striking out of the assumption that makes RAA, and hence classical logic, more powerful than other the previous rules we have studied. 
+	This takes a proof witnessing the sequent $\Sigma, \lnot A \ \vdash \ \bot$ to a proof witnessing $\Sigma \ \vdash \ A$. Notice that we can conclude $A$ using the assumption $\lnot A$ and we can strike out the assumption $\lnot A$ in the RAA step. It this possibility of striking out of the assumption that makes RAA, and hence classical logic, more powerful than the previous logics we have studied. 
 
 	RAA itself can be difficult to use in a proof. It can instead be easier to use one these derived rules of inference which, by Question 4 below, have equivalent proof theoretic strength to RAA. 
 	
@@ -211,7 +211,7 @@
 					{\infer[\LEM]{A \lor \lnot A}{}
 					&
 					\infer[\to I, 1]{A \to (\lnot A \lor \lnot B)}
-						{\infer[\lor I_{L}]{\lnot A \lor \lnot B}
+						{\infer[\lor I_{R}]{\lnot A \lor \lnot B}
 							{\infer[\to I,2]{\lnot B}
 								{\infer[\MP]{\bot}
 									{\infer[\land I]{A \land B}
@@ -220,7 +220,7 @@
 									\lnot(A \land B)}}}}
 					&
 					\infer[\to I,3]{\lnot A \to (\lnot A \lor \lnot B)}
-						{\infer[\lor I_{R}]{\lnot A \lor \lnot B}
+						{\infer[\lor I_{L}]{\lnot A \lor \lnot B}
 							{\temp{1}{\lnot A}}}}
 			\end{array}$
 		\end{center}
@@ -231,13 +231,13 @@
 				$\begin{array}{c}
 					\infer[\RAA,3]{\lnot A \lor \lnot B}
 						{\infer[]{\bot}
-							{\infer[\lor I]{\lnot A \lor \lnot B}
+							{\infer[\lor I{L}]{\lnot A \lor \lnot B}
 								{\infer[\to I,1]{\lnot A}
 									{\infer[\MP]{\bot}
 										{\infer[3]{\cancel{\lnot(\lnot A \lor \lnot B)}}
 											{}
 										&
-										\infer[\lor I]{\lnot A \lor \lnot B}
+										\infer[\lor I_{R}]{\lnot A \lor \lnot B}
 											{\infer[\to I,2]{\lnot B}
 												{\infer[\MP]{\bot}
 													{\lnot(A \land B)
@@ -262,12 +262,12 @@
 					{\infer[\LEM]{A \lor \lnot A}{}
 					&
 					\infer[\to I,1]{A \to \lnot A \lor B}
-						{\infer[\lor I_{L}]{\lnot A \lor B}
+						{\infer[\lor I_{R}]{\lnot A \lor B}
 							{\infer[\MP]{B}
 								{\temp{1}{A} & A \to B}}}
 					&
 					\infer[\to I,2]{\lnot A \to \lnot A \lor B}
-						{\infer[\lor I_{R}]{\lnot A \lor B}
+						{\infer[\lor I_{L}]{\lnot A \lor B}
 							{\temp{2}{\lnot A}}}}
 			\end{array}$
 		\end{center}
@@ -278,12 +278,12 @@
 			$\begin{array}{c}
 				\infer[\RAA,2]{\lnot A \lor B}
 					{\infer[\MP]{\bot}
-						{\infer[\lor I]{\lnot A \lor B}
+						{\infer[\lor I_{L}]{\lnot A \lor B}
 							{\infer[\to I,1]{\lnot A}
 								{\infer[\MP]{\bot}
 									{\infer[2]{\cancel{\lnot(\lnot A \lor B)}}{}
 									&
-									\infer[\lor I]{\lnot A \lor B}
+									\infer[\lor I_{R}]{\lnot A \lor B}
 										{\infer[\MP]{B}
 											{\infer[1]{\cancel{A}}{}
 											&
@@ -300,11 +300,11 @@
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor E]{}
+				\infer[\lor E]{(A \to B) \lor (B \to A)}
 					{\infer[\LEM]{A \lor \lnot A}{}
 					&
 					\infer[\to I,1]{A \to (A \to B) \lor (B \to A)}
-						{\infer[\lor I_{L}]{(A \to B) \lor (B \to A)}
+						{\infer[\lor I_{R}]{(A \to B) \lor (B \to A)}
 							{\infer[\to I, B]{B \to A}
 								{\temp{1}{A}}}}
 					&
@@ -323,13 +323,13 @@
 				$\begin{array}{c}
 					\infer[\RAA,2]{(A \to B) \lor (B \to C)}
 						{\infer[]{\bot}
-							{\infer[\lor I]{(A \to B) \lor (B \to C)}
+							{\infer[\lor I_{R}]{(A \to B) \lor (B \to C)}
 								{\infer[\to I,1]{B \to C}
 									{\infer[\XF]{C}
 										{\infer[\MP]{\bot}
 											{\infer[2]{\cancel{\lnot[(A \to B) \lor (B \to C)]}}{}
 											&
-											\infer[\lor I]{(A \to B) \lor (B \to C)}
+											\infer[\lor I_{L}]{(A \to B) \lor (B \to C)}
 												{\infer[\to I]{A \to B}
 													{\infer[1]{\cancel{B}}{}}}}}}}
 							&
@@ -350,10 +350,10 @@
 				\infer[\to I, A]{A \to B \lor \lnot B}
 					{\infer[\RAA,2]{B \lor \lnot B}
 						{\infer[\MP]{\bot}
-							{\infer[\lor I]{B \lor \lnot B}
+							{\infer[\lor I_{R}]{B \lor \lnot B}
 								{\infer[\to I,1]{\lnot B}
 									{\infer[\MP]{\bot}
-										{\infer[]{B \lor \lnot B}{\infer[1]{\cancel{B}}{}}
+										{\infer[\lor I_{L}]{B \lor \lnot B}{\infer[1]{\cancel{B}}{}}
 										&
 										\infer[2]{\cancel{\lnot (B \lor \lnot B)}}{}}}}
 							&
@@ -414,7 +414,7 @@
 					{\infer[\THM]{A \lor \lnot A}{}
 					&
 					\infer[\to I,1]{A \to (A \to D) \lor (C \to B)}
-						{\infer[\lor I_{L}]{(A \to D) \lor (C \to B)}
+						{\infer[\lor I_{R}]{(A \to D) \lor (C \to B)}
 							{\infer[\to I]{C \to B}
 								{\infer[\MP]{B}
 									{\temp{1}{A}
@@ -440,11 +440,11 @@
 			$\begin{array}{c}
 				\infer[\RAA,2]{(A \to D) \lor (C \to B)}
 					{\infer[\MP]{\bot}
-						{\infer[\lor I_{R}]{(A \to D) \lor (C \to B)}
+						{\infer[\lor I_{L}]{(A \to D) \lor (C \to B)}
 							{\infer[\to I,1]{A \to D}
 								{\infer[\XF]{D}
 									{\infer[\MP]{\bot}
-										{\infer[\lor I_{L}]{(A \to D) \lor (C \to B)}
+										{\infer[\lor I_{R}]{(A \to D) \lor (C \to B)}
 											{\infer[\to I]{C \to B}
 												{\infer[\MP]{B}
 													{\temp{1}{A}
@@ -503,8 +503,6 @@
 		\end{center}
 
 		To complete the proof the two sub-goals need to be joined with a conjunction introduction. 
-
-
 
 		Proof which makes explicit use of RAA. It also calls on a proof of $\vdash \ \lnot A \to (A \to B)$ from Lab Two. This is denoted by the label THM in the proof; here we are calling on a THeoreM that we have already proved elsewhere.
 

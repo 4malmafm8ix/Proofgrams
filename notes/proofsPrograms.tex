@@ -55,7 +55,7 @@
         -- God created the integers;
         inductive Peano where
           | zero : Peano
-          | succ : Peano → Peano
+          | succ : Peano -> Peano
     \end{lstlisting} 
     
 
@@ -133,9 +133,9 @@ Sometimes the assumed knowledge, assumed premises, are not explicitly referenced
 
 
 
-\begin{defn}{Argument}
+
     An argument is a finite collection of declarative sentences (propositions), one of which is singled out as the conclusion, while the others are referred to as premises. Premises are considered the evidence in support of the conclusion.
-\end{defn}
+
 
 \begin{eg}{Moriarty escapes}
     If Watson can trap Moriarty, then Holmes can. Holmes has failed to catch Moriarty, therefore Watson can't catch him either. 
@@ -151,7 +151,6 @@ Sometimes the assumed knowledge, assumed premises, are not explicitly referenced
 
 For each of the arguments above you will have felt a sense of whether the conclusion \emph{properly followed} from the premises. That is to say, whether the argument posed was correct. It is our objective to say, formally, when a conclusion can correctly be deduced from a set of premises. At this point is good to clarify that we are \emph{not} to say anything about any so called ``truth'' or ``falisity'' of the premises. We are simply interested in whether, \emph{given that the premises are the case, is it correct to say the conclusion is also the case}. Put another way, we will assume the premises have already been argued for, or that we are putting off their argument for now. 
 
-\begin{definition}{Sequent}
 
     We introduce the following short hand
 
@@ -159,7 +158,7 @@ For each of the arguments above you will have felt a sense of whether the conclu
 
     to denote that the conclusion $\alpha$ follows correctly from a set $\Sigma = \{P_{1},P_{2},...,P_{n}\}$ of premises for the conclusion $\alpha$. We say that $\alpha$ is a syntactic consequence of $\Sigma$. 
 
-\end{definition}
+
 
 Before we begin to analyse the structure of an argument, we add a layer of abstraction to help clarify some of the ambiguities present in a language like English. This layer of abstraction is called propositional logic. 
 
@@ -277,7 +276,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     \vspace{0.1cm}
 
-    \begin{definition}{Implication Introduction}
+    
         If $^{\Sigma}_{\beta}\mathcal{D}$ is a deduction of $\beta$ from $\Sigma$, then the deduction can be extended to a deduction of $\alpha \rightarrow \beta$ from hypotheses $\Sigma \backslash \{\alpha\}$, which we depict as follows: 
 
         \begin{center}
@@ -286,7 +285,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
                     {\begin{array}{c} \Sigma, \ \cancel{\alpha} \\ \mathcal{D} \\ \beta \end{array}}
             \end{array}$
         \end{center}
-    \end{definition}
+    
 
     In programming terms we can think of a proof of $P \to Q$ using implication introduction as a subroutine with a local variable $P$ that returns $Q$. If we ever have a proof of $P$ lying around, then we can use the subroutine to obtain a proof of $Q$. But writing the subroutine alone says nothing about whether one could ever prove $P$, just what can be done if $P$ were known. 
 
@@ -294,7 +293,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     \vspace{0.1cm}
     
-    \begin{definition}{Implication Elimination (Modus Ponens)}
+    {Implication Elimination (Modus Ponens)}
 
         If $^{\Sigma_{1}}_{\alpha \rightarrow \beta}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\alpha}\mathcal{D}_{2}$ are deductions, then they can be extended to a deduction $^{\Sigma_{1}\cup \Sigma_{2}}_{\beta}\mathcal{D}$, which we depict as follows: 
 
@@ -303,7 +302,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
                 \infer[\MP]{\beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\ \alpha \end{array}}	
             \end{array}$
         \end{center}
-    \end{definition}
+    
 
     \begin{eg}{Implication Composition}
 
@@ -358,7 +357,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     \vspace{0.1cm}
 
-    \begin{definition}{Conjunction Introduction}
+    {Conjunction Introduction}
 
         If $^{\Sigma_{1}}_{\alpha}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{\beta}\mathcal{D}_{2}$ are proofs of $\alpha$ and $\beta$ respectively, then together they constitute a proof $^{\Sigma_{1} \cup \Sigma_{2}}_{\alpha \land \beta}\mathcal{D}$, which we depict as follows: 
 
@@ -378,11 +377,11 @@ This compact notation is simply stating that a proposition (term of type Prop) i
                     \end{array}}
             \end{array}$
         \end{center}
-    \end{definition}
+    
 
     Similarly, if we have a knowledge of $P \land Q$, then that should mean we have knowledge of both $P$ and $Q$ separately. For this reason, a proof of $P \land Q$ can be extended to either a proof of $P$ or a proof of $Q$. This is codified in the following \emph{elimination} rules of the conjunction connective. 
 
-    \begin{definition}{Conjunction Elimination}
+    {Conjunction Elimination}
 
         If $^{\Sigma}_{\alpha \land \beta}\mathcal{D}$ is a proof of $\alpha \land \beta$ from hypotheses $\Sigma$, then we can extend this proof in two ways to obtain proofs of $\alpha$ and $\beta$ respectively: 
 
@@ -411,7 +410,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
     
             \end{array}$
         \end{center}	
-    \end{definition}
+    
 
     \begin{eg}{Conjunction Commutative}
 
@@ -530,7 +529,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     \vspace{0.1cm}
 
-    \begin{definition}{Disjunction Introduction}
+    {Disjunction Introduction}
 
         If $^{\Sigma}_{\alpha}\mathcal{D}$ is a derivation of $\alpha$ from $\Sigma$, then this proof can be extended in two ways to obtain proofs of $\alpha \lor \beta$ and $\beta \lor \alpha$ respectively: 
 
@@ -555,13 +554,13 @@ This compact notation is simply stating that a proposition (term of type Prop) i
     
             \end{array}$
         \end{center}	
-    \end{definition}
+    
 
     What of disjunction elimination? What can be deduced if $P \lor Q$ is a hypotheses? Given nothing more than the proposition $P \lor Q$, we need to account for the fact that a proof of it may have come by way of a proof of $P$, or a proof of $Q$. Therefore a case analysis is required in the elimination of the disjunction $P \lor Q$. Two extra proofs must be provided; one proof of $P \to R$ and another proof of $Q \to R$. 
 
     If we have the assumption $P \lor Q$ - that is, we know that either at least $P$ has a proof or $Q$ has a proof - together with proofs that $P \to R$ and $Q \to R$, then we may extend these three proofs to a proof of $R$. Notice that the proof of $R$ depends on the hypotheses of \emph{all three} branches. Conjunction introduction and modus ponens combined two proofs into one, now we have a rule of inference that combines three proofs into one. 
 
-    \begin{definition}{Disjunction Elimination}
+    {Disjunction Elimination}
 
         If $^{\Sigma_{1}}_{\alpha\lor\beta}\mathcal{D}_{1}$, $^{\Sigma_{2}}_{\alpha\rightarrow\gamma}\mathcal{D}_{2}$, and $^{\Sigma_{2}}_{\beta\rightarrow\gamma}\mathcal{D}_{3}$ are derivations, then together these can be extended to a proof $^{\Sigma}_{\gamma}\mathcal{D}$, where $\Sigma = \Sigma_{1} \cup \Sigma_{2} \cup \Sigma_{3}$. We depict this extension as follows: 
 
@@ -579,7 +578,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
             
             \end{array}$            
         \end{center}
-    \end{definition}
+    
 
     {\bf Note!} Since disjunction elimination requires proofs that either disjunct lead to the same outcome, each disjunct can be temporarily added to the hypotheses in order to prove these implications. 
 
@@ -839,7 +838,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     This mode of reasoning is formalised into a rule of inference as follows. 
 
-    \begin{definition}{Reductio Ad Absurdum}
+    {Reductio Ad Absurdum}
 
         If $^{\Sigma}_{\bot}\mathcal{D}$ is a deduction of $\bot$ from $\Sigma$, then
 
@@ -851,7 +850,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
         \end{center}  
 
         is a derivation of $\alpha$ from the assumptions $\Sigma \backslash\{\lnot\alpha\}$.
-    \end{definition}
+    
 
     It is distinguished from the intuitionistic ex falso quodlibet by allowing for the discharge of the $\lnot\alpha$ assumption. It is this freedom to discharge assumptions that allows for the proof of theorems like double negation elimination and the logical equivalence of contraposition. Note that the discharged assumption must be the negation of the conclusion. 
 
@@ -1147,16 +1146,16 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     \end{eg}
 
-    \begin{definition}{First-Order Theory}
+    {First-Order Theory}
 
-    \end{definition}
+    
 
     First-order theories abound in mathematics. However, we will focus on a first-order theory of arithmetic called Peano Arithmetic. 
 
     \newpage
     \section{Peano Arithmetic}
 
-    \begin{definition}{Peano Arithmetic}
+    {Peano Arithmetic}
 
         Peano Arithmetic is the first-order theory of terms $\mathbb{N}$ generated by the following signature:
 
@@ -1179,7 +1178,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
         PA7 is really an axiom scheme; one axiom for each unary predicate $P$ on the type $\mathbb{N}$ generated by $\mathcal{P}$ the signature above. 
 
-    \end{definition}
+    
 
     Together the constant 0 and the unary successor function generate an infinite sequence of terms that correspond to the natural numbers: 
 
@@ -1344,7 +1343,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
         The function type constructor says that if a $\lambda$-term depends on a free variable $a : \alpha$, then this can be abstracted over to make a function which takes in a term of type $\alpha$. Compare this to the process of taking a global variable in a program and factoring it out to write a routine which now takes that variable as input. 
 
-        \begin{definition}{Function Type Constructor (Abstraction)}
+        {Function Type Constructor (Abstraction)}
     
             If $^{\Sigma}_{t : \beta}\mathcal{D}$ is a typing derivation of a term of  $t : \beta$ from a context $\Sigma$ containing an arbitrary term $a : \alpha$, then $\mathcal{D}$ can be extended to a typing derivation of a term $f : \alpha \rightarrow \beta$ from the context $\Sigma \backslash \{a : \alpha\}$, which we depict as follows: 
     
@@ -1356,11 +1355,11 @@ This compact notation is simply stating that a proposition (term of type Prop) i
             \end{center}
 
             Where $t[a/x]$ denotes the term $t$ with each free instance of $a$ replaced by $x$. 
-        \end{definition}
+        
     
             Well-typed functions should only be passed terms of their domain type. We introduce the following function type destructor to our type derivation calculus to make sure this happens. This is function application with extra care to check the type of the input being passed to the function. 
         
-        \begin{definition}{Function Type Destructor (Application)}
+        {Function Type Destructor (Application)}
     
             If $^{\Sigma_{1}}_{f : \alpha \rightarrow \beta}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{a : \alpha}\mathcal{D}_{2}$ are typing derivations, then they can be extended to a derivation $^{\Sigma_{1}\cup \Sigma_{2}}_{(f \ a) : \beta}\mathcal{D}$ which we depict as follows: 
     
@@ -1369,7 +1368,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
                     \infer[\app]{(f \ a) : \beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ f : \alpha \rightarrow \beta \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\  a : \alpha \end{array}}	
                 \end{array}$
             \end{center}
-        \end{definition}
+        
     
         \newpage
         \begin{eg}{Function Composition}
@@ -1425,7 +1424,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
         Construction rules tell us how to form terms of a particular type. That is to say, they tell us how to write programs \emph{into} that type. In order to form a tuple of type $\alpha \times \beta$ is necessary and sufficient to provide (typing derivations of) terms $a : \alpha$ and $b : \beta$. This is formalised as the following type constructor.
 
-        \begin{definition}{Product Type Constructor}
+        {Product Type Constructor}
 
             If $^{\Sigma_{1}}_{a : \alpha}\mathcal{D}_{1}$ and $^{\Sigma_{2}}_{b : \beta}\mathcal{D}_{2}$ are typing derivations, then they can be extended to a deduction $^{\Sigma_{1}\cup \Sigma_{2}}_{(a, \ b) : \alpha \times \beta}\mathcal{D}$, which we depict as follows: 
 
@@ -1434,11 +1433,11 @@ This compact notation is simply stating that a proposition (term of type Prop) i
                     \infer[\times]{(a, b) : \alpha \times \beta}{\begin{array}{c} \Sigma_{1} \\ \mathcal{D}_{1} \\ a : \alpha \end{array} \quad & \begin{array}{c} \Sigma_{2} \\ \mathcal{D}_{2} \\  b : \beta \end{array}}	
                 \end{array}$
             \end{center}
-        \end{definition}
+        
 
         Constructors tell us how to write programs into the types they are constructing, whereas destructors tell us how to write programs out of the type they are destroying. There are two destructors for the product type, one for each component of the product. Elements of the product type are pairs and we can therefore project onto the FirST component or the SecoND component of the tuple. This is formalised in the following type destructor. 
 
-        \begin{definition}{Product Type Destructors}
+        {Product Type Destructors}
     
             If $^{\Sigma}_{\alpha \times \beta}\mathcal{D}$ is a typing derivation of $\alpha \times \beta$ in a typing context $\Sigma$, then we can extend this derivation in two ways to obtain terms of type $\alpha$ and $\beta$ respectively: 
     
@@ -1467,7 +1466,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
         
                 \end{array}$
             \end{center}	
-        \end{definition}
+        
 
         With these new terms we have to say how computations work i.e. what are the $\beta$-reduction rules for $\fst$ and  $\snd$? If the structure of the term $t : \alpha \times \beta$ is known to be (e.g.) $t = (a,b)$ for $a: \alpha$ and $b: \beta$, then the following terms are considered $\beta$-redex and reduce according to the equations: 
 
@@ -1555,7 +1554,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
     In order to write a program into a sum type, it is sufficient to have a term of either type and place it in with a tag. In the constructor below we use inl(eft) to tag terms that are elements type on the left of the sum and inr(ight) to tag terms of the type on the right of the sum. 
 
-    \begin{definition}{Sum Type Constructors}
+    {Sum Type Constructors}
 
         If $^{\Sigma}_{a : \alpha}\mathcal{D}$ is a typing derivation of a term $a : \alpha$ from a context $\Sigma$, then this derivation can be extended in two ways to obtain derivations of terms inhabiting either $\alpha + \beta$ and $\beta + \alpha$ respectively: 
 
@@ -1571,11 +1570,11 @@ This compact notation is simply stating that a proposition (term of type Prop) i
         
             \end{array}$
           \end{center}
-    \end{definition}
+    
 
     Type destructors tell us how to write a program \emph{out of} a particular type. Terms of sum types $\alpha + \beta$ are either a term of type $\alpha$ or a term of type $\beta$. Therefore, in order to write a program out of $\alpha + \beta$, we have to take into account both of these possibilities. That is, we need to provide a program to deal with the case that the term came from $\alpha$ and a program to deal with the case that the term came from $\beta$. This is formalised in the following destructor. 
 
-    \begin{definition}{Sum Type Destructor}
+    {Sum Type Destructor}
 
         If $^{\Sigma_{1}}_{t : \alpha + \beta}\mathcal{D}_{1}$, $^{\Sigma_{2}}_{f : \alpha\rightarrow\gamma}\mathcal{D}_{2}$, and $^{\Sigma_{3}}_{g : \beta\rightarrow\gamma}\mathcal{D}_{3}$ are typing derivations, then together these can be extended to a derivation $^{\Sigma}_{t : \gamma}\mathcal{D}$, where $\Sigma = \Sigma_{1} \cup \Sigma_{2} \cup \Sigma_{3}$. We depict this extension as follows: 
 
@@ -1593,7 +1592,7 @@ This compact notation is simply stating that a proposition (term of type Prop) i
             
             \end{array}$            
         \end{center}
-    \end{definition}
+    
     
     If the term $\sumElim$ is passed a term $\inl \ a$ for $a : \alpha$, then it will apply $f$ to it. Otherwise it will be passed $\inr \ b$ for $b : \beta$ and will apply $g$ to it. These $\beta$-redex are and reduction rules are described in the following equations: 
 
@@ -1886,14 +1885,14 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
         When writing a proof in Lean extra structure is needed to tell Lean the theorem you're intending to prove. The following is a complete working example of Lean code for this theorem: 
 
-        \begin{lstlisting}
-            variable (P Q R : Prop)
-    
-            --                       P → Q       Q → R  ⊢ P → R
-            theorem composition (f : P → Q) (g : Q → R) : P → R :=
-              λ p : P =>
-                g (f p)
-        \end{lstlisting}
+%        \begin{lstlisting}
+%            variable (P Q R : Prop)
+%    
+%            --                       P → Q       Q → R  ⊢ P → R
+%            theorem composition (f : P → Q) (g : Q → R) : P → R :=
+%              λ p : P =>
+%                g (f p)
+%        \end{lstlisting}
     
         Line-by-line this is what the code is doing. First we declare P, Q, and R to be propositional variables. Next, lines beginning with -{}- are comments; they are for human readers only, to help illustrate what the code is doing. This comment is indicating how to align our usual syntax with that of Lean on the next line. Lean programs can be opened by the ``theorem'' keyword and have the following structure:
         
@@ -1909,31 +1908,31 @@ This compact notation is simply stating that a proposition (term of type Prop) i
 
         In this example we consider the I combinator, or identity function. This program witnesses the proof of the following theorem: $$ \vdash \ P \to P$$
         Notice this is a \emph{theorem} and as such has no hypotheses. For this reason, the goal is stated directly after the name of the theorem.
-
-        \begin{lstlisting}
-            variable (P : Prop)
-            
-            --                  ⊢ P → P
-            theorem Icombinator : P → P :=
-                λ p : P =>
-                    p
-        \end{lstlisting}  
+%
+%        \begin{lstlisting}
+%            variable (P : Prop)
+%            
+%            --                  ⊢ P → P
+%            theorem Icombinator : P → P :=
+%                λ p : P =>
+%                    p
+%        \end{lstlisting}  
         
     \end{eg}
 
     \begin{eg}{S Combinator}
         In this example we show that the bound variables of the $S$ combinator can be consistently assigned types. Again, this proof-term corresponds to a theorem with no hypotheses. Again, this is an exercise in \emph{translation} as we have already derived a proof-term for this theorem. Write the corresponding term in Lean. 
 
-        \begin{lstlisting}
-        variable (P Q R : Prop)
-
-        --                  ⊢ (P → (Q → R)) → ((P → Q) → (P → R))
-        theorem Scombinator : (P → (Q → R)) → ((P → Q) → (P → R)) :=
-        λ f : P → (Q → R) =>
-          λ g : P → Q =>
-            λ w : P =>
-              (f w) (g w)
-        \end{lstlisting}  
+%        \begin{lstlisting}
+%        variable (P Q R : Prop)
+%
+%        --                  ⊢ (P → (Q → R)) → ((P → Q) → (P → R))
+%        theorem Scombinator : (P → (Q → R)) → ((P → Q) → (P → R)) :=
+%        λ f : P → (Q → R) =>
+%          λ g : P → Q =>
+%            λ w : P =>
+%              (f w) (g w)
+%        \end{lstlisting}  
         
         There are three nested implications and therefore three abstractions. Equivalently, there are three applications of the deduction theorem.      
     \end{eg}
@@ -1941,16 +1940,16 @@ This compact notation is simply stating that a proposition (term of type Prop) i
     \begin{eg}{K Combinator}
 
         This theorem confuses many when viewed from the point of view of propositional logic. Some find this computational point-of-view clarifying. 
-
-        \begin{lstlisting}
-            variable (P Q : Prop)
-            
-            --                  ⊢ P → (Q → P)
-            theorem Kcombinator : P → (Q → P) :=
-            λ p : P =>
-              λ q : Q =>
-                p
-            \end{lstlisting}  
+%
+%        \begin{lstlisting}
+%            variable (P Q : Prop)
+%            
+%            --                  ⊢ P → (Q → P)
+%            theorem Kcombinator : P → (Q → P) :=
+%            λ p : P =>
+%              λ q : Q =>
+%                p
+%            \end{lstlisting}  
 
         Given a term of type $P$ (i.e.  $\lambda \ p : P$ =>) how does one obtain a term of type $Q \to P$? Such a term is a function from $Q$ which returns a term of type $P$. Which $P$ does it return? It returns the input $p$ from the first abstraction. This is really the same as the I combinator proof; from a term of type $P$ one can always obtain a term of type $P$.
     \end{eg}
@@ -1962,14 +1961,14 @@ This compact notation is simply stating that a proposition (term of type Prop) i
         $$ (\snd \ t, \fst \ t) : Q \land P $$
 
         Using the Table this proof-term can be written as follows:
-
-        \begin{lstlisting}
-        variable (P Q : Prop)
-
-        --                     P ∧ Q  ⊢ Q ∧ P
-        theorem conj_comm (t : P ∧ Q) : Q ∧ P :=
-            And.intro (And.right t) (And.left t)
-        \end{lstlisting}        
+%
+%        \begin{lstlisting}
+%        variable (P Q : Prop)
+%
+%        --                     P ∧ Q  ⊢ Q ∧ P
+%        theorem conj_comm (t : P ∧ Q) : Q ∧ P :=
+%            And.intro (And.right t) (And.left t)
+%        \end{lstlisting}        
     \end{eg}
 
     \begin{eg}{Conjunction Associative}
@@ -1979,16 +1978,16 @@ This compact notation is simply stating that a proposition (term of type Prop) i
         $$ (\fst \ (\fst \ t), (\snd \ (\fst \ t), \snd \ t)) : P \land (Q \land R) $$
 
         There is another way to project off the components of a term $t : P \land Q$ of a conjunction type. Instead of (\fst t) one can simply use t.left to get the first component and t.right to get the second component. Using this form of $\land$ elimination instead the proof term can be written as follows: 
-
-        \begin{lstlisting}
-        variable (P Q R : Prop)
-        
-        --                 ⊢ (P ∧ Q) ∧ R → P ∧ (Q ∧ R)
-        theorem conj_assoc : (P ∧ Q) ∧ R → P ∧ (Q ∧ R) :=
-            λ t : (P ∧ Q) ∧ R =>
-                And.intro (t.left.left)
-                            (And.intro (t.left.right) (t.right))
-        \end{lstlisting}        
+%
+%        \begin{lstlisting}
+%        variable (P Q R : Prop)
+%        
+%        --                 ⊢ (P ∧ Q) ∧ R → P ∧ (Q ∧ R)
+%        theorem conj_assoc : (P ∧ Q) ∧ R → P ∧ (Q ∧ R) :=
+%            λ t : (P ∧ Q) ∧ R =>
+%                And.intro (t.left.left)
+%                            (And.intro (t.left.right) (t.right))
+%        \end{lstlisting}        
     \end{eg}
 
     \begin{eg}{Currying} Let's revisit currying. Recall the following proof from earlier in the course where the two approaches have been blended together, some type theory notation with some propositional logic notation.
@@ -2011,30 +2010,30 @@ This compact notation is simply stating that a proposition (term of type Prop) i
     The resulting explicitly typed $\lambda$-term below
     $$ \lambda x : P. \ \lambda y : Q. \ f \ (x,y) \ : \ P \to (Q \to R)$$
     is the proof-object witnessing the proof of the sequent. According to the syntax table (Table \ref{tab:lean_translate}) this is translated into the following Lean code:
-
-    \begin{lstlisting}
-        variable (P Q R : Prop)
-
-        --                 (P ∧ Q) → R  ⊢ P → (Q → R)
-        theorem curry (f : (P ∧ Q) → R) : P → (Q → R) :=
-            λ p : P =>
-                λ q : Q =>
-                    f (And.intro p q)
-    \end{lstlisting}
+%
+%    \begin{lstlisting}
+%        variable (P Q R : Prop)
+%
+%        --                 (P ∧ Q) → R  ⊢ P → (Q → R)
+%        theorem curry (f : (P ∧ Q) → R) : P → (Q → R) :=
+%            λ p : P =>
+%                λ q : Q =>
+%                    f (And.intro p q)
+%    \end{lstlisting}
 
     This theorem is named ``curry'' and it uses one hypothesis $f : (P \land Q) \to R$ to prove the goal $P \to (Q \to R)$. In fact curry is a function that takes in a term $f : (P \land Q) \to R$ and returns a term of type $P \to (Q \to R)$; the program it returns is the proof-term derived above. So if one ever has a term of type $(P \land Q) \to R$, the program curry will turn it use it to write a term of type $P \to (Q \to R)$. This means it can be reused in future proofs.
     \end{eg}
 
-    \begin{eg}{Uncurry}
-            \begin{lstlisting}
-                variable (P Q R : Prop)
-
-                --                    P → (Q → R)  ⊢  (P ∧ Q) → R 
-                theorem uncurry (f :  P → (Q → R)) :  (P ∧ Q) → R :=
-                λ t : P ∧ Q =>
-                  (f (And.left t)) (And.right t)
-            \end{lstlisting}
-    \end{eg}
+%    \begin{eg}{Uncurry}
+%            \begin{lstlisting}
+%                variable (P Q R : Prop)
+%
+%                --                    P → (Q → R)  ⊢  (P ∧ Q) → R 
+%                theorem uncurry (f :  P → (Q → R)) :  (P ∧ Q) → R :=
+%                λ t : P ∧ Q =>
+%                  (f (And.left t)) (And.right t)
+%            \end{lstlisting}
+%    \end{eg}
 
     The previous two examples show that the two propositions are logically equivalent $$(P \land Q) \to R \dashv \vdash \ P \to (Q \to R)$$ We can prove this in Lean using the following code: 
     

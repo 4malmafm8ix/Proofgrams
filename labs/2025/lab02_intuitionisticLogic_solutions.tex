@@ -16,7 +16,7 @@
 \usepackage{hyperref}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../proofsPrograms}
+\usepackage{proofsPrograms}
 
 % Package for presenting proofs in landscape. 
 \usepackage{rotating}
@@ -44,7 +44,7 @@
 			\end{itemize}
 
 		Relevant Topic: Propositional Logic\\
-		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1}  
+		Relevant reading: \href{https://leanprover-community.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1}  
 		
 	\vspace{0.2cm}
 
@@ -132,11 +132,11 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 				\infer[\to I, 1]{\lnot (A \to B)}
 					{\infer[\MP]{\bot}
 						{\infer[\MP]{B}
-							{\infer[\land E_{l}]{A}{A \land \lnot B}
+							{\infer[\land E_{L}]{A}{A \land \lnot B}
 							&
 							\temp{1}{A \to B}}
 						&
-						\infer[\land E_{r}]{\lnot B}{A \land \lnot B}}}
+						\infer[\land E_{R}]{\lnot B}{A \land \lnot B}}}
 			\end{array}$
 		\end{center}
 
@@ -151,7 +151,7 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 					{\lnot C \lor \lnot D
 					&
 					\infer[\to I, 2]{\lnot C \to (\lnot A \lor \lnot B)}
-						{\infer[\lor I_{r}]{\lnot A \lor \lnot B}
+						{\infer[\lor I_{L}]{\lnot A \lor \lnot B}
 							{\infer[\to I,1]{\lnot A}
 								{\infer[\MP]{\bot}
 									{\temp{2}{\lnot C}
@@ -162,7 +162,7 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 										A \to C}}}}}
 					&
 					\infer[\to I, 3]{\lnot D \to (\lnot A \lor \lnot B)}
-						{\infer[\lor I_{l}]{\lnot A \lor \lnot B}
+						{\infer[\lor I_{R}]{\lnot A \lor \lnot B}
 							{\infer[\to I,4]{\lnot B}
 								{\infer[\MP]{\bot}
 									{\temp{3}{\lnot D}
@@ -289,13 +289,13 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 						&
 						\infer[\to I, 2]{\lnot A \to \bot}
 							{\infer[\MP]{\bot}
-								{\infer[\land E_{l}]{A}{\temp{1}{A \land B}}
+								{\infer[\land E_{L}]{A}{\temp{1}{A \land B}}
 								&
 								\temp{2}{\lnot A}}}
 						&
 						\infer[\to I, 3]{\lnot B \to \bot}
 							{\infer[\MP]{\bot}
-								{\infer[\land E_{r}]{B}{\temp{1}{A \land B}}
+								{\infer[\land E_{R}]{B}{\temp{1}{A \land B}}
 								&
 								\temp{3}{\lnot B}}}}}
 			\end{array}$
@@ -314,14 +314,14 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 						&
 						\infer[\to I, 2]{A \to \bot}
 							{\infer[\MP]{\bot}
-								{\infer[\land E_{l}]{\lnot A}
+								{\infer[\land E_{L}]{\lnot A}
 									{\lnot A \land \lnot B}
 								&
 								\temp{2}{A}}}
 						&
 						\infer[\to I, 3]{B \to \bot}
 							{\infer[\MP]{\bot}
-								{\infer[\land E_{r}]{\lnot B}
+								{\infer[\land E_{R}]{\lnot B}
 									{\lnot A \land \lnot B}
 								&
 								\temp{3}{B}}}}}
@@ -338,14 +338,14 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 				\infer[\land I]{\lnot A \land \lnot B}
 					{\infer[\to I, 1]{\lnot A}
 						{\infer[\MP]{\bot}
-							{\infer[\lor I_{r}]{A \lor B}
+							{\infer[\lor I_{L}]{A \lor B}
 								{\temp{1}{A}}
 							&
 							\lnot (A \lor B)}}
 					&
 					\infer[\to I, 2]{\lnot B}
 						{\infer[\MP]{\bot}
-							{\infer[\lor I_{l}]{A \lor B}
+							{\infer[\lor I_{R}]{A \lor B}
 								{\temp{2}{B}}
 							&
 							\lnot (A \lor B)}}}
@@ -362,12 +362,12 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 				\infer[\to I, 1]{\lnot(A \land B)}
 					{\infer[\MP]{\bot}
 						{\infer[\MP]{\lnot B}
-							{\infer[\land E_{l}]{A}
+							{\infer[\land E_{L}]{A}
 								{\temp{1}{A \land B}}
 							&
 							A \to \lnot B}
 						&
-						\infer[\land E_{r}]{B}
+						\infer[\land E_{R}]{B}
 							{\temp{1}{A \land B}}}}
 			\end{array}$
 		\end{center}
@@ -381,10 +381,10 @@ More commonly called the \emph{principle of explosion}, this rule of inference s
 			$\begin{array}{c}
 				\infer[\to I, 1]{\lnot \lnot(A \lor \lnot A)}
 					{\infer[\MP]{\bot}
-						{\infer[\lor I_{l}]{A \lor \lnot A}
+						{\infer[\lor I_{R}]{A \lor \lnot A}
 							{\infer[\to I, 2]{\lnot A}
 								{\infer[\MP]{\bot}
-									{\infer[\lor I_{r}]{A \lor \lnot A}
+									{\infer[\lor I_{L}]{A \lor \lnot A}
 										{\temp{2}{A}}
 									&
 									\temp{1}{\lnot(A \lor \lnot A)}}}}

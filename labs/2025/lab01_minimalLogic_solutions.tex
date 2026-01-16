@@ -16,7 +16,7 @@
 \usepackage{hyperref}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../proofsPrograms}
+\usepackage{proofsPrograms}
 
 % Package for presenting proofs in landscape. 
 \usepackage{rotating}
@@ -45,7 +45,7 @@
 			\end{itemize}
 
 		Relevant Topic: Propositional Logic\\
-		Relevant Reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1} 
+		Relevant Reading: \href{https://leanprover-community.github.io/logic_and_proof/index.html}{L$\exists\forall$N Chapters 3,4} and \href{https://www.cs.cornell.edu/courses/cs6110/2015sp/textbook/Simon\%20Thompson\%20textbook.pdf}{Simon section 1.1} 
 		
 	\vspace{2mm}
 
@@ -102,10 +102,10 @@ First, remember that each move in a natural deduction (for this tutorial) consis
 		\hspace{5mm}
 
 	\begin{tabular}{c c}
-		$\begin{array}{c}\infer[\lor I_{l}]{B \lor A}
+		$\begin{array}{c}\infer[\lor I_{R}]{A \lor B}
 		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}}\end{array}$
 		&
-		$\begin{array}{c}\infer[\lor I_{r}]{A \lor B}
+		$\begin{array}{c}\infer[\lor I_{R}]{B \lor A}
 		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}}\end{array}$
 	\end{tabular}\\
 	$\land$ introduction & $\to$ introduction & $\lor$ introduction
@@ -121,16 +121,16 @@ First, remember that each move in a natural deduction (for this tutorial) consis
 \begin{center}
 	\begin{tabular}{c c c}
 		\begin{tabular}{c c}
-			$\begin{array}{c}\infer[\land_{l}]{A}
+			$\begin{array}{c}\infer[\land E_{L}]{A}
 			{\begin{array}{c} \Sigma \\ \vdots \\ A \land B \end{array}}\end{array}$
 			&
-			$\begin{array}{c}\infer[\land_{r}]{B}
+			$\begin{array}{c}\infer[\land E_{R}]{B}
 			{\begin{array}{c} \Sigma \\ \vdots \\ A \land B \end{array}}\end{array}$
 		\end{tabular}
 
 	&
 
-	$\begin{array}{c}\infer[\to I]{B}
+	$\begin{array}{c}\infer[\to E]{B}
 		{\begin{array}{c} \Sigma \\ \vdots \\ A \end{array}
 		&
 		\begin{array}{c} \Sigma \\ \vdots \\ A \to B \end{array}
@@ -162,12 +162,12 @@ In order to determine which rules to use, one must consider the connectives in t
 \textbf{Hints and Tips}
 
 \begin{itemize}
-	\item[] Determine the introduction rules required for conclusion; 
-	\item[] Determine the elimination rules required from hypotheses;
+	\item[] Convince yourself in plain English why the sequent should be provable before doing any natural deduction steps.
+	\item[] Determine the introduction rules required for conclusion. 
+	\item[] Determine the elimination rules required from hypotheses.
 	\item[] Determine any temporary hypotheses from either implication introduction, or disjunction elimination i.e. proof by cases. 
 	\item[] Rewrite the sequent with the temporary hypotheses. 
 	\item[] Write small subproofs where necessary. 
-	\item[] Convince yourself in plain English why the sequent should be provable before doing any natural deduction steps.
 \end{itemize}
 
 
@@ -275,10 +275,10 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\land I]{B \land A}
-					{\infer[\land E_{r}]{B}
+					{\infer[\land E_{R}]{B}
 						{A \land B}
 					&
-					\infer[\land E_{l}]{A}
+					\infer[\land E_{L}]{A}
 						{A \land B}}
 			\end{array}$
 		\end{center}
@@ -304,7 +304,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{l}]{B \lor A}
+				\infer[\lor I_{R}]{B \lor A}
 					{\temp{1}{A}}
 			\end{array}$
 		\end{center}
@@ -317,7 +317,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{r}]{B \lor A}
+				\infer[\lor I_{L}]{B \lor A}
 					{\temp{2}{B}}
 			\end{array}$
 		\end{center}
@@ -330,11 +330,11 @@ In order to determine which rules to use, one must consider the connectives in t
 					{A \lor B
 						&
 						\infer[\to I,1]{A \to (B \lor A)}
-							{\infer[\lor I_{l}]{B \lor A}
+							{\infer[\lor I_{R}]{B \lor A}
 								{\temp{1}{A}}}
 						&
 						\infer[\to I,2]{B \to (B \lor A)}
-							{\infer[\lor I_{r}]{B \lor A}
+							{\infer[\lor I_{L}]{B \lor A}
 								{\temp{2}{B}}}}				
 			\end{array}$
 
@@ -388,9 +388,9 @@ In order to determine which rules to use, one must consider the connectives in t
 					\infer[\to I,1]{(A \land B) \to C}
 						{\infer[\MP]{C}
 							{\infer[]{B\to C}
-								{\infer[\land E_{l}]{A}{\infer[1]{\cancel{A \land B}}{}} & A \to (B \to C)}
+								{\infer[\land E_{L}]{A}{\infer[1]{\cancel{A \land B}}{}} & A \to (B \to C)}
 							&
-							\infer[\land E_{r}]{B}
+							\infer[\land E_{R}]{B}
 								{\infer[1]{\cancel{A \land B}}{}}}}
 				\end{array}$
 			\end{center}
@@ -413,7 +413,7 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\to I, 1]{A \to (B \lor C)}
-					{\infer[\lor I_{r}]{B \lor C}
+					{\infer[\lor I_{L}]{B \lor C}
 						{\infer[\MP]{B}
 							{\temp{1}{\cancel{A}}
 						&
@@ -464,7 +464,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{r}]{C \lor D}
+				\infer[\lor I_{L}]{C \lor D}
 					{\infer[\MP]{C}
 						{\temp{1}{A} & A \to C}}
 			\end{array}$
@@ -478,7 +478,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{l}]{C \lor D}
+				\infer[\lor I_{R}]{C \lor D}
 					{\infer[\MP]{D}
 						{\temp{2}{B} & B \to D}}
 			\end{array}$
@@ -492,12 +492,12 @@ In order to determine which rules to use, one must consider the connectives in t
 					{A \lor B					
 						&
 					\infer[\to I,1]{A \to (C \lor D)}
-						{\infer[\lor I_{r}]{C \lor D}
+						{\infer[\lor I_{L}]{C \lor D}
 							{\infer[\MP]{C}
 								{\temp{1}{A} & A \to C}}}
 						&
 					\infer[\to I, 2]{B \to (C \lor D)}
-						{\infer[\lor I_{l}]{C \lor D}
+						{\infer[\lor I_{R}]{C \lor D}
 							{\infer[\MP]{D}
 								{\temp{2}{B} & B \to D}}}
 					}				
@@ -559,7 +559,7 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c} 
 				\infer[\MP]{B}
-					{\infer[\land E_{l}]{A \to B}{(A \to B) \land (A \to C)}
+					{\infer[\land E_{L}]{A \to B}{(A \to B) \land (A \to C)}
 					&
 					\temp{1}{A}}
 			\end{array}$
@@ -570,7 +570,7 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c} 
 				\infer[\MP]{C}
-					{\infer[\land E_{r}]{A \to C}{(A \to B) \land (A \to C)}
+					{\infer[\land E_{R}]{A \to C}{(A \to B) \land (A \to C)}
 					&
 					\temp{1}{A}}
 			\end{array}$
@@ -582,12 +582,12 @@ In order to determine which rules to use, one must consider the connectives in t
 				\infer[\to I, 1]{A \to (B \land C)}
 					{\infer[\land I]{B \land C}
 						{\infer[\MP]{B}
-							{\infer[\land E_{l}]{A \to B}{(A \to B) \land (A \to C)}
+							{\infer[\land E_{L}]{A \to B}{(A \to B) \land (A \to C)}
 							&
 							\temp{1}{A}}
 							&
 						\infer[\MP]{C}
-							{\infer[\land E_{r}]{A \to C}{(A \to B) \land (A \to C)}
+							{\infer[\land E_{R}]{A \to C}{(A \to B) \land (A \to C)}
 							&
 							\temp{1}{A}}}}
 			\end{array}$
@@ -613,9 +613,9 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{r}]{(A \land B) \lor (A \land C)}
+				\infer[\lor I_{L}]{(A \land B) \lor (A \land C)}
 					{\infer[\land I]{A \land B}
-						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+						{\infer[\land E_{L}]{A}{A \land (B \lor C)}
 							&
 						\temp{1}{B}}}
 			\end{array}$
@@ -625,9 +625,9 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{l}]{(A \land B) \lor (A \land C)}
+				\infer[\lor I_{R}]{(A \land B) \lor (A \land C)}
 					{\infer[\land I]{A \land C}
-						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+						{\infer[\land E_{L}]{A}{A \land (B \lor C)}
 							&
 						\temp{2}{C}}}
 			\end{array}$
@@ -639,17 +639,17 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\lor E]{(A \land B) \lor (A \land C)}
-					{\infer[\land E_{r}]{B \lor C}{A \land (B \lor C)}
+					{\infer[\land E_{R}]{B \lor C}{A \land (B \lor C)}
 						&
 					\infer[\to I, 1]{B \to ((A \land B) \lor (A \land C))}
-						{\infer[\lor I_{r}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land B}
-								{\infer[\land E_{l}]{A}
+						{\infer[\lor I_{L}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land B}
+								{\infer[\land E_{L}]{A}
 									{A \land (B \lor C)}
 							&
 						\temp{1}{B}}}}
 					&
-					\infer[\to I,2]{C \to ((A \land B) \lor (A \land C))}{\infer[\lor I_{l}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land C}
-						{\infer[\land E_{l}]{A}{A \land (B \lor C)}
+					\infer[\to I,2]{C \to ((A \land B) \lor (A \land C))}{\infer[\lor I_{R}]{(A \land B) \lor (A \land C)}{\infer[\land I]{A \land C}
+						{\infer[\land E_{L}]{A}{A \land (B \lor C)}
 							&
 						\temp{2}{C}}}}
 						}
@@ -672,10 +672,10 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\land I]{A \land (B \lor C)}
-					{\infer[\land E_{l}]{A}{\temp{1}{A \land B}}
+					{\infer[\land E_{L}]{A}{\temp{1}{A \land B}}
 					&
 					\infer[\lor I]{B \lor C}
-						{\infer[\land E_{r}]{B}
+						{\infer[\land E_{R}]{B}
 							{\temp{1}{A \land B}}}}
 			\end{array}$
 		\end{center}
@@ -685,10 +685,10 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\land I]{A \land (B \lor C)}
-					{\infer[\land E_{l}]{A}{\temp{2}{A \land C}}
+					{\infer[\land E_{L}]{A}{\temp{2}{A \land C}}
 					&
-					\infer[\lor I_{l}]{B \lor C}
-						{\infer[\land E_{r}]{C}
+					\infer[\lor I_{R}]{B \lor C}
+						{\infer[\land E_{R}]{C}
 							{\temp{2}{A \land C}}}}
 			\end{array}$
 		\end{center}
@@ -703,18 +703,18 @@ In order to determine which rules to use, one must consider the connectives in t
 						&
 						\infer[\to I, 1]{(A \land B) \to (A \land (B \lor C))}
 							{\infer[\land I]{A \land (B \lor C)}
-								{\infer[\land E_{l}]{A}{\temp{1}{A \land B}}
+								{\infer[\land E_{L}]{A}{\temp{1}{A \land B}}
 								&
-							\infer[\lor I]{B \lor C}
-								{\infer[\land E_{r}]{B}
+							\infer[\lor I_{L}]{B \lor C}
+								{\infer[\land E_{R}]{B}
 									{\temp{1}{A \land B}}}}}
 						&
 						\infer[\to I, 2]{(A \land C) \to (A \land (B \lor C))}
 							{\infer[\land I]{A \land (B \lor C)}
-								{\infer[\land E_{l}]{A}{\temp{2}{A \land C}}
+								{\infer[\land E_{L}]{A}{\temp{2}{A \land C}}
 								&
-							\infer[\lor I_{l}]{B \lor C}
-								{\infer[\land E_{r}]{C}
+							\infer[\lor I_{R}]{B \lor C}
+								{\infer[\land E_{R}]{C}
 									{\temp{2}{A \land C}}}}}}				
 				\end{array}$
 			\end{center}
@@ -735,9 +735,9 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\land I]{(A \lor B) \land (A \lor C)}
-					{\infer[\lor I_{r}]{A \lor B}{\temp{1}{A}}
+					{\infer[\lor I_{L}]{A \lor B}{\temp{1}{A}}
 					&
-					\infer[\lor I_{r}]{A \lor C}{\temp{1}{A}}}
+					\infer[\lor I_{L}]{A \lor C}{\temp{1}{A}}}
 			\end{array}$
 		\end{center}
 
@@ -747,11 +747,11 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\land I]{(A \lor B) \land (A \lor C)}
-					{\infer[\lor I_{r}]{A \lor B}
-						{\infer[\land E_{l}]{B}{\temp{2}{B \land C}}}
+					{\infer[\lor I_{R}]{A \lor B}
+						{\infer[\land E_{L}]{B}{\temp{2}{B \land C}}}
 					&
-					\infer[\lor I_{r}]{A \lor C}
-						{\infer[\land E_{r}]{C}{\temp{2}{B \land C}}}}
+					\infer[\lor I_{R}]{A \lor C}
+						{\infer[\land E_{R}]{C}{\temp{2}{B \land C}}}}
 			\end{array}$
 		\end{center}		
 
@@ -765,17 +765,17 @@ In order to determine which rules to use, one must consider the connectives in t
 						&
 						\infer[\to I, 1]{A \to (A \lor B) \land (A \lor C)}
 							{\infer[\land I]{(A \lor B) \land (A \lor C)}
-								{\infer[\lor I_{r}]{A \lor B}{\temp{1}{A}}
+								{\infer[\lor I_{L}]{A \lor B}{\temp{1}{A}}
 								&
-								\infer[\lor I_{r}]{A \lor C}{\temp{1}{A}}}}
+								\infer[\lor I_{L}]{A \lor C}{\temp{1}{A}}}}
 						&
 						\infer[\to I, 2]{(B \land C) \to (A \lor B) \land (A \lor C)}
 							{\infer[\land I]{(A \lor B) \land (A \lor C)}
-								{\infer[\lor I_{r}]{A \lor B}
-									{\infer[\land E_{l}]{B}{\temp{2}{B \land C}}}
+								{\infer[\lor I_{R}]{A \lor B}
+									{\infer[\land E_{L}]{B}{\temp{2}{B \land C}}}
 								&
-								\infer[\lor I_{r}]{A \lor C}
-									{\infer[\land E_{r}]{C}{\temp{2}{B \land C}}}}}}
+								\infer[\lor I_{R}]{A \lor C}
+									{\infer[\land E_{R}]{C}{\temp{2}{B \land C}}}}}}
 				\end{array}$
 			\end{center}
 		\end{scriptsize}
@@ -796,7 +796,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 		\begin{center}
 			$\begin{array}{c}
-				\infer[\lor I_{r}]{A \lor (B \land C)}
+				\infer[\lor I_{L}]{A \lor (B \land C)}
 					{\temp{1}{A}}
 			\end{array}$
 		\end{center}
@@ -812,7 +812,7 @@ In order to determine which rules to use, one must consider the connectives in t
 			\textbf{Nested case of left disjunct}
 				\begin{center}
 					$\begin{array}{c}
-						\infer[\lor I_{r}]{A \lor (B \land C)}
+						\infer[\lor I_{L}]{A \lor (B \land C)}
 							{\temp{3}{A}}
 					\end{array}$
 				\end{center}
@@ -821,7 +821,7 @@ In order to determine which rules to use, one must consider the connectives in t
 
 			\begin{center}
 				$\begin{array}{c}
-					\infer[\lor I_{l}]{A \lor (B \land C)}
+					\infer[\lor I_{R}]{A \lor (B \land C)}
 						{\infer[]{B \land C}
 							{\temp{2}{B}&\temp{4}{C}}}
 				\end{array}$
@@ -836,11 +836,11 @@ In order to determine which rules to use, one must consider the connectives in t
 							{A \lor C
 							&
 							\infer[\to I,3]{A \to A \lor (B \land C)}
-								{\infer[\lor I_{r}]{A \lor (B \land C)}
+								{\infer[\lor I_{L}]{A \lor (B \land C)}
 									{\temp{3}{A}}}
 							&
 							\infer[\to I, 4]{C \to A \lor (B \land C)}
-								{\infer[\lor I_{l}]{A \lor (B \land C)}
+								{\infer[\lor I_{R}]{A \lor (B \land C)}
 									{\infer[]{B \land C}
 										{\temp{2}{B}&\temp{4}{C}}}}}
 					\end{array}$
@@ -857,24 +857,24 @@ In order to determine which rules to use, one must consider the connectives in t
 		\begin{center}
 			$\begin{array}{c}
 				\infer[\lor E]{A \lor (B \land C)}
-					{\infer[\land E_{l}]{A \lor B}
+					{\infer[\land E_{L}]{A \lor B}
 						{(A \lor B) \land (A \lor C)}
 					&
 					\infer[\to I,1]{A \to A \lor (B \land C)}
-						{\infer[\lor I_{r}]{A \lor (B \land C)}
+						{\infer[\lor I_{L}]{A \lor (B \land C)}
 							{\temp{1}{A}}}
 					&
 					\infer[\to I, 2]{B \to (A \lor (B \land C))}
 						{\infer[\lor E]{A \lor (B \land C)}
-							{\infer[\land E_{r}]{(A \lor C)}
+							{\infer[\land E_{R}]{(A \lor C)}
 								{(A \lor B) \land (A \lor C)}
 							&
 							\infer[\to I,3]{A \to A \lor (B \land C)}
-								{\infer[\lor I_{r}]{A \lor (B \land C)}
+								{\infer[\lor I_{L}]{A \lor (B \land C)}
 									{\temp{3}{A}}}
 							&
 							\infer[\to I, 4]{C \to A \lor (B \land C)}
-								{\infer[\lor I_{l}]{A \lor (B \land C)}
+								{\infer[\lor I_{R}]{A \lor (B \land C)}
 									{\infer[]{B \land C}
 										{\temp{2}{B}&\temp{4}{C}}}}}}}
 			\end{array}$

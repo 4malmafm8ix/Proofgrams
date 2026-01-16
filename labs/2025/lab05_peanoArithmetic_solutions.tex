@@ -24,7 +24,7 @@
 \newcommand{\temp}[2]{{\overline{#2}}^{#1}}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../proofsPrograms}
+\usepackage{proofsPrograms}
 
 % Fix the header space: start at the top of the page.
 \usepackage{hyperref}
@@ -709,12 +709,21 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 			\end{center}
 			
 			
-			%\newpage
+
 			\item $\PA \ \vdash \ a < s(a)$
-			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
 			
-			$$a < b := \exists x \ b = a + s(x)$$
-			$$s(a) < s(b) := \exists x \ s(b) = s(a) + s(x)$$
+			\begin{center}
+			$\begin{array}{c}
+				\infer[\text{SUGAR}]{a < s(a)}
+					{\infer[\exists I]{\exists x \ a + s(x) = s(a)}
+						{\infer[\forall E]{a + s(0) = s(a)}
+							{\infer[\THM]{\forall x \ x + 1 = s(x)}
+								{}}}}
+			\end{array}$			
+			\end{center}
+			
+			
+			\item $\PA , \ a < b \ \vdash \ s(a) < s(b)$
 			
 			\begin{center}
 				$\begin{array}{c}
@@ -735,11 +744,30 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 			
 			\item $\PA , \ s(a) < s(b) \ \vdash \ a < b$
 			
+			\begin{center}
+			\footnotesize{$\begin{array}{c}
+				\infer[\exists E]{a < b}
+					{s(a) < s(b)
+					&
+					\infer[\to I,1]{s(b) = s(a) + s(t) \to a < b}
+						{\infer[\text{SUGAR}]{a < b}
+							{\infer[\MP]{b = a + s(t)}
+								{\infer[\forall E]{s(b) = s(a + s(t)) \to b = a + s(t)}
+									{\PA 2}
+								&
+								\infer[=E]{s(b) = s(a + s(t))}
+									{\infer[1]{s(b) = s(a) + s(t)}{}
+									&
+									\infer[\forall E]{s(a) + s(t) = s(a + s(t))}{\infer[\THM]{\forall x \ \forall y \ s(x) + y = s(x + y)}
+										{}}}}}}}
+			\end{array}$}
+			\end{center}
+			
 			\newpage
 			\item $\PA , \ (a < b) \land (b < c) \ \vdash \ a < c$
 			{\scriptsize
 			\begin{center}
-				$\begin{array}{c}
+				\scriptsize{$\begin{array}{c}
 					\infer[\exists E]{a < c}
 						{\infer[\land E_{L}]{a < b}
 							{(a < b) \land (b < c)}
@@ -759,7 +787,7 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 											&
 											\infer[\forall E]{s(x) + s(x) = s(x + s(x))}{\PA 4}}}}}}}
 				
-				\end{array}$			
+				\end{array}$}			
 			\end{center}}
 			
 			%\newpage
@@ -789,7 +817,7 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 			\begin{center}
 				$\begin{array}{c}
 					\infer[\to I,2]{\exists y \ t = s(y) \to (t = 0 \lor 0 < t)}
-						{\infer[\lor I{L}]{(t = 0 \lor 0 < t)}
+						{\infer[\lor I_{L}]{(t = 0 \lor 0 < t)}
 							{\infer[\exists E^{!!!}]{0 < t}
 								{\temp{2}{\exists y \ t = s(y)}
 								&
@@ -820,10 +848,10 @@ $$ \PA \ \vdash \ \exists y \ (n=s(y)) \to [s(n) = 0 \lor \exists y (s(n) = s(y)
 			\end{center}
 			
 			
-			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
-			
-			
-			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hfill \text{(Challenge!)}$
+%			\item $\PA \ \vdash \ \forall x \ \forall y \ [\lnot(x<y) \to ((x=y) \lor (y<x))] \hfill \text{(Challenge!)}$
+%			
+%			
+%			\item $\PA \ \vdash \ \forall x \ \forall y \ [(x\leq y) \land (y\leq x)] \to x=y \hfill \text{(Challenge!)}$
 		\end{enumerate}
 	 
 \end{enumerate}	

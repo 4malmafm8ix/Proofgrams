@@ -15,7 +15,7 @@
 \newcommand{\temp}[2]{{\overline{#2}}^{#1}}
 
 % Import the necessary preamble for the document. 
-\usepackage{../../proofsPrograms}
+\usepackage{proofsPrograms}
 
 % Fix the header space: start at the top of the page.
 \usepackage{hyperref}
@@ -45,7 +45,7 @@
 			\end{itemize}
 
 		Relevant Topic: First-Order Logic.\\
-		Relevant reading: \href{https://leanprover.github.io/logic_and_proof/index.html}{Logic and Proof} Sections 7,8, and 9.
+		Relevant reading: \href{https://leanprover-community.github.io/logic_and_proof/index.html}{Logic and Proof} Sections 7,8, and 9.
 		
 	\vspace{0.2cm}
 
@@ -98,7 +98,7 @@
 									{\infer[\forall E]{Ft \lor Gt \to Ht}
 										{\forall x \ (Fx \lor Gx \to Hx)}
 									&
-									\infer[\lor I_{R}]{Ft \lor Gt}
+									\infer[\lor I_{L}]{Ft \lor Gt}
 										{\temp{1}{Ft}}}
 								&
 								\infer[\forall E]{\lnot Ht}
@@ -145,8 +145,13 @@
 			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[]{}
-						{}					
+					\infer[\to I,1]{P \to \forall x \ F x}
+						{\infer[\forall I]{\forall x \ F x}
+							{\infer[\MP]{F t}
+								{\infer[\forall E]{P \to F t}
+									{\forall x (P \to F x)}
+								&
+								\infer[1]{P}{}}}}
 				\end{array}$
 			\end{center}
 
@@ -155,8 +160,13 @@
 			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[]{}
-						{}					
+					\infer[\forall I]{\forall x (P \to F x)}
+						{\infer[\to I,1]{P \to F t}
+							{\infer[\forall E]{Ft}
+								{\infer[\MP]{\forall x F x}
+									{\infer[1]{P}{}
+									&
+									P \to \forall x \ F x}}}}
 				\end{array}$
 			\end{center}
 			
@@ -165,8 +175,16 @@
 			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[]{}
-						{}					
+					\infer[\to I,1]{P \to \exists x F x}
+						{\infer[\exists E]{\exists x F x}
+							{\exists x (P \to F x)
+							&
+							\infer[\to I,2]{(P \to F t) \to \exists x F x}
+								{\infer[\exists I]{\exists x F x}
+									{\infer[\MP]{F t}
+										{\infer[2]{P \to F t}{}
+										&
+										\infer[1]{P}{}}}}}}
 				\end{array}$
 			\end{center}
 			
@@ -177,7 +195,7 @@
 				$\begin{array}{c}
 					\infer[\to I,2]{\lnot \forall x \ Fx}
 						{\infer[\MP]{\bot}
-							{\exists x \ Fx
+							{\exists x \ \lnot Fx
 							&
 							\infer[\to I,1]{\lnot Ft \to \bot}
 								{\infer[\MP]{\bot}
@@ -193,16 +211,12 @@
 			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[\to I,2]{\lnot \exists x \ Fx}
+					\infer[\to I,1]{\lnot \exists x \ Fx}
 						{\infer[\MP]{\bot}
-							{\temp{2}{\exists x \ Fx}
+							{\temp{1}{\exists x \ Fx}
 							&
-							\infer[\to I,1]{Ft \to \bot}
-								{\infer[\MP]{\bot}
-									{\temp{1}{Ft}
-									&
-									\infer[\forall E]{\lnot Ft}
-										{\forall x \ \lnot Fx}}}}}
+							\infer[\forall E]{Ft \to \bot}
+								{\forall x \ \lnot F x}}}
 				\end{array}$
 			\end{center}
 			
@@ -224,14 +238,21 @@
 			%\newpage
 			\item $ \exists x Fx \to P \vdash \forall x (Fx \to P)$
 			
+			Note that the binding conventions mean: $\exists x Fx \to P$ is $(\exists x Fx) \to P$. That is, $\exists$ binds tighter than $\to$ implication. 
+			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[]{}
-						{}					
+					\infer[\forall I]{\forall x (Fx \to P)}
+						{\infer[\to I,1]{Ft \to P}
+							{\infer[\MP]{P}
+								{\infer[\exists I]{\exists x Fx}
+									{\infer[1]{Ft}{}}
+								&
+								\exists x Fx \to P}}}
 				\end{array}$
 			\end{center}
 			
-			%\newpage
+			\newpage
 			\item $\exists x (Fx \to Gx)  \vdash  \forall x Fx \to \exists x Gx$
 			
 			\begin{center}
@@ -250,7 +271,6 @@
 				\end{array}$
 			\end{center}
 			
-			%\newpage
 			\item $\forall x Fx \vdash \lnot \exists x \ \lnot Fx$ 
 			
 			\begin{center}
@@ -268,7 +288,6 @@
 				\end{array}$
 			\end{center}
 			
-			\newpage
 			\item $\exists x Fx \vdash \lnot \forall x \ \lnot Fx$
 			
 			\begin{center}
@@ -277,12 +296,8 @@
 						{\infer[\MP]{\bot}
 							{\exists x \ Fx
 							&
-							\infer[\to I,2]{Ft \to \bot}
-								{\infer[\MP]{\bot}
-									{\temp{2}{Ft}
-									&
-									\infer[\forall E]{\lnot Ft}
-										{\temp{1}{\forall x \ \lnot Fx}}}}}}
+							\infer[\forall E]{Ft \to \bot}
+								{\forall x \lnot Fx}}}
 				\end{array}$
 			\end{center}
 			
@@ -309,15 +324,62 @@
 				\end{array}$
 			\end{center}
 
-			%\newpage
-			\item $\vdash \ \exists x \ (Fx \lor Gx) \leftrightarrow \exists x \ Fx \ \lor \ \exists x \ Gx$
+			\newpage
+			\item $$\vdash \ \exists x \ (Fx \lor Gx) \leftrightarrow \exists x \ Fx \ \lor \ \exists x \ Gx$$
+			
+			To prove an $\leftrightarrow$ we prove each implication separetly. They should be connected with an $\land I$ and introduction to complete the proof. 
+			
+			First we prove $\exists x \ (Fx \lor Gx) \vdash \exists x \ Fx \lor \exists x \ Gx$
 			
 			\begin{center}
 				$\begin{array}{c}
-					\infer[]{}
-						{}
+					\infer[\exists I]{\exists x Fx \lor \exists x Gx}
+						{\exists x (Fx \lor Gx)
+						&
+						\infer[\to I,1]{Ft \lor Gt \to (\exists x Fx \lor \exists x Gx)}
+							{\infer[\lor E]{\exists x Fx \lor \exists x Gx}
+								{\infer[1]{Ft \lor Gt}{}
+								&
+								\infer[\to I,2]{Ft \to \exists x Fx \lor \exists x Gx}
+									{\infer[\lor I_{L}]{\exists x Fx \lor \exists x Gx}
+										{\infer[\exists I]{\exists x F x}
+											{\infer[2]{Ft}{}}}}
+								&
+								\infer[\to I,3]{Gt \to \exists x Fx \lor \exists x Gx}
+									{\infer[\lor I_{R}]{\exists x Fx \lor \exists x Gx}
+										{\infer[\exists I]{\exists x G x}
+											{\infer[3]{Gt}{}}}}}}}
 				\end{array}$
 			\end{center}
+			
+			Next we prove $\exists x Fx \lor \exists x Gx \vdash \exists x (Fx \lor Gx)$
+			
+			\begin{center}
+				$\begin{array}{c}
+					\infer[\lor E]{\exists x (Fx \lor Gx)}
+						{\exists x F x \lor \exists x G x
+						&
+						\infer[\to I,1]{\exists x Fx \to \exists x (Fx \lor Gx)}
+							{\infer[\exists E]{\exists x (Fx \lor Gx)}
+								{\infer[1]{\exists x Fx}{}
+								&
+								\infer[\to I,2]{Ft \to \exists x (Fx \lor Gx)}
+									{\infer[\exists I]{\exists x (Fx \lor Gx)}
+										{\infer[\lor I_{L}]{Ft \lor Gt}
+											{\infer[2]{Ft}{}}}}}}
+						&
+						\infer[\to I,3]{\exists x Gx \to \exists x (Fx \lor Gx)}
+							{\infer[\exists E]{\exists x (Fx \lor Gx)}
+								{\infer[3]{\exists x Gx}{}
+								&
+								\infer[\to I,4]{Gt \to \exists x (Fx \lor Gx)}
+									{\infer[\exists I]{\exists x (Fx \lor Gx)}
+										{\infer[\lor I_{R}]{Ft \lor Gt}
+											{\infer[4]{Gt}{}}}}}}}
+				\end{array}$
+			\end{center}			
+			
+
 		\end{enumerate}	
 
 	\newpage
