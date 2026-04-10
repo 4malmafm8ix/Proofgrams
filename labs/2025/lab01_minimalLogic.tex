@@ -9,7 +9,7 @@
 \usepackage{cancel}
 
 % Import the necessary preamble for the document. 
-\usepackage{proofsPrograms}
+\usepackage{../../proofsPrograms}
 
 % Natural Deduction package
 \usepackage{proof}
@@ -103,9 +103,12 @@
 		\item $ A\lor  B,\ \  A\to  C,\ \  B \to  D \vdash   C \lor  D$		
 		\item $A \to B \ \vdash \ (C \to A) \to (C \to B)$	
 		\item $(A \to B) \land (A \to C) \ \vdash \ A \to (B \land C)$
+		\item $A \ \vdash \ ((A \to B) \to B$
+		\item $((A \to B) \to B) \to B \ \vdash \ A \to B$
+		\item $A \to B \ \vdash ((A \to B) \to B) \to B$
 	\end{enumerate}	
 
-	\item \textbf{Distributivity of Disjunction and Conjunction.} Each of these sequents can be proved with positive minimal logic alone. However, their proofs are longer than those written above. Some planning and working out of subproofs will help keep these proofs neat and manageable. 
+	\item \textbf{Distributivity of Disjunction and Conjunction.} Each of these sequents can be proved with positive minimal logic alone. These proofs are longer than those written above and some planning will help keep these proofs neat and manageable. 
 
 	\begin{enumerate}
 		\item $A \land (B \lor C) \ \vdash \ (A \land B) \lor (A \land C)$ \hfill [Handin exercise]

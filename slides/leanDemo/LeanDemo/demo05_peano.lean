@@ -30,8 +30,8 @@ open ℕ
 -- ⋮
 -- In fact the inductive type constructor ensures these are the only
 -- natural numbers and that they're all distinct.
-theorem PA1 (m : ℕ) : ¬(succ m = zero) := by intro f<;>injection f
-theorem PA2 (m n : ℕ) : succ m = succ n → m = n := by intro h<;>injection h
+theorem PA1 (m : ℕ) : ¬(succ m = zero) := by intro f; injection f
+theorem PA2 (m n : ℕ) : succ m = succ n → m = n := by intro h; injection h
 
 -- This leaves some of the signature PA : (0,s,+,×,=) to be defined.
 -- Rather than thinking of +,× as term builders, we think of them
@@ -71,11 +71,9 @@ theorem zero_add : ∀ x : ℕ, zero + x = x :=
     intro a
     induction a with
     | zero      => rfl
-    | succ k ih =>
-      calc
-        zero + succ k
-        = succ (zero + k) := by rw [PA4]
-        _ = succ k        := by rw [ih]
+    | succ n ih => rw [PA4,ih]
+
+#print zero_add
 
 @[simp]
 theorem zero_mul : ∀ x : ℕ, zero * x = zero := sorry
@@ -87,7 +85,12 @@ theorem mul_one : ∀ x : ℕ, x * (succ zero) = x := sorry
 theorem succ_add : ∀ x y : ℕ, (succ x) + y = succ (x + y) := sorry
 
 @[simp]
-theorem add_assoc : ∀ x y z : ℕ, (x + y) + z = x + (y + z) := sorry
+theorem add_assoc : ∀ x y z : ℕ, (x + y) + z = x + (y + z) :=
+  by
+    intro a b c
+    induction a with
+    | zero      => rw [zero_add, zero_add]
+    | succ n ih => rw [succ_add, succ_add, succ_add, ih]
 
 @[simp]
 theorem add_comm : ∀ x y : ℕ, x + y = y + x := sorry
@@ -159,11 +162,7 @@ instance : LT ℕ where
 
 theorem zero_lt_succ : ∀ x : ℕ, zero < succ x :=
   by
-    intro a
-    -- succ a = zero + succ ? ; a solves this.
-    apply Exists.intro a
-    --rw [PA4,zero_add]
-    simp
+    sorry
 
 theorem lt_succ : ∀ x : ℕ, x < succ x :=
   by
@@ -185,17 +184,20 @@ theorem succ_lt : ∀ x y : ℕ, x < y → succ x < succ y :=
 --                              x < y ∧ y < z → x < z
 theorem lt_trans : ∀ x y z : ℕ, x < y → y < z → x < z :=
   by
-    intro a b c alb blc
+    intro a b c
+    intro alb blc
     obtain ⟨k,pk⟩ := alb
     obtain ⟨l,pl⟩ := blc
-    -- Goal: c = a + succ ?
-    -- c = b + succ l
-    --   = (a + succ k) + succ l
-    --   = a + (succ k + succ l)
-    --   = a + succ (k + succ l)
-    apply Exists.intro (k + succ l)
-    simp [pk, pl]
-    rw [add_comm,add_assoc]
+    -- c = a + succ (?)
+
+    -- c = b + (succ l)
+    --   = (a + (succ k)) + succ (l)
+    --   = a + (succ(k) + succ (l))
+    --   = a + succ (succ (k) + l)
+    apply Exists.intro ((succ k) + l)
+    rw [pl, pk, add_assoc,PA4]
+
+#print lt_trans
 
 theorem zero_or_gtzero : ∀ x : ℕ, x = zero ∨ zero < x :=
  by
@@ -219,12 +221,7 @@ instance : Dvd ℕ where
 
 theorem divide_reflexive : ∀ x : ℕ, x ≠ zero → x ∣ x :=
   by
-    intro a anz
-    apply And.intro
-    -- a = a * ?
-    apply Exists.intro (succ zero)
-    simp
-    exact anz
+    sorry
 
 
 theorem divide_transitive : ∀ x y z : ℕ, x ∣ y → y ∣ z → x ∣ z :=

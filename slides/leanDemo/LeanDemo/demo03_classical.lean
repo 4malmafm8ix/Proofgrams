@@ -28,54 +28,32 @@ open Classical -- Pandora's Box is now open!
 
 -- Example 01 [Double Negation Elimination]
 -- ¬¬P ⊢ P
-theorem dne (nnp : ¬¬P) : P :=
-  Or.elim (em P)
-          (λ p => p)
-          (λ np => False.elim (nnp np))
+theorem dne (nnp : ¬¬P) : P := sorry
 
-example (nnp : ¬¬P) : P :=
-  byContradiction nnp
+example (nnp : ¬¬P) : P := sorry
 
 -- Example 02
 -- P → Q ⊢ ¬P ∨ Q [Material Implication]
-theorem materialImplication (f : P → Q) : ¬P ∨ Q :=
-  Or.elim (em P) -- P ∨ ¬P
-          (λ p => Or.intro_right (¬P) (f p))
-          (λ np => Or.intro_left Q np)
+theorem materialImplication (f : P → Q) : ¬P ∨ Q := sorry
 
 -- Example 03 [DeMorgan's Law]
 -- ¬(P ∧ Q) ⊢ ¬P ∨ ¬Q
-theorem deMorgan (f : ¬(P ∧ Q)) : ¬P ∨ ¬Q :=
-  Or.elim (em P)
-          (λ p => Or.intro_right (¬P)
-                                 (λ q => f (And.intro p q)))
-          (λ np => Or.intro_left (¬Q) np)
+theorem deMorgan (f : ¬(P ∧ Q)) : ¬P ∨ ¬Q := sorry
 
 -- Example 04
 -- ¬(P → Q) ⊢ P ∧ ¬Q
 example (f : ¬(P → Q)) : P ∧ ¬Q := by
-  apply And.intro
-  apply byContradiction
-  intro np
-  exact f (λ p => False.elim (np p))
-  intro q
-  exact f (λ p => q)
+  sorry
 
 -- Example 05 [ClassicalContrapositive]
 -- ¬Q → ¬P ⊢ P → Q
-theorem classicalContra (f : ¬Q → ¬P) : P → Q :=
-  λ wp => byContradiction (λ nq => (f nq) wp)
+theorem classicalContra (f : ¬Q → ¬P) : P → Q := sorry
 
 -- Example 06 [Pierce's Law]
 -- ⊢ ((P → Q) → P) → P
-theorem pierceHelper {A B : Prop} (f : ¬A) : A → B :=
-  λ a => False.elim (f a)
+theorem pierceHelper {A B : Prop} (f : ¬A) : A → B := sorry
 
-theorem pierce : ((P → Q) → P) → P :=
-  λ f =>
-    Or.elim (em P)
-            (λ p => p)
-            (λ np => f (pierceHelper np))
+theorem pierce : ((P → Q) → P) → P := sorry
 
 -- To a mathematician/logician trained in the Classical
 -- truth value point-of-view, any Prop is either true or false.
@@ -95,7 +73,6 @@ theorem proofIrrel : ∀ A B : Prop,
 -- Nonetheless, Lean considers them equal by definition because they
 -- both happen to inhabit the same A + B : Prop.
 -- If A : Prop, and a : A and b : A, then a = b **by definition**
-
 
 -- However, this is only true for the level Prop of the Universe.
 -- As illustrated by the following not being solved by rfl.
